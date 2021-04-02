@@ -2,6 +2,7 @@
 
 namespace EscolaLms\HeadlessH5P;
 
+use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PContract;
 use H5PFrameworkInterface;
 use H5PFileStorage;
 use H5PStorage;
@@ -11,7 +12,7 @@ use EscolaLms\HeadlessH5P\Repositories\H5PRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5pDefaultFileStorage;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 
-class HeadlessH5P
+class HeadlessH5P implements HeadlessH5PContract
 {
     private H5PFrameworkInterface $repository;
     private H5PFileStorage $fileStorage;
@@ -19,36 +20,44 @@ class HeadlessH5P
     private H5PValidator $validator;
     private H5PStorage $storage;
 
-    public function __construct()
+    /**
+     * HeadlessH5P constructor.
+     * @param H5PFrameworkInterface $repository
+     * @param H5PFileStorage $fileStorage
+     * @param H5PCore $core
+     * @param H5PValidator $validator
+     * @param H5PStorage $storage
+     */
+    public function __construct(H5PFrameworkInterface $repository, H5PFileStorage $fileStorage, H5PCore $core, H5PValidator $validator, H5PStorage $storage)
     {
-        $this->repository = new H5pRepository();
-        $this->fileStorage = new H5pDefaultFileStorage(storage_path('app/h5p'));
-        $this->core = new H5PCore($this->repository, $this->fileStorage, url(''));
-        $this->validator = new H5PValidator($this->repository, $this->core);
-        $this->storage = new H5PStorage($this->repository, $this->core);
+        $this->repository = $repository;
+        $this->fileStorage = $fileStorage;
+        $this->core = $core;
+        $this->validator = $validator;
+        $this->storage = $storage;
     }
 
-    public function getRepository():H5PFrameworkInterface
+    public function getRepository(): H5PFrameworkInterface
     {
         return $this->repository;
     }
 
-    public function getFileStorage():H5PFileStorage
+    public function getFileStorage(): H5PFileStorage
     {
         return $this->fileStorage;
     }
-    
-    public function getCore():H5PCore
+
+    public function getCore(): H5PCore
     {
         return $this->core;
     }
-    
-    public function getValidator():H5PValidator
+
+    public function getValidator(): H5PValidator
     {
         return $this->validator;
     }
 
-    public function getStorage():H5PStorage
+    public function getStorage(): H5PStorage
     {
         return $this->storage;
     }

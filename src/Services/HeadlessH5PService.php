@@ -2,13 +2,14 @@
 
 namespace EscolaLms\HeadlessH5P\Services;
 
+use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PContract;
 use Illuminate\Http\UploadedFile;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 use EscolaLms\HeadlessH5P\HeadlessH5P;
 
 class HeadlessH5PService implements HeadlessH5PServiceContract
 {
-    public function __construct(HeadlessH5P $h5p)
+    public function __construct(HeadlessH5PContract $h5p)
     {
         $this->h5p = $h5p;
     }
