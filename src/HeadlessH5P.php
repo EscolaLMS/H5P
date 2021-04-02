@@ -7,8 +7,16 @@ use H5PFileStorage;
 use H5PStorage;
 use H5PCore;
 use H5PValidator;
+use H5peditor;
+use EditorStorage;
+use EditorAjaxRepository;
+use H5peditorStorage;
+use H5PEditorAjaxInterface;
+
 use EscolaLms\HeadlessH5P\Repositories\H5PRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5pDefaultFileStorage;
+use EscolaLms\HeadlessH5P\Repositories\H5PEditorAjaxRepository;
+use EscolaLms\HeadlessH5P\Repositories\H5pEditorStorageRepository;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 
 class HeadlessH5P
@@ -18,6 +26,8 @@ class HeadlessH5P
     private H5PCore $core;
     private H5PValidator $validator;
     private H5PStorage $storage;
+    private H5peditorStorage $editorStorage;
+    private H5PEditorAjaxInterface $editorAjaxRepository;
 
     public function __construct()
     {
@@ -26,6 +36,14 @@ class HeadlessH5P
         $this->core = new H5PCore($this->repository, $this->fileStorage, url(''));
         $this->validator = new H5PValidator($this->repository, $this->core);
         $this->storage = new H5PStorage($this->repository, $this->core);
+        $this->editorStorage = new H5pEditorStorageRepository();
+        $this->editorAjaxRepository = new H5PEditorAjaxRepository();
+        $this->editor = new H5peditor($this->core, $this->editorStorage, $this->editorAjaxRepository);
+    }
+
+    public function getEditor():H5peditor
+    {
+        return $this->editor;
     }
 
     public function getRepository():H5PFrameworkInterface

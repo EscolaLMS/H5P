@@ -31,4 +31,22 @@ class LibraryApiController extends Controller implements LibraryApiSwagger
             'errors' => $this->hh5pService->getMessages('error'),
         ], $valid ? 200 : 400);
     }
+
+    public function editorSettings(Request $request)
+    {
+        $settings = $this->hh5pService->getEditorSettings();
+
+        return response()->json($settings, 200);
+    }
+
+    public function libraries(Request $request)
+    {
+        $libraries = $this->hh5pService->getLibraries(
+            $request->get('machineName'),
+            $request->get('majorVersion'),
+            $request->get('minorVersion')
+        );
+
+        return response()->json($libraries, 200);
+    }
 }
