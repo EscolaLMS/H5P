@@ -1,0 +1,34 @@
+{
+  "name": "escolalms/headless-h5p",
+  "description": "MAD package for get kibble",
+  "type": "package",
+  "require": {
+    "php": "^7.4",
+    "laravel/framework": "^8.0",
+    "spatie/laravel-permission": "^3.18",
+    "h5p/h5p-core": "dev-master"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.0",
+    "orchestra/testbench": "^6.0",
+    "laravel/legacy-factories": "^1.0.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "EscolaLms\\HeadlessH5P\\": "src",
+      "EscolaLms\\HeadlessH5P\\Tests\\": "tests"
+    }
+  },
+  "license": "(c) EscolaLMS",
+  "authors": [{
+    "name": "Mateusz Wojcza",
+    "email": "mateusz@wojczal.com"
+  }],
+  "extra": {
+    "laravel": {
+      "providers": [
+        "EscolaLms\\HeadlessH5P\\HeadlessH5PServiceProvider"
+      ]
+    }
+  }
+}
