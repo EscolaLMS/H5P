@@ -1,6 +1,6 @@
 {
   "name": "escolalms/headless-h5p",
-  "description": "MAD package for get kibble",
+  "description": "Headless H5P API",
   "type": "package",
   "require": {
     "php": "^7.4",

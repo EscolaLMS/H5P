@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaSoft\KibbleMad\Tests;
+namespace EscolaLms\HeadlessH5P\Tests;
 
 use App\Models\User;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
