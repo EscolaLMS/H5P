@@ -58,8 +58,28 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
     public function getLibraries($machineName, $major_version, $minor_version)
     {
-        $this->h5p->getEditor()->ajax->action(H5PEditorEndpoints::LIBRARIES);
-        return [];
+
+        // TODO this should be in config
+        $lang = 'en';
+
+        /**
+         * $libraries              = $this->findEditorLibraries($library['machineName'], $library['majorVersion'], $library['minorVersion']);
+        $libraryData->semantics = $this->h5p->loadLibrarySemantics($library['machineName'], $library['majorVersion'], $library['minorVersion']);
+        $libraryData->language  = $this->getLibraryLanguage($library['machineName'], $library['majorVersion'], $library['minorVersion'], $languageCode);
+        $libraryData->defaultLanguage = empty($defaultLanguage) ? null : $this->getLibraryLanguage($library['machineName'], $library['majorVersion'], $library['minorVersion'], $defaultLanguage);
+        $libraryData->languages = $this->storage->getAvailableLanguages($library['machineName'], $library['majorVersion'], $library['minorVersion']);
+
+         */
+
+        $libraries_url = url('h5p/libraries');
+
+        if ($machineName) {
+            $defaultLang = $this->h5p->getEditor()->getLibraryLanguage($machineName, $major_version, $minor_version, $lang);
+            //return json_encode($defaultLang);
+            $this->h5p->getEditor()->ajax->action(H5PEditorEndpoints::SINGLE_LIBRARY, $machineName, $major_version, $minor_version, $lang, '', $libraries_url, $defaultLang);
+        } else {
+            return $this->h5p->getEditor()->ajax->action(H5PEditorEndpoints::LIBRARIES);
+        }
 
         /*
 
@@ -93,10 +113,10 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'l10n' => 'l10n',
             'filesPath'=> 'filesPath',
             'fileIcon' => 'fileIcon',
-            'ajaxPath'=> 'ajaxPath',
-            'libraryUrl' => 'libraryUrl',
-            'getCopyrightSemantics'=>'getCopyrightSemantics', // self::$contentvalidator->getCopyrightSemantics(),
-            'getMetadataSemantics'=>'getMetadataSemantics', // self::$contentvalidator->getCopyrightSemantics(),
+            'ajaxPath'=> route('hh5p.index').'/',
+            'libraryUrl' => route('hh5p.library.libraries'),
+            'getCopyrightSemantics'=> $this->h5p->getContentValidator()->getCopyrightSemantics(),
+            'getMetadataSemantics'=>$this->h5p->getContentValidator()->getMetadataSemantics(),
             'get_laravelh5p_url' => url('editor'),
             'get_h5peditor_url' => url('h5p-editor'),
             'get_language' => 'en',
@@ -114,7 +134,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'saveFreq' => false,
             'siteUrl'  => $config['domain'],
             'l10n'     => [
-                'H5P' => $config['l10n']
+                'H5P' => __('h5p::h5p')
             ],
             'hubIsEnabled' => false,
         ];
@@ -127,7 +147,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'scripts' => [],
         ];
 
-        $settings['core']['styles'][] = $config['get_laravelh5p_url'].'/css/laravel-h5p.css';
+        //$settings['core']['styles'][] = $config['get_laravelh5p_url'].'/css/laravel-h5p.css';
 
         foreach (H5PCore::$styles as $style) {
             $settings['core']['styles'][] = $config['get_h5pcore_url'].'/'.$style;
@@ -137,6 +157,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         }
 
         $settings['core']['scripts'][] = $config['get_h5peditor_url'].'/scripts/h5peditor-editor.js';
+        $settings['core']['scripts'][] = $config['get_h5peditor_url'].'/scripts/h5peditor-init.js';
 
         $settings['core']['scripts'][] = $config['get_laravelh5p_url'].'/laravel-h5p.js';
 
@@ -166,7 +187,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $settings['editor']['assets']['css'] = $settings['core']['styles'];
         $settings['editor']['assets']['js'] = $settings['core']['scripts'];
 
-        $settings['editor']['assets']['js'][] = $config['get_laravelh5p_url'] . '/js/laravel-h5p-editor.js';
+        //$settings['editor']['assets']['js'][] = $config['get_laravelh5p_url'] . '/js/laravel-h5p-editor.js';
 
         // add editor styles
         foreach (H5peditor::$styles as $style) {

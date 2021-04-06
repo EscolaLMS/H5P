@@ -47,6 +47,11 @@ class LibraryApiController extends Controller implements LibraryApiSwagger
             $request->get('minorVersion')
         );
 
-        return response()->json($libraries, 200);
+        // Sic!
+        // $this->h5p->getEditor()->ajax->action(H5PEditorEndpoints::LIBRARIES); is calling the output already
+        // which is calling HP5Core::ajaxSucces
+        // which is doint `print json_encode($data);`
+
+        // return response()->json($libraries, 200);
     }
 }

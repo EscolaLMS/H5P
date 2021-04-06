@@ -3,6 +3,8 @@
 namespace EscolaLms\HeadlessH5P\Repositories;
 
 use H5peditorStorage;
+use EscolaLms\HeadlessH5P\Models\H5PLibrary;
+use EscolaLms\HeadlessH5P\Helpers\Helpers;
 
 /**
  * A defined interface for the editor to communicate with the database of the
@@ -23,6 +25,24 @@ class H5pEditorStorageRepository implements H5peditorStorage
    */
     public function getLanguage($machineName, $majorVersion, $minorVersion, $language)
     {
+        // TODO, languge, before save it to DB
+
+        /*
+        //        $language = 'ja';
+        // Load translation field from DB
+        $return = DB::select(
+            'SELECT hlt.translation FROM h5p_libraries_languages hlt
+           JOIN h5p_libraries hl ON hl.id = hlt.library_id
+          WHERE hl.name = ?
+            AND hl.major_version = ?
+            AND hl.minor_version = ?
+            AND hlt.language_code = ?',
+            [$machineName, $majorVersion, $minorVersion, $language]
+        );
+
+        return $return ? $return[0]->translation : null;
+        */
+        return null;
     }
 
     /**
@@ -35,6 +55,8 @@ class H5pEditorStorageRepository implements H5peditorStorage
      */
     public function getAvailableLanguages($machineName, $majorVersion, $minorVersion)
     {
+        // TODO this shoule return something
+        return [];
     }
     /**
      * "Callback" for mark the given file as a permanent file.
@@ -60,6 +82,82 @@ class H5pEditorStorageRepository implements H5peditorStorage
      */
     public function getLibraries($libraries = null)
     {
+        // TODO
+
+        // check against specific libraries
+
+        $libraries_result = H5pLibrary::where('runnable', 1)
+                ->whereNotNull('semantics')
+                ->orderBy('name', 'ASC')
+                ->get();
+
+        Helpers::fixCaseKeysArray(['majorVersion', 'minorVersion', 'patchVersion'], $libraries_result);
+
+        return $libraries_result;
+
+        $return = [];
+
+        if ($libraries !== null) {
+            // Get details for the specified libraries only.
+            foreach ($libraries as $library) {
+                // Look for library
+                $details = H5pLibrary::where('name', $library->name)
+                    ->where('major_version', $library->majorVersion)
+                    ->where('minor_version', $library->minorVersion)
+                    ->whereNotNull('semantics')
+                    ->first();
+
+                if ($details) {
+                    // Library found, add details to list
+                    $library->tutorialUrl = $details->tutorial_url;
+                    $library->title = $details->title;
+                    $library->runnable = $details->runnable;
+                    $library->restricted = $details->restricted === '1' ? true : false;
+                    $return[] = $library;
+                }
+            }
+        } else {
+
+            // Load all libraries
+            $libraries = [];
+
+            $libraries_result = H5pLibrary::where('runnable', 1)
+                ->whereNotNull('semantics')
+                ->orderBy('name', 'ASC')
+                ->get();
+
+            Helpers::fixCaseKeysArray(['majorVersion', 'minorVersion', 'patchVersion'], $libraries_result);
+
+
+            /*
+            // 모든 버전의 라리브러리가 로드되므로 하나의 가장 최신 라이브러리를 찾는 부분
+            foreach ($libraries_result as $library) {
+                // Make sure we only display the newest version of a library.
+                foreach ($libraries as $key => $existingLibrary) {
+                    if ($library->name === $existingLibrary->name) {
+                        // Found library with same name, check versions
+                        if (($library->majorVersion === $existingLibrary->majorVersion &&
+                            $library->minorVersion > $existingLibrary->minorVersion) ||
+                            ($library->majorVersion > $existingLibrary->majorVersion)) {
+                            // This is a newer version
+                            $existingLibrary->isOld = true;
+                        } else {
+                            // This is an older version
+                            $library->isOld = true;
+                        }
+                    }
+                }
+                // Check to see if content type should be restricted
+                $library->restricted = $library->restricted === '1' ? true : false;
+
+                // Add new library
+                $return[] = $library;
+            }
+            */
+        }
+
+        return $return;
+        // TODO
     }
     /**
      * Alter styles and scripts

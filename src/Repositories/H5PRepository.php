@@ -5,6 +5,9 @@ namespace EscolaLms\HeadlessH5P\Repositories;
 use H5PFrameworkInterface;
 use Illuminate\Support\Facades\Log;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
+use EscolaLms\HeadlessH5P\Models\H5PLibraryDependency;
+
+use EscolaLms\HeadlessH5P\Helpers\Helpers;
 
 class H5pRepository implements H5PFrameworkInterface
 {
@@ -216,7 +219,7 @@ class H5pRepository implements H5PFrameworkInterface
      */
     public function getLibraryId($machineName, $majorVersion = null, $minorVersion = null)
     {
-        $where = H5pLibrary::select()->where('name', $machineName);
+        $where = H5pLibrary::where('name', $machineName);
 
         if ($majorVersion !== null) {
             $where->where('major_version', $majorVersion);
@@ -357,15 +360,6 @@ class H5pRepository implements H5PFrameworkInterface
      */
     public function saveLibraryData(&$libraryData, $new = true)
     {
-
-        /*
-        $flight = Flight::firstOrCreate(
-            ['name' => 'London to Paris'],
-            ['delayed' => 1, 'arrival_time' => '11:30']
-        );
-        */
-  
-
         $library = [
             'name'             => $libraryData['machineName'],
             'title'            => $libraryData['title'],
@@ -453,6 +447,44 @@ class H5pRepository implements H5PFrameworkInterface
      */
     public function saveLibraryDependencies($libraryId, $dependencies, $dependency_type)
     {
+        foreach ($dependencies as $dependency) {
+            $dbLib = H5PLibrary::where([
+                'name' => $dependency['machineName'],
+                'major_version' => $dependency['majorVersion'],
+                'minor_version' => $dependency['minorVersion'],
+            ])->firstOrFail();
+
+            H5PLibraryDependency::firstOrCreate([
+                'library_id'=>$libraryId,
+                'required_library_id'=>$dbLib->id,
+                'dependency_type'=>$dependency_type
+            ]);
+        }
+
+        return true;
+
+        /*
+        $dbDriver = DB::connection()->getPdo()->getAttribute(PDO::ATTR_DRIVER_NAME);
+        if ($dbDriver === 'pgsql') {
+            foreach ($dependencies as $dependency) {
+                DB::insert('INSERT INTO h5p_libraries_libraries (library_id, required_library_id, dependency_type)
+            SELECT ?, hl.id, ? FROM h5p_libraries hl WHERE
+            name = ?
+            AND major_version = ?
+            AND minor_version = ?
+            ON CONFLICT (library_id, required_library_id) DO UPDATE SET dependency_type = ?', [$id, $dependencyType, $dependency['machineName'], $dependency['majorVersion'], $dependency['minorVersion'], $dependencyType]);
+            }
+        } else {
+            foreach ($dependencies as $dependency) {
+                DB::insert('INSERT INTO h5p_libraries_libraries (library_id, required_library_id, dependency_type)
+                SELECT ?, hl.id, ? FROM h5p_libraries hl WHERE
+                name = ?
+                AND major_version = ?
+                AND minor_version = ?
+                ON DUPLICATE KEY UPDATE dependency_type = ?', [$id, $dependencyType, $dependency['machineName'], $dependency['majorVersion'], $dependency['minorVersion'], $dependencyType]);
+            }
+        }
+        */
     }
 
     /**
@@ -569,7 +601,139 @@ class H5pRepository implements H5PFrameworkInterface
      */
     public function loadLibrary($machineName, $majorVersion, $minorVersion)
     {
+        $library = H5PLibrary::where([
+            'name' => $machineName,
+            'major_version'=> $majorVersion,
+            'minor_version'=>$minorVersion])
+        ->with('dependencies.requiredLibrary')
+        ->first();
+
+
+
+        if (is_null($library)) {
+            return;
+        }
+
+        //dd($library->toArray());
+
+        $result =  $library->toArray();
+
+        foreach ($library->dependencies as $dependency) {
+            $result [$dependency->dependencyType.'Dependencies'][] = [
+                'id' => $dependency->requiredLibrary->id,
+                'libraryId' => $dependency->requiredLibrary->id,
+                'machineName'  => $dependency->requiredLibrary->machineName,
+                'majorVersion' => $dependency->requiredLibrary->majorVersion,
+                'minorVersion' => $dependency->requiredLibrary->minorVersion,
+            ];
+        }
+
+//        dd($result);
+
+        //dd($result);
+
+        return $result;
+
+
+        //dd($result);
+
+        //Helpers::fixCaseKeysArray(['libraryId', 'machineName', 'majorVersion', 'minorVersion', 'patchVersion', 'embedTypes', 'preloadedJs', 'preloadedCss', 'dropLibraryCss', 'hasIcon'], $library);
+
+
+
+        /*
+
+        $dependencies = DB::select('SELECT hl.name as machineName, hl.major_version as majorVersion, hl.minor_version as minorVersion, hll.dependency_type as dependencyType
+            FROM h5p_libraries_libraries hll
+            JOIN h5p_libraries hl ON hll.required_library_id = hl.id
+            WHERE hll.library_id = ?', [$library->libraryId]);
+
+            self::fixCaseKeysArray([ 'machineName', 'majorVersion', 'minorVersion', 'dependencyType'], $dependencies);
+
+
+        foreach ($dependencies as $dependency) {
+            $return[$dependency->dependencyType.'Dependencies'][] = [
+                'machineName'  => $dependency->machineName,
+                'majorVersion' => $dependency->majorVersion,
+                'minorVersion' => $dependency->minorVersion,
+            ];
+        }
+        */
+
+     
+        /*
+        $uberName = $name . ' ' . $majorVersion . '.' . $minorVersion;
+
+        if (in_array($uberName, array_keys($this->loadedLibraries))) {
+            return $this->loadedLibraries[$uberName];
+        }
+
+        if (config('laravel-h5p.preload_all_libraries')) {
+            if (count($this->allLibraries) == 0) {
+                $this->allLibraries = DB::table('h5p_libraries')
+                    ->select(['id as libraryId', 'name as machineName', 'title', 'major_version as majorVersion', 'minor_version as minorVersion', 'patch_version as patchVersion', 'embed_types as embedTypes', 'preloaded_js as preloadedJs', 'preloaded_css as preloadedCss', 'drop_library_css as dropLibraryCss', 'fullscreen', 'runnable', 'semantics', 'has_icon as hasIcon'])
+                    ->get();
+
+                self::fixCaseKeysArray(['libraryId', 'machineName', 'majorVersion', 'minorVersion', 'patchVersion', 'embedTypes', 'preloadedJs', 'preloadedCss', 'dropLibraryCss', 'hasIcon'], $this->allLibraries);
+            }
+
+            $library = $this->allLibraries->filter(function ($val) use ($name, $majorVersion, $minorVersion) {
+                return $val->machineName == $name
+                    && $val->majorVersion == $majorVersion
+                    && $val->minorVersion == $minorVersion;
+            })->first();
+        } else {
+            $library = DB::table('h5p_libraries')
+                ->select(['id as libraryId', 'name as machineName', 'title', 'major_version as majorVersion', 'minor_version as minorVersion', 'patch_version as patchVersion', 'embed_types as embedTypes', 'preloaded_js as preloadedJs', 'preloaded_css as preloadedCss', 'drop_library_css as dropLibraryCss', 'fullscreen', 'runnable', 'semantics', 'has_icon as hasIcon'])
+                ->where('name', $name)
+                ->where('major_version', $majorVersion)
+                ->where('minor_version', $minorVersion)
+                ->first();
+
+            self::fixCaseKeysArray(['libraryId', 'machineName', 'majorVersion', 'minorVersion', 'patchVersion', 'embedTypes', 'preloadedJs', 'preloadedCss', 'dropLibraryCss', 'hasIcon'], $library);
+        }
+
+        $return = json_decode(json_encode($library), true);
+
+        if (config('laravel-h5p.preload_all_libraries')) {
+            if (count($this->allDependencies) == 0) {
+                $this->allDependencies = collect(json_decode(json_encode(DB::select('SELECT hl.name as machineName, hl.major_version as majorVersion, hl.minor_version as minorVersion, hll.dependency_type as dependencyType, hll.library_id as libraryId
+                FROM h5p_libraries_libraries hll
+                JOIN h5p_libraries hl ON hll.required_library_id = hl.id'))));
+                self::fixCaseKeysArray([ 'machineName', 'majorVersion', 'minorVersion', 'dependencyType', 'libraryId'], $this->allDependencies);
+            }
+
+            $dependencies = $this->allDependencies->filter(function ($val) use ($library) {
+                return $val->libraryId == $library->libraryId;
+            });
+        } else {
+            $dependencies = DB::select('SELECT hl.name as machineName, hl.major_version as majorVersion, hl.minor_version as minorVersion, hll.dependency_type as dependencyType
+            FROM h5p_libraries_libraries hll
+            JOIN h5p_libraries hl ON hll.required_library_id = hl.id
+            WHERE hll.library_id = ?', [$library->libraryId]);
+
+            self::fixCaseKeysArray([ 'machineName', 'majorVersion', 'minorVersion', 'dependencyType'], $dependencies);
+        }
+
+        foreach ($dependencies as $dependency) {
+            $return[$dependency->dependencyType.'Dependencies'][] = [
+                'machineName'  => $dependency->machineName,
+                'majorVersion' => $dependency->majorVersion,
+                'minorVersion' => $dependency->minorVersion,
+            ];
+        }
+        if ($this->isInDevMode()) {
+            $semantics = $this->getSemanticsFromFile($return['machineName'], $return['majorVersion'], $return['minorVersion']);
+            if ($semantics) {
+                $return['semantics'] = $semantics;
+            }
+        }
+
+        $this->loadedLibraries[$uberName] = $return;
+        return $return;
+        */
     }
+
 
     /**
      * Loads library semantics.
@@ -585,6 +749,12 @@ class H5pRepository implements H5PFrameworkInterface
      */
     public function loadLibrarySemantics($machineName, $majorVersion, $minorVersion)
     {
+        $library = H5pLibrary::where('name', $machineName)
+                ->where('major_version', $majorVersion)
+                ->where('minor_version', $minorVersion)
+                ->first();
+
+        return $library === false ? null : $library->semantics;
     }
 
     /**
