@@ -21,7 +21,6 @@ class H5PLibraryDependency extends Model
         'dependency_type',
     ];
 
-
     protected $appends = [
         'dependencyType',
     ];

@@ -463,28 +463,7 @@ class H5pRepository implements H5PFrameworkInterface
 
         return true;
 
-        /*
-        $dbDriver = DB::connection()->getPdo()->getAttribute(PDO::ATTR_DRIVER_NAME);
-        if ($dbDriver === 'pgsql') {
-            foreach ($dependencies as $dependency) {
-                DB::insert('INSERT INTO h5p_libraries_libraries (library_id, required_library_id, dependency_type)
-            SELECT ?, hl.id, ? FROM h5p_libraries hl WHERE
-            name = ?
-            AND major_version = ?
-            AND minor_version = ?
-            ON CONFLICT (library_id, required_library_id) DO UPDATE SET dependency_type = ?', [$id, $dependencyType, $dependency['machineName'], $dependency['majorVersion'], $dependency['minorVersion'], $dependencyType]);
-            }
-        } else {
-            foreach ($dependencies as $dependency) {
-                DB::insert('INSERT INTO h5p_libraries_libraries (library_id, required_library_id, dependency_type)
-                SELECT ?, hl.id, ? FROM h5p_libraries hl WHERE
-                name = ?
-                AND major_version = ?
-                AND minor_version = ?
-                ON DUPLICATE KEY UPDATE dependency_type = ?', [$id, $dependencyType, $dependency['machineName'], $dependency['majorVersion'], $dependency['minorVersion'], $dependencyType]);
-            }
-        }
-        */
+       
     }
 
     /**

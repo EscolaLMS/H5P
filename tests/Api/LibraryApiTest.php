@@ -12,20 +12,18 @@ class LibraryApiTest extends TestCase
 {
     public function test_uploadig_library()
     {
-        //Storage::fake('avatars');
+        $filename = 'arithmetic-quiz.h5p';
+        $filepath = realpath(__DIR__.'/../mocks/'.$filename);
+        $storage_path = storage_path($filename);
 
-        $h5pFile = new UploadedFile(__DIR__.'/../mocks/arithmetic-quiz.h5p', 'arithmetic-quiz.h5p');
+        copy($filepath, $storage_path);
+
+        $h5pFile = new UploadedFile($storage_path, 'arithmetic-quiz.h5p', 'application/pdf', null, true);
 
         $response = $this->post('/api/hh5p/library', [
             'h5p_file' => $h5pFile,
         ]);
 
         $response->assertStatus(200);
-
-        // TODO additional tests
-
-        // Files are created, more then 10 folders
-
-        // Database is filled,  more then 10 records
     }
 }
