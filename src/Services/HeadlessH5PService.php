@@ -18,7 +18,7 @@ use H5PContentValidator;
 use Illuminate\Http\UploadedFile;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 use EscolaLms\HeadlessH5P\Repositories\H5PRepository;
-use EscolaLms\HeadlessH5P\Repositories\H5PFileStorageRepository;
+//use EscolaLms\HeadlessH5P\Repositories\H5PFileStorageRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PEditorAjaxRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PEditorStorageRepository;
 
