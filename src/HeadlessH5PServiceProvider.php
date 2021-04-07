@@ -38,7 +38,7 @@ class HeadlessH5PServiceProvider extends ServiceProvider
     private function bindH5P(): void
     {
         $this->app->bind(HeadlessH5PServiceContract::class, function ($app) {
-            $repository = new H5pRepository();
+            $repository = new H5PRepository();
             $fileStorage = new H5PFileStorageRepository(storage_path('app/h5p'));
             $core = new H5PCore($repository, $fileStorage, url('h5p'));
             $core->aggregateAssets = false;
