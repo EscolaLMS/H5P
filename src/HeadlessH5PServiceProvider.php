@@ -4,6 +4,7 @@ namespace EscolaLms\HeadlessH5P;
 
 use Illuminate\Support\ServiceProvider;
 use EscolaLms\HeadlessH5P\HeadlessH5P;
+use EscolaLms\HeadlessH5P\Commands\StorageH5PLinkCommand;
 
 class HeadlessH5PServiceProvider extends ServiceProvider
 {
@@ -12,6 +13,7 @@ class HeadlessH5PServiceProvider extends ServiceProvider
         $this->app->singleton(H5PCore::class, function ($app) {
             return new HeadlessH5P();
         });
+        $this->commands([StorageH5PLinkCommand::class]);
     }
 
     public function boot(): void
