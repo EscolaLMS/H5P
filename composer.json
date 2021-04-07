@@ -3,7 +3,7 @@
   "description": "Headless H5P API",
   "type": "package",
   "require": {
-    "php": "^7.4",
+    "php": ">=7.4",
     "laravel/framework": "^8.0",
     "spatie/laravel-permission": "^3.18",
     "h5p/h5p-core": "dev-master",

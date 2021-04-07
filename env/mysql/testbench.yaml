@@ -7,6 +7,4 @@ env:
   - DB_PASSWORD=password
 
 providers:
-  - Spatie\Permission\PermissionServiceProvider
-  - Laravel\Passport\PassportServiceProvider
-  - EscolaLms\Core\EscolaLmsServiceProvider
+  - EscolaLms\HeadlessH5P\HeadlessH5PServiceProvider
