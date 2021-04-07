@@ -9,7 +9,7 @@ use EscolaLms\HeadlessH5P\Models\H5PLibraryDependency;
 
 use EscolaLms\HeadlessH5P\Helpers\Helpers;
 
-class H5pRepository implements H5PFrameworkInterface
+class H5PRepository implements H5PFrameworkInterface
 {
     protected $messages = ['error' => [], 'updated' => []];
 
@@ -219,7 +219,7 @@ class H5pRepository implements H5PFrameworkInterface
      */
     public function getLibraryId($machineName, $majorVersion = null, $minorVersion = null)
     {
-        $where = H5pLibrary::where('name', $machineName);
+        $where = H5PLibrary::where('name', $machineName);
 
         if ($majorVersion !== null) {
             $where->where('major_version', $majorVersion);
@@ -462,8 +462,6 @@ class H5pRepository implements H5PFrameworkInterface
         }
 
         return true;
-
-       
     }
 
     /**
@@ -728,7 +726,7 @@ class H5pRepository implements H5PFrameworkInterface
      */
     public function loadLibrarySemantics($machineName, $majorVersion, $minorVersion)
     {
-        $library = H5pLibrary::where('name', $machineName)
+        $library = H5PLibrary::where('name', $machineName)
                 ->where('major_version', $majorVersion)
                 ->where('minor_version', $minorVersion)
                 ->first();

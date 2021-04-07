@@ -86,7 +86,7 @@ class H5PEditorStorageRepository implements H5peditorStorage
 
         // check against specific libraries
 
-        $libraries_result = H5pLibrary::where('runnable', 1)
+        $libraries_result = H5PLibrary::where('runnable', 1)
                 ->whereNotNull('semantics')
                 ->orderBy('name', 'ASC')
                 ->get();
@@ -101,7 +101,7 @@ class H5PEditorStorageRepository implements H5peditorStorage
             // Get details for the specified libraries only.
             foreach ($libraries as $library) {
                 // Look for library
-                $details = H5pLibrary::where('name', $library->name)
+                $details = H5PLibrary::where('name', $library->name)
                     ->where('major_version', $library->majorVersion)
                     ->where('minor_version', $library->minorVersion)
                     ->whereNotNull('semantics')
@@ -121,7 +121,7 @@ class H5PEditorStorageRepository implements H5peditorStorage
             // Load all libraries
             $libraries = [];
 
-            $libraries_result = H5pLibrary::where('runnable', 1)
+            $libraries_result = H5PLibrary::where('runnable', 1)
                 ->whereNotNull('semantics')
                 ->orderBy('name', 'ASC')
                 ->get();
