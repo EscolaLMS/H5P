@@ -29,7 +29,9 @@ class StorageH5PLinkCommand extends Command
     {
         $relative = $this->option('relative');
 
-        foreach ($this->links() as $link => $target) {
+        $links = $this->links();
+
+        foreach ($links as $link => $target) {
             if (file_exists($link)) {
                 $this->error("The [$link] link already exists.");
                 continue;

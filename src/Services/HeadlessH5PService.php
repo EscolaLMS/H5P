@@ -2,26 +2,100 @@
 
 namespace EscolaLms\HeadlessH5P\Services;
 
-use Illuminate\Http\UploadedFile;
-use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
-use EscolaLms\HeadlessH5P\HeadlessH5P;
 use H5PCore;
 use H5peditor;
 use H5PEditorEndpoints;
+use H5PFrameworkInterface;
+use H5PFileStorage;
+use H5PStorage;
+use H5PValidator;
+use EditorStorage;
+use EditorAjaxRepository;
+use H5peditorStorage;
+use H5PEditorAjaxInterface;
+use H5PContentValidator;
+
+use Illuminate\Http\UploadedFile;
+use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
+use EscolaLms\HeadlessH5P\Repositories\H5PRepository;
+use EscolaLms\HeadlessH5P\Repositories\H5PFileStorageRepository;
+use EscolaLms\HeadlessH5P\Repositories\H5PEditorAjaxRepository;
+use EscolaLms\HeadlessH5P\Repositories\H5PEditorStorageRepository;
 
 class HeadlessH5PService implements HeadlessH5PServiceContract
 {
-    public function __construct(HeadlessH5P $h5p)
+    private H5PFrameworkInterface $repository;
+    private H5PFileStorage $fileStorage;
+    private H5PCore $core;
+    private H5PValidator $validator;
+    private H5PStorage $storage;
+    private H5peditorStorage $editorStorage;
+    private H5PEditorAjaxInterface $editorAjaxRepository;
+    private H5PContentValidator $contentValidator;
+    
+    public function __construct(
+        H5PFrameworkInterface $repository,
+        H5PFileStorage $fileStorage,
+        H5PCore $core,
+        H5PValidator $validator,
+        H5PStorage $storage,
+        H5peditorStorage $editorStorage,
+        H5PEditorAjaxInterface $editorAjaxRepository,
+        H5peditor $editor,
+        H5PContentValidator $contentValidator
+    ) {
+        $this->repository = $repository;
+        $this->fileStorage = $fileStorage;
+        $this->core = $core;
+        $this->validator = $validator;
+        $this->storage = $storage;
+        $this->editorStorage = $editorStorage;
+        $this->editorAjaxRepository = $editorAjaxRepository;
+        $this->editor = $editor;
+        $this->contentValidator = $contentValidator;
+    }
+  
+    public function getEditor():H5peditor
     {
-        $this->h5p = $h5p;
+        return $this->editor;
+    }
+  
+    public function getRepository():H5PFrameworkInterface
+    {
+        return $this->repository;
+    }
+  
+    public function getFileStorage():H5PFileStorage
+    {
+        return $this->fileStorage;
+    }
+      
+    public function getCore():H5PCore
+    {
+        return $this->core;
+    }
+      
+    public function getValidator():H5PValidator
+    {
+        return $this->validator;
+    }
+  
+    public function getStorage():H5PStorage
+    {
+        return $this->storage;
+    }
+  
+    public function getContentValidator():H5PContentValidator
+    {
+        return $this->contentValidator;
     }
 
     /** Copy file to `getUploadedH5pPath` and validates its contents */
     public function validatePackage(UploadedFile $file, $skipContent = true, $h5p_upgrade_only = false): bool
     {
-        rename($file->getPathName(), $this->h5p->getRepository()->getUploadedH5pPath());
+        rename($file->getPathName(), $this->getRepository()->getUploadedH5pPath());
         try {
-            $isValid = $this->h5p->getValidator()->isValidPackage($skipContent, $h5p_upgrade_only);
+            $isValid = $this->getValidator()->isValidPackage($skipContent, $h5p_upgrade_only);
         } catch (Exception $err) {
             var_dump($err);
         }
@@ -44,7 +118,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     public function savePackage(object $content = null, int $contentMainId = null, bool $skipContent = true, array $options = []): bool
     { // this is crazy, it does save package from `getUploadedH5pPath` path
         try {
-            $this->h5p->getStorage()->savePackage($content, $contentMainId, $skipContent, $options);
+            $this->getStorage()->savePackage($content, $contentMainId, $skipContent, $options);
         } catch (Exception $err) {
             return false;
         }
@@ -53,7 +127,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
     public function getMessages($type = 'error')
     {
-        return $this->h5p->getRepository()->getMessages($type);
+        return $this->getRepository()->getMessages($type);
     }
 
     public function getLibraries($machineName, $major_version, $minor_version)
@@ -65,15 +139,15 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $libraries_url = url('h5p/libraries');
 
         if ($machineName) {
-            $defaultLang = $this->h5p->getEditor()->getLibraryLanguage($machineName, $major_version, $minor_version, $lang);
+            $defaultLang = $this->getEditor()->getLibraryLanguage($machineName, $major_version, $minor_version, $lang);
             //return json_encode($defaultLang);
-            $this->h5p->getEditor()->ajax->action(H5PEditorEndpoints::SINGLE_LIBRARY, $machineName, $major_version, $minor_version, $lang, '', $libraries_url, $defaultLang);
+            $this->getEditor()->ajax->action(H5PEditorEndpoints::SINGLE_LIBRARY, $machineName, $major_version, $minor_version, $lang, '', $libraries_url, $defaultLang);
         } else {
-            return $this->h5p->getEditor()->ajax->action(H5PEditorEndpoints::LIBRARIES);
+            return $this->getEditor()->ajax->action(H5PEditorEndpoints::LIBRARIES);
         }
     }
 
-    public function getEditorSettings($content = null)
+    public function getEditorSettings($content = null):array
     {
         // TODO: This config should be as package config
         $config = [
@@ -87,8 +161,8 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'fileIcon' => 'fileIcon',
             'ajaxPath'=> route('hh5p.index').'/',
             'libraryUrl' => route('hh5p.library.libraries'),
-            'getCopyrightSemantics'=> $this->h5p->getContentValidator()->getCopyrightSemantics(),
-            'getMetadataSemantics'=>$this->h5p->getContentValidator()->getMetadataSemantics(),
+            'getCopyrightSemantics'=> $this->getContentValidator()->getCopyrightSemantics(),
+            'getMetadataSemantics'=>$this->getContentValidator()->getMetadataSemantics(),
             'get_laravelh5p_url' => url('editor'),
             'get_h5peditor_url' => url('h5p-editor'),
             'get_language' => 'en',

@@ -7,14 +7,16 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use EscolaLms\HeadlessH5P\Http\Controllers\Swagger\LibraryApiSwagger;
 use EscolaLms\HeadlessH5P\Services\HeadlessH5PService;
+use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
+
 use EscolaLms\HeadlessH5P\Http\Requests\LibraryStoreRequest;
 use Illuminate\Routing\Controller;
 
 class LibraryApiController extends Controller implements LibraryApiSwagger
 {
-    private HeadlessH5PService $hh5pService;
+    private HeadlessH5PServiceContract $hh5pService;
 
-    public function __construct(HeadlessH5PService $hh5pService)
+    public function __construct(HeadlessH5PServiceContract $hh5pService)
     {
         $this->hh5pService = $hh5pService;
     }

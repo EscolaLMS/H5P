@@ -6,6 +6,6 @@ use H5PFileStorage;
 use H5PCore;
 use H5PDefaultStorage;
 
-class H5pFileStorageRepository extends H5PDefaultStorage implements H5PFileStorage
+class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStorage
 {
 }

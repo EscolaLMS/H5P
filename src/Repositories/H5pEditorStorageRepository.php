@@ -10,7 +10,7 @@ use EscolaLms\HeadlessH5P\Helpers\Helpers;
  * A defined interface for the editor to communicate with the database of the
  * web system.
  */
-class H5pEditorStorageRepository implements H5peditorStorage
+class H5PEditorStorageRepository implements H5peditorStorage
 {
 
   /**
