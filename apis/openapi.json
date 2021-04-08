@@ -6,12 +6,35 @@
     },
     "paths": {
         "/api/hh5p/library": {
+            "get": {
+                "tags": [
+                    "H5P"
+                ],
+                "summary": "Gets all h5p libraries in the database",
+                "description": "Gets all h5p libraries in the database",
+                "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\LibraryApiSwagger::index",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/H5PLibrary"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "tags": [
-                    "Attachments"
+                    "H5P"
                 ],
                 "summary": "Store h5p library in database",
-                "description": "Store Library",
+                "description": "Store h5p library in database",
                 "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\LibraryApiSwagger::store",
                 "requestBody": {
                     "required": true,
@@ -37,6 +60,435 @@
                         }
                     }
                 }
+            }
+        },
+        "/api/hh5p/libraries": {
+            "get": {
+                "tags": [
+                    "H5P"
+                ],
+                "summary": "H5P Editor Endpoint. Gets all h5p runnable libraries in the database. Called by  ",
+                "description": "Gets all h5p runnable libraries in the database. Called by H5P Editor",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/H5PLibrary"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/hh5p/libraries?": {
+            "get": {
+                "tags": [
+                    "H5P"
+                ],
+                "summary": "H5P Editor Endpoint. Get specific library object  ",
+                "description": "Get specific library object",
+                "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\LibraryApiSwagger::libraries",
+                "parameters": [
+                    {
+                        "name": "machineName",
+                        "in": "query",
+                        "description": "machine Name of Library",
+                        "schema": {
+                            "type": "string",
+                            "format": "int32"
+                        },
+                        "example": "H5P.ArithmeticQuiz"
+                    },
+                    {
+                        "name": "majorVersion",
+                        "in": "query",
+                        "description": "major Version",
+                        "schema": {
+                            "type": "string",
+                            "format": "int32"
+                        },
+                        "example": "1"
+                    },
+                    {
+                        "name": "minorVersion",
+                        "in": "query",
+                        "description": "minor Version",
+                        "schema": {
+                            "type": "string",
+                            "format": "int32"
+                        },
+                        "example": "1"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/H5PLibraryForEditor"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/hh5p/editor": {
+            "get": {
+                "tags": [
+                    "H5P"
+                ],
+                "summary": "Editor settings ",
+                "description": "Editor settings",
+                "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\LibraryApiSwagger::editorSettings",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "Id of Content from DB. For initial editor (new content) id should be null",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/H5PEditorSettings"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "H5PLibraryForEditor": {
+                "properties": {
+                    "css": {
+                        "description": "array of css dependencies",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "defaultLanguage": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "javascript": {
+                        "description": "array of js dependencies",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "language": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "languages": {
+                        "description": "array of possible languages",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "name": {
+                        "description": "machine name of the library",
+                        "type": "string",
+                        "example": "H5P.ArithmeticQuiz"
+                    },
+                    "semantics": {
+                        "description": "array of objects with keys: name, type, label, importance, widget, etc",
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        }
+                    },
+                    "title": {
+                        "description": "Title",
+                        "type": "string",
+                        "example": "Arithmetic Quiz"
+                    },
+                    "translations": {
+                        "description": "array of possible languages",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "upgradesScript": {
+                        "description": "",
+                        "type": "boolean"
+                    },
+                    "version": {
+                        "description": "has `major` and `minor` keys",
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "H5PEditorSettings": {
+                "properties": {
+                    "ajax": {
+                        "description": "array of css dependencies",
+                        "type": "object",
+                        "allOf": [
+                            {
+                                "properties": {
+                                    "setFinished": {},
+                                    "ajaxSetFinished": {}
+                                },
+                                "type": "object"
+                            }
+                        ]
+                    },
+                    "baseUrl": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "editor": {
+                        "description": "",
+                        "type": "object",
+                        "allOf": [
+                            {
+                                "properties": {
+                                    "ajaxPath": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "assets": {
+                                        "description": "array of dependencies",
+                                        "type": "object",
+                                        "allOf": [
+                                            {
+                                                "properties": {
+                                                    "css": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "js": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        ]
+                                    },
+                                    "apiVersion": {
+                                        "description": "versio of h5p API",
+                                        "type": "object",
+                                        "allOf": [
+                                            {
+                                                "properties": {
+                                                    "majorVersion": {
+                                                        "type": "integer"
+                                                    },
+                                                    "minorVersion": {
+                                                        "type": "integer"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        ]
+                                    },
+                                    "copyrightSemantics": {
+                                        "description": "copyright Semantics",
+                                        "type": "object"
+                                    },
+                                    "deleteMessage": {
+                                        "description": "delete Message",
+                                        "type": "string"
+                                    },
+                                    "fileIcon": {
+                                        "description": "",
+                                        "type": "object"
+                                    },
+                                    "filesPath": {
+                                        "description": "array of css dependencies",
+                                        "type": "string"
+                                    },
+                                    "libraryUrl": {
+                                        "description": "array of css dependencies",
+                                        "type": "string"
+                                    },
+                                    "metadataSemantics": {
+                                        "description": "",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        ]
+                    },
+                    "core": {
+                        "description": "",
+                        "type": "object",
+                        "allOf": [
+                            {
+                                "properties": {
+                                    "scripts": {
+                                        "description": "array of css dependencies",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "styles": {
+                                        "description": "array of css dependencies",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        ]
+                    },
+                    "languages": {
+                        "description": "array of possible languages",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "name": {
+                        "description": "machine name of the library",
+                        "type": "string",
+                        "example": "H5P.ArithmeticQuiz"
+                    },
+                    "semantics": {
+                        "description": "array of objects with keys: name, type, label, importance, widget, etc",
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        }
+                    },
+                    "title": {
+                        "description": "Title",
+                        "type": "string",
+                        "example": "Arithmetic Quiz"
+                    },
+                    "translations": {
+                        "description": "array of possible languages",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "upgradesScript": {
+                        "description": "",
+                        "type": "boolean"
+                    },
+                    "version": {
+                        "description": "has `major` and `minor` keys",
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "H5PLibrary": {
+                "properties": {
+                    "id": {
+                        "description": "ID of Content in DB",
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "name": {
+                        "description": "Machine name. Alias",
+                        "type": "string"
+                    },
+                    "runnable": {
+                        "description": "Can be selected from editor dropdown list",
+                        "type": "integer"
+                    },
+                    "restricted": {
+                        "description": "",
+                        "type": "integer"
+                    },
+                    "fullscreen": {
+                        "description": "",
+                        "type": "integer"
+                    },
+                    "embed_types": {
+                        "description": "Either div or iframe",
+                        "type": "string"
+                    },
+                    "semantics": {
+                        "description": "",
+                        "type": "object"
+                    },
+                    "machineName": {
+                        "description": "Machine Name",
+                        "type": "string"
+                    },
+                    "majorVersion": {
+                        "description": "major version",
+                        "type": "string"
+                    },
+                    "minorVersion": {
+                        "description": "minor version",
+                        "type": "string"
+                    },
+                    "patchVersion": {
+                        "description": "Patch Version",
+                        "type": "string"
+                    },
+                    "preloadedJs": {
+                        "description": "Comma separated list of JavaScript dependencies",
+                        "type": "string"
+                    },
+                    "preloadedCss": {
+                        "description": "Comma separated list of CSS dependencies",
+                        "type": "string"
+                    },
+                    "dropLibraryCss": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "tutorialUrl": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "hasIcon": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "libraryId": {
+                        "description": "ID of library. Alias",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
             }
         }
     }
