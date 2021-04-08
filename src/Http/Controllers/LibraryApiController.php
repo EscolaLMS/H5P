@@ -21,6 +21,13 @@ class LibraryApiController extends Controller implements LibraryApiSwagger
         $this->hh5pService = $hh5pService;
     }
 
+    public function index(Request $request): JsonResponse
+    {
+        $libraries = $this->hh5pService->listLibraries();
+
+        return response()->json($libraries, 200);
+    }
+
     public function store(LibraryStoreRequest $request)
     {
         $valid = $this->hh5pService->validatePackage($request->file('h5p_file'));
@@ -35,7 +42,7 @@ class LibraryApiController extends Controller implements LibraryApiSwagger
         ], $valid ? 200 : 400);
     }
 
-    public function editorSettings(Request $request)
+    public function editorSettings(Request $request): JsonResponse
     {
         $settings = $this->hh5pService->getEditorSettings();
 

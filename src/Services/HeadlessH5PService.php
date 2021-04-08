@@ -16,11 +16,13 @@ use H5PEditorAjaxInterface;
 use H5PContentValidator;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Collection;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 use EscolaLms\HeadlessH5P\Repositories\H5PRepository;
 //use EscolaLms\HeadlessH5P\Repositories\H5PFileStorageRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PEditorAjaxRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PEditorStorageRepository;
+use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 
 class HeadlessH5PService implements HeadlessH5PServiceContract
 {
@@ -130,6 +132,14 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         return $this->getRepository()->getMessages($type);
     }
 
+    public function listLibraries():Collection
+    {
+        return H5PLibrary::all();
+    }
+
+    /**
+     * Calls editor ajax actions
+     */
     public function getLibraries($machineName, $major_version, $minor_version)
     {
 
