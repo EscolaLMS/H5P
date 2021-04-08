@@ -13,7 +13,7 @@ class CreateHH5pLibrariesDependenciesTable extends Migration
      */
     public function up()
     {
-        Schema::create('h5pp_libraries_dependencies', function (Blueprint $table) {
+        Schema::create('hh5p_libraries_dependencies', function (Blueprint $table) {
             $table->bigInteger('library_id')->unsigned();
             $table->bigInteger('required_library_id')->unsigned();
             $table->string('dependency_type', 31);
@@ -30,6 +30,6 @@ class CreateHH5pLibrariesDependenciesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('h5pp_libraries_dependencies');
+        Schema::drop('hh5p_libraries_dependencies');
     }
 }
