@@ -10,8 +10,7 @@ use EscolaLms\HeadlessH5P\Http\Requests\LibraryStoreRequest;
 interface LibraryApiSwagger
 {
     /**
-    * @param CreateAttachmentRequest $request
-    * @return JsonResponse
+    * @OA\Info(title="EscolaLMS", version="0.0.1")
     *
     * @OA\Post(
     *      path="/api/hh5p/library",
