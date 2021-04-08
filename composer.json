@@ -20,7 +20,7 @@
       "EscolaLms\\HeadlessH5P\\Tests\\": "tests"
     }
   },
-  "license": "(c) EscolaLMS",
+  "license": "Apache-2.0",
   "authors": [{
     "name": "Mateusz Wojczal",
     "email": "mateusz@wojczal.com"

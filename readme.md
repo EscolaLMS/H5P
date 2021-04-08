@@ -7,3 +7,4 @@ Headless H5P API
 ### Libraries
 
 - pushing and validating new h5p file library
+- editor config 
