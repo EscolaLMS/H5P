@@ -1,5 +1,4 @@
 <?php
-
 namespace EscolaLms\HeadlessH5P\Repositories;
 
 use H5peditorStorage;
