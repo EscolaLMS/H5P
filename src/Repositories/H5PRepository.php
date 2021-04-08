@@ -731,7 +731,9 @@ class H5PRepository implements H5PFrameworkInterface
                 ->where('minor_version', $minorVersion)
                 ->first();
 
-        return $library === false ? null : $library->semantics;
+
+
+        return $library === false ? null : json_encode($library->semantics);
     }
 
     /**
