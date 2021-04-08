@@ -1,0 +1,44 @@
+version: "3.5"
+networks:
+  escola_lms:
+    name: escola_lms
+    driver: bridge
+
+services:
+  escola_lms_app74:
+    image: escolalms/php:7.4
+    command: bash -c "php-fpm -F"
+    volumes:
+      - ./../:/var/www/html
+    networks:
+      - escola_lms
+
+  escola_lms_app80:
+    image: escolalms/php:8
+    command: bash -c "php-fpm -F"
+    volumes:
+      - ./../:/var/www/html
+    networks:
+      - escola_lms
+
+  mysql:
+    networks:
+      - escola_lms
+    image: mariadb:10.5
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: database
+      MYSQL_PASSWORD: password
+      MYSQL_USER: username
+
+  postgres:
+    image: postgres:12
+    networks:
+      - escola_lms
+    volumes:
+      - ./docker/postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=default
+      - POSTGRES_USER=default
+      - POSTGRES_PASSWORD=secret
+      - TZ=Europe/Warsaw

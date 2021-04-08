@@ -1,0 +1,11 @@
+env:
+  - DB_CONNECTION=mysql
+  - DB_HOST=mysql
+  - DB_PORT=3306
+  - DB_DATABASE=database
+  - DB_USERNAME=username
+  - DB_PASSWORD=password
+  - APP_DEBUG=true
+
+providers:
+  - EscolaLms\HeadlessH5P\HeadlessH5PServiceProvider

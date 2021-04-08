@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false">
+    <testsuite name="Escola LMS Auth">
+        <directory suffix="Test.php">./tests</directory>
+    </testsuite>
+    <php>
+        <env name="APP_KEY" value="AckfSECXIvnK5r28GVIWUAxmbBSjTsmF"/>
+        <env name="DB_CONNECTION" value="mysql"/>
+        <env name="DB_HOST" value="mysql"/>
+        <env name="APP_DEBUG" value="true"/>
+        <env name="DB_PORT" value="3306"/>
+        <env name="DB_DATABASE" value="database"/>
+        <env name="DB_USERNAME" value="username"/>
+        <env name="DB_PASSWORD" value="password"/>
+    </php>
+</phpunit>
