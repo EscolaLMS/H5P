@@ -65,7 +65,7 @@ interface LibraryApiSwagger
     *      )
     * )
     */
-    public function destroy(Request $request): JsonResponse;
+    public function destroy(Request $request, int $id): JsonResponse;
 
     /**
     * @OA\Get(
