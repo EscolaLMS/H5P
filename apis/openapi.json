@@ -5,6 +5,38 @@
         "version": "0.0.1"
     },
     "paths": {
+        "/api/hh5p/editor": {
+            "get": {
+                "tags": [
+                    "H5P"
+                ],
+                "summary": "Editor settings ",
+                "description": "Editor settings",
+                "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\EditorApiSwagger::__invoke",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "Id of Content from DB. For initial editor (new content) id should be null",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/H5PEditorSettings"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/hh5p/library": {
             "get": {
                 "tags": [
@@ -62,6 +94,35 @@
                 }
             }
         },
+        "/api/hh5p/delete/{id}": {
+            "delete": {
+                "tags": [
+                    "H5P"
+                ],
+                "summary": "Deletes h5p library from database",
+                "description": "Deletes h5p library from database",
+                "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\LibraryApiSwagger::destroy",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of library that will be deleted",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
         "/api/hh5p/libraries": {
             "get": {
                 "tags": [
@@ -100,8 +161,7 @@
                         "in": "query",
                         "description": "machine Name of Library",
                         "schema": {
-                            "type": "string",
-                            "format": "int32"
+                            "type": "string"
                         },
                         "example": "H5P.ArithmeticQuiz"
                     },
@@ -110,8 +170,7 @@
                         "in": "query",
                         "description": "major Version",
                         "schema": {
-                            "type": "string",
-                            "format": "int32"
+                            "type": "string"
                         },
                         "example": "1"
                     },
@@ -120,8 +179,7 @@
                         "in": "query",
                         "description": "minor Version",
                         "schema": {
-                            "type": "string",
-                            "format": "int32"
+                            "type": "string"
                         },
                         "example": "1"
                     }
@@ -133,38 +191,6 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/H5PLibraryForEditor"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/hh5p/editor": {
-            "get": {
-                "tags": [
-                    "H5P"
-                ],
-                "summary": "Editor settings ",
-                "description": "Editor settings",
-                "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\LibraryApiSwagger::editorSettings",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "query",
-                        "description": "Id of Content from DB. For initial editor (new content) id should be null",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/H5PEditorSettings"
                                 }
                             }
                         }
