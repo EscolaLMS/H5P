@@ -55,16 +55,4 @@ class LibraryApiTest extends TestCase
         $response = $this->delete("/api/hh5p/library/$id");
         $response->assertStatus(404);
     }
-
-    public function test_library_delete()
-    {
-        $library = H5PLibrary::where('runnable', 1)->first();
-        $id = $library->id;
-
-        $response = $this->delete("/api/hh5p/library/$id");
-        $response->assertStatus(200);
-
-        $response = $this->delete("/api/hh5p/library/$id");
-        $response->assertStatus(404);
-    }
 }

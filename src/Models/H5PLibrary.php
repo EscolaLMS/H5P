@@ -110,6 +110,109 @@ use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
  * )
  */
 
+/**
+ * @OA\Schema(
+ *      schema="H5PLibrary",
+ *      type="object",
+ *      @OA\Property(
+ *          property="id",
+ *          description="ID of Content in DB",
+ *          type="integer",
+ *      ),
+ *      @OA\Property(
+ *          property="created_at",
+ *          description="",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="updated_at",
+ *          description="",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="name",
+ *          description="Machine name. Alias",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="runnable",
+ *          description="Can be selected from editor dropdown list",
+ *          type="integer",
+ *      ),
+ *      @OA\Property(
+ *          property="restricted",
+ *          description="",
+ *          type="integer",
+ *      ),
+ *      @OA\Property(
+ *          property="fullscreen",
+ *          description="",
+ *          type="integer",
+ *      ),
+ *      @OA\Property(
+ *          property="embed_types",
+ *          description="Either div or iframe",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="semantics",
+ *          description="",
+ *          type="object",
+ *      ),
+ *      @OA\Property(
+ *          property="machineName",
+ *          description="Machine Name",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="majorVersion",
+ *          description="major version",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="minorVersion",
+ *          description="minor version",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="patchVersion",
+ *          description="Patch Version",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="preloadedJs",
+ *          description="Comma separated list of JavaScript dependencies",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="preloadedCss",
+ *          description="Comma separated list of CSS dependencies",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="dropLibraryCss",
+ *          description="",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="tutorialUrl",
+ *          description="",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="hasIcon",
+ *          description="",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="libraryId",
+ *          description="ID of library. Alias",
+ *          type="integer",
+ *      )
+
+ * )
+ */
+
 class H5PLibrary extends Model
 {
     protected $table = 'hh5p_libraries';
@@ -191,10 +294,6 @@ class H5PLibrary extends Model
         'drop_library_css',
         'tutorial_url',
         'has_icon',
-    ];
-
-    protected $casts = [
-        //'semantics' => 'array',
     ];
         
 

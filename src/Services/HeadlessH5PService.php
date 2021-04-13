@@ -24,8 +24,6 @@ use EscolaLms\HeadlessH5P\Repositories\H5PEditorAjaxRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PEditorStorageRepository;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 
-//use EscolaLms\HeadlessH5P\Models\H5PLibraryDependency;
-
 class HeadlessH5PService implements HeadlessH5PServiceContract
 {
     private H5PFrameworkInterface $repository;
