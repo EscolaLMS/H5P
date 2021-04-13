@@ -2,6 +2,7 @@
 namespace EscolaLms\HeadlessH5P\Services\Contracts;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Collection;
 
 use H5PFrameworkInterface;
 use H5PFileStorage;
@@ -41,5 +42,15 @@ interface HeadlessH5PServiceContract
 
     public function savePackage(object $content, int $contentMainId, bool $skipContent, array $options): bool;
 
+    public function getMessages(string $type);
+
+    public function listLibraries():Collection;
+
+    public function getConfig():array;
+
+    public function getLibraries(string $machineName, string $major_version, string $minor_version);
+
     public function getEditorSettings($content = null): array;
+
+    public function deleteLibrary($id):bool;
 }

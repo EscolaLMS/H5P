@@ -24,6 +24,10 @@ use EscolaLms\HeadlessH5P\Repositories\H5PFileStorageRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PEditorAjaxRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PEditorStorageRepository;
 
+/**
+* @OA\Info(title="EscolaLMS", version="0.0.1")
+*/
+
 class HeadlessH5PServiceProvider extends ServiceProvider
 {
     public function register(): void
@@ -70,6 +74,7 @@ class HeadlessH5PServiceProvider extends ServiceProvider
         //$this->loadFactoriesFrom(__DIR__ . '/../database/factories');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'h5p');
+        $this->mergeConfigFrom(__DIR__ . '/../config/hh5p.php', 'hh5p');
         // Load configs
     }
 }

@@ -5,6 +5,110 @@ namespace EscolaLms\HeadlessH5P\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use EscolaLms\HeadlessH5P\Models\H5PLibraryDependency;
+use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
+
+/**
+ * @OA\Schema(
+ *      schema="H5PLibrary",
+ *      type="object",
+ *      @OA\Property(
+ *          property="id",
+ *          description="ID of Content in DB",
+ *          type="integer",
+ *      ),
+ *      @OA\Property(
+ *          property="created_at",
+ *          description="",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="updated_at",
+ *          description="",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="name",
+ *          description="Machine name. Alias",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="runnable",
+ *          description="Can be selected from editor dropdown list",
+ *          type="integer",
+ *      ),
+ *      @OA\Property(
+ *          property="restricted",
+ *          description="",
+ *          type="integer",
+ *      ),
+ *      @OA\Property(
+ *          property="fullscreen",
+ *          description="",
+ *          type="integer",
+ *      ),
+ *      @OA\Property(
+ *          property="embed_types",
+ *          description="Either div or iframe",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="semantics",
+ *          description="",
+ *          type="object",
+ *      ),
+ *      @OA\Property(
+ *          property="machineName",
+ *          description="Machine Name",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="majorVersion",
+ *          description="major version",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="minorVersion",
+ *          description="minor version",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="patchVersion",
+ *          description="Patch Version",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="preloadedJs",
+ *          description="Comma separated list of JavaScript dependencies",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="preloadedCss",
+ *          description="Comma separated list of CSS dependencies",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="dropLibraryCss",
+ *          description="",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="tutorialUrl",
+ *          description="",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="hasIcon",
+ *          description="",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="libraryId",
+ *          description="ID of library. Alias",
+ *          type="integer",
+ *      )
+
+ * )
+ */
 
 /**
  * @OA\Schema(
@@ -153,6 +257,7 @@ class H5PLibrary extends Model
         'created_at',
         'updated_at',
         'machineName',
+        'uberName',
         'majorVersion',
         'minorVersion',
         'patchVersion',
@@ -161,11 +266,14 @@ class H5PLibrary extends Model
         'dropLibraryCss',
         'tutorialUrl',
         'hasIcon',
-        'libraryId'
+        'libraryId',
+        'children',
+        'languages'
     ];
     
     protected $appends = [
         'machineName',
+        'uberName',
         'majorVersion',
         'minorVersion',
         'patchVersion',
@@ -187,12 +295,13 @@ class H5PLibrary extends Model
         'tutorial_url',
         'has_icon',
     ];
-
-    protected $casts = [
-        'semantics' => 'array',
-    ];
         
 
+    public function getSemanticsAttribute($value)
+    {
+        return json_decode($value);
+    }
+    
     public function getLibraryIdAttribute()
     {
         return $this->getKey();
@@ -204,6 +313,11 @@ class H5PLibrary extends Model
         return $this->getAttributeValue('name');
         return isset($this->attributes['name']) ? $this->attributes['name'] : '';
         return $this->attributes['name'];
+    }
+
+    public function getUberNameAttribute():string
+    {
+        return $this->getAttributeValue('name')." ".$this->getAttributeValue('major_version').".".$this->getAttributeValue('minor_version');
     }
     
     public function getMajorVersionAttribute():int
@@ -249,5 +363,16 @@ class H5PLibrary extends Model
     public function dependencies()
     {
         return $this->hasMany(H5PLibraryDependency::class, 'library_id');
+    }
+
+    public function children()
+    {
+        return $this->belongsToMany(H5PLibrary::class, 'hh5p_libraries_dependencies', 'library_id', 'required_library_id')->with('children');
+    }
+
+
+    public function languages()
+    {
+        return $this->hasMany(H5PLibraryLanguage::class, 'library_id');
     }
 }

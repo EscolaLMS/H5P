@@ -28,7 +28,7 @@ class LibraryApiController extends Controller implements LibraryApiSwagger
         return response()->json($libraries, 200);
     }
 
-    public function store(LibraryStoreRequest $request)
+    public function store(LibraryStoreRequest $request): JsonResponse
     {
         $valid = $this->hh5pService->validatePackage($request->file('h5p_file'));
         if ($valid) {
@@ -40,13 +40,6 @@ class LibraryApiController extends Controller implements LibraryApiSwagger
             'messages' => $this->hh5pService->getMessages('updated'),
             'errors' => $this->hh5pService->getMessages('error'),
         ], $valid ? 200 : 400);
-    }
-
-    public function editorSettings(Request $request): JsonResponse
-    {
-        $settings = $this->hh5pService->getEditorSettings();
-
-        return response()->json($settings, 200);
     }
 
     public function libraries(Request $request)
@@ -63,5 +56,17 @@ class LibraryApiController extends Controller implements LibraryApiSwagger
         // which is doint `print json_encode($data);`
 
         // return response()->json($libraries, 200);
+        // in worse scenario can be handles by @ob_start
+    }
+
+    public function destroy(Request $request, int $id): JsonResponse
+    {
+        $valid = $this->hh5pService->deleteLibrary($id);
+        
+        return response()->json([
+            'valid' => $valid,
+            'messages' =>  $valid ? "Library $id deleted" : "",
+            'errors' => !$valid ? "Library $id note deleted" : "",
+        ], $valid ? 200 : 400);
     }
 }

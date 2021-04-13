@@ -34,6 +34,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     private H5peditorStorage $editorStorage;
     private H5PEditorAjaxInterface $editorAjaxRepository;
     private H5PContentValidator $contentValidator;
+    private array $config;
     
     public function __construct(
         H5PFrameworkInterface $repository,
@@ -137,14 +138,29 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         return H5PLibrary::all();
     }
 
+    public function getConfig():array
+    {
+        if (!isset($this->config)) {
+            $config = (array)config('hh5p');
+            $config['url'] = asset($config['url']);
+            $config['ajaxPath'] = route($config['ajaxPath']).'/';
+            $config['libraryUrl'] =  route($config['libraryUrl']);
+            $config['get_laravelh5p_url'] =  url($config['get_laravelh5p_url']);
+            $config['get_h5peditor_url'] =  url($config['get_h5peditor_url']);
+            $config['get_h5pcore_url'] =  url($config['get_h5pcore_url']);
+            $config['getCopyrightSemantics'] = $this->getContentValidator()->getCopyrightSemantics();
+            $config['getMetadataSemantics'] = $this->getContentValidator()->getMetadataSemantics();
+            $this->config = $config;
+        }
+        return $this->config ;
+    }
+
     /**
      * Calls editor ajax actions
      */
-    public function getLibraries($machineName, $major_version, $minor_version)
+    public function getLibraries(string $machineName, string $major_version, string $minor_version)
     {
-
-        // TODO this should be in config
-        $lang = 'en';
+        $lang = config('hh5p.language');
 
         $libraries_url = url('h5p/libraries');
 
@@ -159,25 +175,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
     public function getEditorSettings($content = null):array
     {
-        // TODO: This config should be as package config
-        $config = [
-            'domain' => 'domain',
-            'url' => asset('storage/h5p'),
-            'ajaxSetFinished' => 'ajaxSetFinished',
-            'ajaxContentUserData' => 'contentUserData',
-            'saveFreq' => 'saveFreq',
-            'l10n' => 'l10n',
-            'filesPath'=> 'filesPath',
-            'fileIcon' => 'fileIcon',
-            'ajaxPath'=> route('hh5p.index').'/',
-            'libraryUrl' => route('hh5p.library.libraries'),
-            'getCopyrightSemantics'=> $this->getContentValidator()->getCopyrightSemantics(),
-            'getMetadataSemantics'=>$this->getContentValidator()->getMetadataSemantics(),
-            'get_laravelh5p_url' => url('editor'),
-            'get_h5peditor_url' => url('h5p-editor'),
-            'get_language' => 'en',
-            'get_h5pcore_url' => url('h5p-core')
-        ];
+        $config = $this->getConfig();
 
         $settings =  [
             'baseUrl'            => $config['domain'],
@@ -260,5 +258,29 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         }
         
         return $settings;
+    }
+    
+
+    public function deleteLibrary($id):bool
+    {
+        $library = H5pLibrary::findOrFail($id);
+
+        // TODO: check if runnable
+        // TODO: check is usable, against content. If yes should ne be deleted
+
+
+        // Error if in use
+        // TODO implement getLibraryUsage, once content is ready
+        // $usage = $this->getRepository()->getLibraryUsage($library);
+        /*
+        if ($usage['content'] !== 0 || $usage['libraries'] !== 0) {
+            return redirect()->route('h5p.library.index')
+                ->with('error', trans('laravel-h5p.library.used_library_can_not_destoroied'));
+        }
+        */
+
+        $this->getRepository()->deleteLibrary($library);
+
+        return true;
     }
 }
