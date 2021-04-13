@@ -63,5 +63,17 @@ class LibraryApiController extends Controller implements LibraryApiSwagger
         // which is doint `print json_encode($data);`
 
         // return response()->json($libraries, 200);
+        // in worse scenario can be handles by @ob_start
+    }
+
+    public function destroy(Request $request, int $id)
+    {
+        $valid = $this->hh5pService->deleteLibrary($id);
+        
+        return response()->json([
+            'valid' => $valid,
+            'messages' =>  $valid ? "Library $id deleted" : "",
+            'errors' => !$valid ? "Library $id note deleted" : "",
+        ], $valid ? 200 : 400);
     }
 }

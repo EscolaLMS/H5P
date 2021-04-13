@@ -70,6 +70,7 @@ class HeadlessH5PServiceProvider extends ServiceProvider
         //$this->loadFactoriesFrom(__DIR__ . '/../database/factories');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'h5p');
+        $this->mergeConfigFrom(__DIR__ . '/../config/hh5p.php', 'hh5p');
         // Load configs
     }
 }

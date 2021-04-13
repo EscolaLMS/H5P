@@ -5,6 +5,7 @@ namespace EscolaLms\HeadlessH5P\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use EscolaLms\HeadlessH5P\Models\H5PLibraryDependency;
+use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
 
 /**
  * @OA\Schema(
@@ -153,6 +154,7 @@ class H5PLibrary extends Model
         'created_at',
         'updated_at',
         'machineName',
+        'uberName',
         'majorVersion',
         'minorVersion',
         'patchVersion',
@@ -161,11 +163,14 @@ class H5PLibrary extends Model
         'dropLibraryCss',
         'tutorialUrl',
         'hasIcon',
-        'libraryId'
+        'libraryId',
+        'children',
+        'languages'
     ];
     
     protected $appends = [
         'machineName',
+        'uberName',
         'majorVersion',
         'minorVersion',
         'patchVersion',
@@ -189,10 +194,15 @@ class H5PLibrary extends Model
     ];
 
     protected $casts = [
-        'semantics' => 'array',
+        //'semantics' => 'array',
     ];
         
 
+    public function getSemanticsAttribute($value)
+    {
+        return json_decode($value);
+    }
+    
     public function getLibraryIdAttribute()
     {
         return $this->getKey();
@@ -204,6 +214,11 @@ class H5PLibrary extends Model
         return $this->getAttributeValue('name');
         return isset($this->attributes['name']) ? $this->attributes['name'] : '';
         return $this->attributes['name'];
+    }
+
+    public function getUberNameAttribute():string
+    {
+        return $this->getAttributeValue('name')." ".$this->getAttributeValue('major_version').".".$this->getAttributeValue('minor_version');
     }
     
     public function getMajorVersionAttribute():int
@@ -249,5 +264,16 @@ class H5PLibrary extends Model
     public function dependencies()
     {
         return $this->hasMany(H5PLibraryDependency::class, 'library_id');
+    }
+
+    public function children()
+    {
+        return $this->belongsToMany(H5PLibrary::class, 'hh5p_libraries_dependencies', 'library_id', 'required_library_id')->with('children');
+    }
+
+
+    public function languages()
+    {
+        return $this->hasMany(H5PLibraryLanguage::class, 'library_id');
     }
 }
