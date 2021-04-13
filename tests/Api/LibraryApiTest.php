@@ -7,10 +7,11 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use EscolaLms\HeadlessH5P\Tests\TestCase;
+use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 
 class LibraryApiTest extends TestCase
 {
-    public function test_uploadig_library()
+    public function test_library_uploadig()
     {
         $filename = 'arithmetic-quiz.h5p';
         $filepath = realpath(__DIR__.'/../mocks/'.$filename);
@@ -29,5 +30,29 @@ class LibraryApiTest extends TestCase
         }
 
         $response->assertStatus(200);
+    }
+
+    public function test_library_index()
+    {
+        $response = $this->get('/api/hh5p/library');
+
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            [
+                'id', 'machineName', 'majorVersion', 'minorVersion'
+            ]
+        ]);
+    }
+
+    public function test_library_delete()
+    {
+        $library = H5PLibrary::where('runnable', 1)->first();
+        $id = $library->id;
+
+        $response = $this->delete("/api/hh5p/library/$id");
+        $response->assertStatus(200);
+
+        $response = $this->delete("/api/hh5p/library/$id");
+        $response->assertStatus(404);
     }
 }
