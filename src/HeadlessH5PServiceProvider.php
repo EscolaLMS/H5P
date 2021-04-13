@@ -24,6 +24,10 @@ use EscolaLms\HeadlessH5P\Repositories\H5PFileStorageRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PEditorAjaxRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PEditorStorageRepository;
 
+/**
+* @OA\Info(title="EscolaLMS", version="0.0.1")
+*/
+
 class HeadlessH5PServiceProvider extends ServiceProvider
 {
     public function register(): void

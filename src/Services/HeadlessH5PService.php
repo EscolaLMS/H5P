@@ -140,7 +140,6 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         return H5PLibrary::all();
     }
 
-
     public function getConfig():array
     {
         if (!isset($this->config)) {
@@ -161,7 +160,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     /**
      * Calls editor ajax actions
      */
-    public function getLibraries($machineName, $major_version, $minor_version)
+    public function getLibraries(string $machineName, string $major_version, string $minor_version)
     {
         $lang = config('hh5p.language');
 
