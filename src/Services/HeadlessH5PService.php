@@ -158,7 +158,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     /**
      * Calls editor ajax actions
      */
-    public function getLibraries(string $machineName, string $major_version, string $minor_version)
+    public function getLibraries(string $machineName = null, string $major_version = null, string $minor_version = null)
     {
         $lang = config('hh5p.language');
 
