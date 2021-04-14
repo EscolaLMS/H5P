@@ -166,13 +166,9 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
         if ($machineName) {
             $defaultLang = $this->getEditor()->getLibraryLanguage($machineName, $major_version, $minor_version, $lang);
-            //return json_encode($defaultLang);
             return $this->getEditor()->getLibraryData($machineName, $major_version, $minor_version, $lang, '', $libraries_url, $defaultLang);
-        //$this->getEditor()->ajax->action(H5PEditorEndpoints::SINGLE_LIBRARY, $machineName, $major_version, $minor_version, $lang, '', $libraries_url, $defaultLang);
         } else {
             return $this->getEditor()->getLibraries();
-
-            //return $this->getEditor()->ajax->action(H5PEditorEndpoints::LIBRARIES);
         }
     }
 
