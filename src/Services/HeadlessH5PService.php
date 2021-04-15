@@ -207,9 +207,9 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         }
         $settings['core']['scripts'][] = $config['get_h5peditor_url'].'/scripts/h5peditor-editor.js';
         $settings['core']['scripts'][] = $config['get_h5peditor_url'].'/scripts/h5peditor-init.js';
-        $settings['core']['scripts'][] = $config['get_h5peditor_url'].'/language/en.js';
+        $settings['core']['scripts'][] = $config['get_h5peditor_url'].'/language/en.js'; // TODO this lang should vary depending on config
 
-        $settings['core']['scripts'][] = $config['get_laravelh5p_url'].'/laravel-h5p.js';
+        //$settings['core']['scripts'][] = $config['get_laravelh5p_url'].'/laravel-h5p.js';
 
         $settings['editor'] = [
             'filesPath' => $config['filesPath'],
