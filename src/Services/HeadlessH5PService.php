@@ -166,10 +166,9 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
         if ($machineName) {
             $defaultLang = $this->getEditor()->getLibraryLanguage($machineName, $major_version, $minor_version, $lang);
-            //return json_encode($defaultLang);
-            $this->getEditor()->ajax->action(H5PEditorEndpoints::SINGLE_LIBRARY, $machineName, $major_version, $minor_version, $lang, '', $libraries_url, $defaultLang);
+            return $this->getEditor()->getLibraryData($machineName, $major_version, $minor_version, $lang, '', $libraries_url, $defaultLang);
         } else {
-            return $this->getEditor()->ajax->action(H5PEditorEndpoints::LIBRARIES);
+            return $this->getEditor()->getLibraries();
         }
     }
 
@@ -208,9 +207,9 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         }
         $settings['core']['scripts'][] = $config['get_h5peditor_url'].'/scripts/h5peditor-editor.js';
         $settings['core']['scripts'][] = $config['get_h5peditor_url'].'/scripts/h5peditor-init.js';
-        $settings['core']['scripts'][] = $config['get_h5peditor_url'].'/language/en.js';
+        $settings['core']['scripts'][] = $config['get_h5peditor_url'].'/language/en.js'; // TODO this lang should vary depending on config
 
-        $settings['core']['scripts'][] = $config['get_laravelh5p_url'].'/laravel-h5p.js';
+        //$settings['core']['scripts'][] = $config['get_laravelh5p_url'].'/laravel-h5p.js';
 
         $settings['editor'] = [
             'filesPath' => $config['filesPath'],

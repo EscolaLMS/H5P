@@ -42,7 +42,7 @@ class LibraryApiController extends Controller implements LibraryApiSwagger
         ], $valid ? 200 : 400);
     }
 
-    public function libraries(Request $request)
+    public function libraries(Request $request): JsonResponse
     {
         $libraries = $this->hh5pService->getLibraries(
             $request->get('machineName'),
@@ -50,13 +50,7 @@ class LibraryApiController extends Controller implements LibraryApiSwagger
             $request->get('minorVersion')
         );
 
-        // Sic!
-        // $this->h5p->getEditor()->ajax->action(H5PEditorEndpoints::LIBRARIES); is calling the output already
-        // which is calling HP5Core::ajaxSucces
-        // which is doint `print json_encode($data);`
-
-        // return response()->json($libraries, 200);
-        // in worse scenario can be handles by @ob_start
+        return response()->json($libraries, 200);
     }
 
     public function destroy(Request $request, int $id): JsonResponse
