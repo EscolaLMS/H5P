@@ -19,10 +19,12 @@ use Illuminate\Support\ServiceProvider;
 use EscolaLms\HeadlessH5P\Commands\StorageH5PLinkCommand;
 use EscolaLms\HeadlessH5P\Services\HeadlessH5PService;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
+use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
 use EscolaLms\HeadlessH5P\Repositories\H5PRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PFileStorageRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PEditorAjaxRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PEditorStorageRepository;
+use EscolaLms\HeadlessH5P\Repositories\H5PContentRepository;
 
 /**
 * @OA\Info(title="EscolaLMS", version="0.0.1")
@@ -32,11 +34,10 @@ class HeadlessH5PServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton(H5PCore::class, function ($app) {
-            return new HeadlessH5P();
-        });
         $this->commands([StorageH5PLinkCommand::class]);
         $this->bindH5P();
+
+        $this->app->bind(H5PContentRepositoryContract::class, H5PContentRepository::class);
     }
 
     private function bindH5P(): void

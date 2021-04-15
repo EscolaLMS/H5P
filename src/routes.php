@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use EscolaLms\HeadlessH5P\Http\Controllers\LibraryApiController;
 use EscolaLms\HeadlessH5P\Http\Controllers\EditorApiController;
+use EscolaLms\HeadlessH5P\Http\Controllers\ContentApiController;
 
 Route::group(['middleware' => ['api'], 'prefix' => 'api/hh5p'], function () {
     Route::get('/', function () {
@@ -14,4 +15,6 @@ Route::group(['middleware' => ['api'], 'prefix' => 'api/hh5p'], function () {
     Route::get('editor', EditorApiController::class)->name('hh5p.editor.settings');
     Route::get('libraries', [LibraryApiController::class, 'libraries'])->name('hh5p.library.libraries');
     Route::post('libraries', [LibraryApiController::class, 'libraries'])->name('hh5p.library.libraries');
+
+    Route::post('content', [ContentApiController::class, 'store'])->name('hh5p.content.store');
 });
