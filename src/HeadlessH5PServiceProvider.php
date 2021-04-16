@@ -32,17 +32,19 @@ use EscolaLms\HeadlessH5P\Repositories\H5PContentRepository;
 
 class HeadlessH5PServiceProvider extends ServiceProvider
 {
+    public $singletons = [
+        H5PContentRepositoryContract::class => H5PContentRepository::class
+    ];
+
     public function register(): void
     {
         $this->commands([StorageH5PLinkCommand::class]);
         $this->bindH5P();
-
-        $this->app->bind(H5PContentRepositoryContract::class, H5PContentRepository::class);
     }
 
     private function bindH5P(): void
     {
-        $this->app->bind(HeadlessH5PServiceContract::class, function ($app) {
+        $this->app->singleton(HeadlessH5PServiceContract::class, function ($app) {
             $repository = new H5PRepository();
             $fileStorage = new H5PFileStorageRepository(storage_path('app/h5p'));
             $core = new H5PCore($repository, $fileStorage, url('h5p'));

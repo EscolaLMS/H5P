@@ -14,29 +14,7 @@ class H5PContent extends Model
     protected $table = 'hh5p_contents';
 
     protected $primaryKey = 'id';
-    protected $fillable = [
-        'user_id',
-        'title',
-        'library_id',
-        'parameters',
-        'filtered',
-        'slug',
-        'embed_type',
-        'disable',
-        'content_type',
-        'author',
-        'source',
-        'year_from',
-        'year_to',
-        'license',
-        'license_version',
-        'license_extras',
-        'author_comments',
-        'changes',
-        'default_languge',
-        'keywords',
-        'description',
-    ];
+    protected $guarded = ['id'];
 
     public function getParametersAttribute($value)
     {
