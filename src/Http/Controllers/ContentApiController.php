@@ -5,7 +5,7 @@ namespace EscolaLms\HeadlessH5P\Http\Controllers;
 //use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-//use EscolaLms\HeadlessH5P\Http\Controllers\Swagger\ContentStoreRequest;
+use EscolaLms\HeadlessH5P\Http\Controllers\Swagger\ContentApiSwagger;
 use EscolaLms\HeadlessH5P\Services\HeadlessH5PService;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 
@@ -14,7 +14,7 @@ use Illuminate\Routing\Controller;
 use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
 use Exception;
 
-class ContentApiController extends Controller /*implements LibraryApiSwagger*/
+class ContentApiController extends Controller implements ContentApiSwagger
 {
     private HeadlessH5PServiceContract $hh5pService;
     private H5PContentRepositoryContract $contentRepository;

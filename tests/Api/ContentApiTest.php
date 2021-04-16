@@ -8,11 +8,26 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use EscolaLms\HeadlessH5P\Tests\TestCase;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
+//use Illuminate\Support\Facades\App;
+
+use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 
 class ContentApiTest extends TestCase
 {
     public function test_library_create()
     {
+        $filename = 'arithmetic-quiz.h5p';
+        $filepath = realpath(__DIR__.'/../mocks/'.$filename);
+        $storage_path = storage_path($filename);
+
+        copy($filepath, $storage_path);
+
+        $h5pFile = new UploadedFile($storage_path, 'arithmetic-quiz.h5p', 'application/pdf', null, true);
+
+        $response = $this->post('/api/hh5p/library', [
+            'h5p_file' => $h5pFile,
+        ]);
+
         $library = H5PLibrary::first();
 
         $response = $this->postJson('/api/hh5p/content', [
