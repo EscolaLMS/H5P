@@ -12,6 +12,7 @@ use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 use EscolaLms\HeadlessH5P\Http\Requests\ContentStoreRequest;
 use Illuminate\Routing\Controller;
 use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
+use Exception;
 
 class ContentApiController extends Controller /*implements LibraryApiSwagger*/
 {
@@ -35,10 +36,16 @@ class ContentApiController extends Controller /*implements LibraryApiSwagger*/
 
     public function store(ContentStoreRequest $request): JsonResponse
     {
-        $content = $this->contentRepository->create($request->get('title'), $request->get('library'), $request->get('params'));
-
+        try {
+            $contentId = $this->contentRepository->create($request->get('title'), $request->get('library'), $request->get('params'));
+        } catch (Exception $error) {
+            return response()->json([
+                'error' => $error->getMessage()
+            ], 400);
+        }
+    
         return response()->json([
-            $content
+            'id' => $contentId
         ], 200);
     }
 

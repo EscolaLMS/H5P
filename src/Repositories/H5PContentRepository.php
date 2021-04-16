@@ -6,6 +6,7 @@ use EscolaLms\HeadlessH5P\Models\H5PContent;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
+use EscolaLms\HeadlessH5P\Exceptions\H5PException;
 
 class H5PContentRepository implements H5PContentRepositoryContract
 {
@@ -16,22 +17,31 @@ class H5PContentRepository implements H5PContentRepositoryContract
         $this->hh5pService = $hh5pService;
     }
 
-    public function create(string $title, string $library, string $params):H5PContent
+    public function create(string $title, string $library, string $params):int
     {
-        $libNames =$this->hh5pService->getCore()->libraryFromString($library);
+        $libNames = $this->hh5pService->getCore()->libraryFromString($library);
+
         $libDb = H5PLibrary::where([
             ['name', $libNames['machineName']],
             ['major_version', $libNames['majorVersion']],
             ['minor_version', $libNames['minorVersion']],
-        ])->firstOrFail();
-                
-        $content = H5PContent::create([
+        ])->first();
+
+        if ($libDb === null) {
+            throw new H5PException(H5PException::LIBRARY_NOT_FOUND);
+        }
+        
+        $json = json_decode($params);
+
+        if ($json === null) {
+            throw new H5PException(H5PException::INVALID_PARAMETERS_JSON);
+        }
+
+        return $this->hh5pService->getCore()->saveContent([
             'library_id'=> $libDb->id,
             'title'=>$title,
             'library'=>$library,
             'parameters'=>$params
         ]);
-
-        return $content;
     }
 }

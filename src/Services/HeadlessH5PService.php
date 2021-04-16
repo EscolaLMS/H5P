@@ -23,6 +23,7 @@ use EscolaLms\HeadlessH5P\Repositories\H5PRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PEditorAjaxRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PEditorStorageRepository;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
+use EscolaLms\HeadlessH5P\Models\H5PContent;
 
 class HeadlessH5PService implements HeadlessH5PServiceContract
 {
@@ -230,7 +231,8 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         ];
 
         if ($content !== null) {
-            $settings['editor']['nodeVersionId'] = $content['id'];
+            $settings['contents']["cid-$content"] = $this->getSettingsForContent($content);
+            $settings['editor']['nodeVersionId'] = $content;
         }
 
         // load core assets
@@ -281,5 +283,82 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $this->getRepository()->deleteLibrary($library);
 
         return true;
+    }
+
+    public function getSettingsForContent($id)
+    {
+        $content = $this->getCore()->loadContent($id);
+        $content['metadata']['title'] = $content['title'];
+        
+        $safe_parameters = $this->getCore()->filterParameters($content);
+        $library = $content['library'];
+
+
+        $uberName =  $library['name']." ".$library['majorVersion'].'.'.$library['minorVersion'];
+
+        $settings = [
+            'library'         => $uberName,
+            'content'         => $content,
+            'jsonContent'     => json_encode([
+                'params' => json_decode($safe_parameters),
+                'metadata' => $content['metadata']
+            ]),
+            'fullScreen'      => $content['library']['fullscreen'],
+            //'exportUrl'       => config('laravel-h5p.h5p_export') ? route('h5p.export', [$content['id']]) : '',
+            //'embedCode'       => '<iframe src="'.route('h5p.embed', ['id' => $content['id']]).'" width=":w" height=":h" frameborder="0" allowfullscreen="allowfullscreen"></iframe>',
+            //'resizeCode'      => '<script src="'.self::get_h5pcore_url('/js/h5p-resizer.js').'" charset="UTF-8"></script>',
+            //'url'             => route('h5p.embed', ['id' => $content['id']]),
+            'title'           => $content['title'],
+            //'displayOptions'  => self::$core->getDisplayOptionsForView($content['disable'], $author_id),
+            'contentUserData' => [
+                0 => [
+                    'state' => '{}',
+                ],
+            ],
+        ];
+
+        return $settings;
+
+        // Detemine embed type
+        $embed = H5PCore::determineEmbedType($content['embedType'], $content['library']['embedTypes']);
+        // Make sure content isn't added twice
+        $cid = 'cid-'.$content['id'];
+        if (!isset($settings['contents'][$cid])) {
+            $settings['contents'][$cid] = self::get_content_settings($content);
+            $core = self::$core;
+            // Get assets for this content
+            $preloaded_dependencies = $core->loadContentDependencies($content['id'], 'preloaded');
+            $files = $core->getDependenciesFiles($preloaded_dependencies);
+            self::alter_assets($files, $preloaded_dependencies, $embed);
+            if ($embed === 'div') {
+                foreach ($files['scripts'] as $script) {
+                    $url = $script->path.$script->version;
+                    if (!in_array($url, $settings['loadedJs'])) {
+                        $settings['loadedJs'][] = self::get_h5plibrary_url($url);
+                    }
+                }
+                foreach ($files['styles'] as $style) {
+                    $url = $style->path.$style->version;
+                    if (!in_array($url, $settings['loadedCss'])) {
+                        $settings['loadedCss'][] = self::get_h5plibrary_url($url);
+                    }
+                }
+            } elseif ($embed === 'iframe') {
+                $settings['contents'][$cid]['scripts'] = $core->getAssetsUrls($files['scripts']);
+                $settings['contents'][$cid]['styles'] = $core->getAssetsUrls($files['styles']);
+            }
+        }
+
+        if ($embed === 'div') {
+            return [
+               'settings' => $settings,
+               'embed'    => '<div class="h5p-content" data-content-id="'.$content['id'].'"></div>',
+           ];
+        } else {
+            return [
+               'settings' => $settings,
+               'embed'    => '<div class="h5p-iframe-wrapper"><iframe id="h5p-iframe-'.$content['id'].'" class="h5p-iframe" data-content-id="'.$content['id'].'" style="height:1px" src="about:blank" frameBorder="0" scrolling="no"></iframe></div>',
+           ];
+        }
     }
 }

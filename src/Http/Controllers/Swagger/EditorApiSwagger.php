@@ -260,5 +260,5 @@ interface EditorApiSwagger
     *      )
     * )
     */
-    public function __invoke(Request $request): JsonResponse;
+    public function __invoke(Request $request, int $id): JsonResponse;
 }
