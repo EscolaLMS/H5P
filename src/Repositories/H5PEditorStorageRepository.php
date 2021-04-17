@@ -42,6 +42,7 @@ class H5PEditorStorageRepository implements H5peditorStorage
             ])->first();
 
             if ($libraryLanguage) {
+                return is_string($libraryLanguage->translation) ? $libraryLanguage->translation : json_encode($libraryLanguage->translation);
                 return $libraryLanguage->translation;
             }
         }
@@ -137,6 +138,7 @@ class H5PEditorStorageRepository implements H5peditorStorage
      */
     public static function markFileForCleanup($file, $content_id)
     {
+        // TODO implement this
     }
     /**
      * Clean up temporary files

@@ -7,6 +7,28 @@ use Illuminate\Http\Request;
 
 use EscolaLms\HeadlessH5P\Http\Requests\ContentStoreRequest;
 
+    /**
+     * @OA\Schema(
+     *      schema="H5PContentStore",
+     *      type="object",
+     *      @OA\Property(
+     *          property="title",
+     *          description="Title of new content",
+     *          type="string"
+     *      ),
+     *      @OA\Property(
+     *          property="library",
+     *          description="ubername of library",
+     *          type="string"
+     *      ),
+     *      @OA\Property(
+     *          property="params",
+     *          description="params taken from editor",
+     *          type="string"
+     *      ),
+     * )
+    */
+
 interface ContentApiSwagger
 {
 
@@ -19,20 +41,27 @@ interface ContentApiSwagger
     *      @OA\RequestBody(
     *          required=true,
     *          @OA\MediaType(
-    *              mediaType="multipart/form-data",
-    *              @OA\Schema(
-    *                  type="object",
-    *                  @OA\Property(
-    *                      property="h5p_file",
-    *                      type="string",
-    *                      format="binary"
-    *                  )
-    *              )
+    *              mediaType="application/json",
+    *              @OA\Schema(ref="#/components/schemas/H5PContentStore")
     *          )
     *      ),
     *      @OA\Response(
     *          response=200,
     *          description="successful operation",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          )
+    *      ),
+    *      @OA\Response(
+    *          response=400,
+    *          description="validation error",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          )
+    *      ),
+    *      @OA\Response(
+    *          response=401,
+    *          description="unauthorised",
     *          @OA\MediaType(
     *              mediaType="application/json"
     *          )

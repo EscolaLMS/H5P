@@ -12,7 +12,9 @@ use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 use Illuminate\Routing\Controller;
 use Exception;
 
-class EditorApiController extends Controller implements EditorApiSwagger
+    // TODO add swagger
+
+class FilesApiController extends Controller /*implements EditorApiSwagger*/
 {
     private HeadlessH5PServiceContract $hh5pService;
 
@@ -21,11 +23,12 @@ class EditorApiController extends Controller implements EditorApiSwagger
         $this->hh5pService = $hh5pService;
     }
 
+    // TODO add bespoke Request
     public function __invoke(Request $request, int $id = null): JsonResponse
     {
         try {
-            $settings = $this->hh5pService->getEditorSettings($id);
-            return response()->json($settings, 200);
+            $result = $this->hh5pService->uploadFile($request->get('contentId'), $request->get('field'), $request->get('_token'));
+            return response()->json($result);
         } catch (Exception $error) {
             return response()->json(['error'=>$error->getMessage()], 400);
         }

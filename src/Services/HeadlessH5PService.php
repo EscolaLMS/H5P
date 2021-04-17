@@ -14,6 +14,7 @@ use EditorAjaxRepository;
 use H5peditorStorage;
 use H5PEditorAjaxInterface;
 use H5PContentValidator;
+use H5peditorFile;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
@@ -24,6 +25,7 @@ use EscolaLms\HeadlessH5P\Repositories\H5PEditorAjaxRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PEditorStorageRepository;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Models\H5PContent;
+use EscolaLms\HeadlessH5P\Exceptions\H5PException;
 
 class HeadlessH5PService implements HeadlessH5PServiceContract
 {
@@ -88,6 +90,11 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     {
         return $this->storage;
     }
+
+    public function getEditorStorage():H5peditorStorage
+    {
+        return $this->editorStorage;
+    }
   
     public function getContentValidator():H5PContentValidator
     {
@@ -151,6 +158,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             $config['get_h5pcore_url'] =  url($config['get_h5pcore_url']);
             $config['getCopyrightSemantics'] = $this->getContentValidator()->getCopyrightSemantics();
             $config['getMetadataSemantics'] = $this->getContentValidator()->getMetadataSemantics();
+            $config['filesPath'] = url("h5p/editor");// TODO: diffrernt name
             $this->config = $config;
         }
         return $this->config ;
@@ -163,6 +171,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     {
         $lang = config('hh5p.language');
 
+        // TODO this shoule be from config
         $libraries_url = url('h5p/libraries');
 
         if ($machineName) {
@@ -360,5 +369,35 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
                'embed'    => '<div class="h5p-iframe-wrapper"><iframe id="h5p-iframe-'.$content['id'].'" class="h5p-iframe" data-content-id="'.$content['id'].'" style="height:1px" src="about:blank" frameBorder="0" scrolling="no"></iframe></div>',
            ];
         }
+    }
+
+    public function uploadFile($contentId, $field, $token)
+    {
+        // TODO: implmenet nonce
+        if (!$this->isValidEditorToken($token)) {
+            throw new H5PException(H5PException::LIBRARY_NOT_FOUND);
+        }
+
+        $file = new H5peditorFile($this->getRepository());
+        if (!$file->isLoaded()) {
+            throw new H5PException(H5PException::FILE_NOT_FOUND);
+        }
+    
+        // Make sure file is valid and mark it for cleanup at a later time
+        if ($file->validate()) {
+            $file_id = $this->getFileStorage()->saveFile($file, $contentId);
+            $this->getEditorStorage()->markFileForCleanup($file_id, $contentId); // TODO: IMPLEMENT THIS
+        }
+
+        $result = json_decode($file->getResult());
+        $result-> path = $file->getType() . 's/' . $file->getName() . '#tmp';
+
+        return $result;
+    }
+
+    private function isValidEditorToken(string $token = null):bool
+    {
+        $isValidToken = $this->getEditor()->ajaxInterface->validateEditorToken($token);
+        return !!$isValidToken;
     }
 }

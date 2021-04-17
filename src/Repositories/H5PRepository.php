@@ -9,6 +9,7 @@ use EscolaLms\HeadlessH5P\Models\H5PLibraryDependency;
 use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
 use EscolaLms\HeadlessH5P\Models\H5PContent;
 use EscolaLms\HeadlessH5P\Helpers\Helpers;
+use EscolaLms\HeadlessH5P\Exceptions\H5PException;
 
 class H5PRepository implements H5PFrameworkInterface
 {
@@ -739,6 +740,9 @@ class H5PRepository implements H5PFrameworkInterface
     public function loadContent($id)
     {
         $content = H5PContent::with('library')->where(['id' => $id])->firstOrFail();
+        if (is_null($content->null)) {
+            throw new H5PException(H5PException::LIBRARY_NOT_FOUND);
+        }
         $content = $content->toArray();
         $content ['contentId'] = $content['id']; // : Identifier for the content
         $content ['params'] = json_encode($content['params']);// : json content as string
