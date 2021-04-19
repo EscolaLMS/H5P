@@ -21,7 +21,7 @@ class EditorApiController extends Controller implements EditorApiSwagger
         $this->hh5pService = $hh5pService;
     }
 
-    public function __invoke(Request $request, int $id = null): JsonResponse
+    public function __invoke(Request $request, $id = null): JsonResponse
     {
         try {
             $settings = $this->hh5pService->getEditorSettings($id);

@@ -4,6 +4,7 @@ namespace EscolaLms\HeadlessH5P\Repositories;
 
 use EscolaLms\HeadlessH5P\Models\H5PContent;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
+use EscolaLms\HeadlessH5P\Models\H5PTempFile;
 use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 use EscolaLms\HeadlessH5P\Exceptions\H5PException;
@@ -37,12 +38,39 @@ class H5PContentRepository implements H5PContentRepositoryContract
             throw new H5PException(H5PException::INVALID_PARAMETERS_JSON);
         }
 
-        return $this->hh5pService->getCore()->saveContent([
+        $content = $this->hh5pService->getCore()->saveContent([
             'library_id'=> $libDb->id,
             'title'=>$title,
             'library'=>$library,
             'parameters'=>$params,
             'nonce'=>$nonce
         ]);
+
+        $this->moveTmpFilesToContentFolders($nonce, $content);
+
+        return $content;
+    }
+
+    private function moveTmpFilesToContentFolders($nonce, $contentId):bool
+    {
+
+        // TODO: take this from config
+        $storage_path = storage_path('app/h5p');
+
+        $files = H5PTempFile::where(['nonce' => $nonce])->get();
+
+        foreach ($files as $file) {
+            $old_path = $storage_path.$file->path;
+            $new_path = $storage_path.str_replace('/editor', '/content/'.$contentId, $file->path);
+            $dir_path = dirname($new_path);
+            if (!is_dir($dir_path)) {
+                mkdir($dir_path, 0777, true);
+            }
+            rename($old_path, $new_path);
+
+            $file->delete();
+        }
+
+        return true;
     }
 }

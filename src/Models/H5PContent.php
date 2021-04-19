@@ -37,7 +37,8 @@ class H5PContent extends Model
         'slug',
         'filtered',
         'disable',
-        'embed_type'
+        'embed_type',
+        'nonce'
     ];
 
     public function getParamsAttribute($value)

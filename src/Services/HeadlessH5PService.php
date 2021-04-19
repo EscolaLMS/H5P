@@ -242,7 +242,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         if ($content !== null) {
             $settings['contents']["cid-$content"] = $this->getSettingsForContent($content);
             $settings['editor']['nodeVersionId'] = $content;
-            $settings['nonce'] =  $content['nonce'];
+            $settings['nonce'] =  $settings['contents']["cid-$content"]['nonce'];
         } else {
             $settings['nonce'] = bin2hex(random_bytes(4));
         }

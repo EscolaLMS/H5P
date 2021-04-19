@@ -740,7 +740,7 @@ class H5PRepository implements H5PFrameworkInterface
     public function loadContent($id)
     {
         $content = H5PContent::with('library')->where(['id' => $id])->firstOrFail();
-        if (is_null($content->null)) {
+        if (is_null($content->library)) {
             throw new H5PException(H5PException::LIBRARY_NOT_FOUND);
         }
         $content = $content->toArray();

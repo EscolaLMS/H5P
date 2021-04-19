@@ -1,7 +1,7 @@
 <?php
 return [
     'domain' => 'domain',
-    'url' => 'storage/h5p',
+    'url' => 'h5p',
     'ajaxSetFinished' => 'ajaxSetFinished',
     'ajaxContentUserData' => 'contentUserData',
     'saveFreq' => 'saveFreq',

@@ -139,9 +139,6 @@ class H5PEditorStorageRepository implements H5peditorStorage
      */
     public static function markFileForCleanup($file, $nonce)
     {
-        // content_id is nonce
-        // TODO implement this
-
         $content = H5PContent::where('nonce', $nonce)->first();
 
         $path = is_null($content) ? '/editor' : '/content/'.$content->id;
