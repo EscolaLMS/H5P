@@ -242,6 +242,9 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         if ($content !== null) {
             $settings['contents']["cid-$content"] = $this->getSettingsForContent($content);
             $settings['editor']['nodeVersionId'] = $content;
+            $settings['nonce'] =  $content['nonce'];
+        } else {
+            $settings['nonce'] = bin2hex(random_bytes(4));
         }
 
         // load core assets
@@ -324,6 +327,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
                     'state' => '{}',
                 ],
             ],
+            'nonce' => $content['nonce']
         ];
 
         return $settings;
@@ -371,7 +375,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         }
     }
 
-    public function uploadFile($contentId, $field, $token)
+    public function uploadFile($contentId, $field, $token, $nonce = null)
     {
         // TODO: implmenet nonce
         if (!$this->isValidEditorToken($token)) {
@@ -386,7 +390,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         // Make sure file is valid and mark it for cleanup at a later time
         if ($file->validate()) {
             $file_id = $this->getFileStorage()->saveFile($file, $contentId);
-            $this->getEditorStorage()->markFileForCleanup($file_id, $contentId); // TODO: IMPLEMENT THIS
+            $this->getEditorStorage()->markFileForCleanup($file_id, $nonce); // TODO: IMPLEMENT THIS
         }
 
         $result = json_decode($file->getResult());

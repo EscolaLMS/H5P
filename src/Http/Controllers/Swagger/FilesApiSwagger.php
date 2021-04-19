@@ -57,5 +57,38 @@ interface FilesApiSwagger
     *      )
     * )
     */
-    public function __invoke(FilesStoreRequest $request): JsonResponse;
+
+    /**
+    * @OA\Post(
+    *      path="/api/hh5p/files/{nonce}",
+    *      summary="Store h5p files for h5p editor",
+    *      tags={"H5P"},
+    *      description="Store h5p files for h5p editor",
+    *      @OA\Parameter(
+    *          name="nonce",
+    *          description="nonce of current editing file",
+    *          in="path",
+    *          required=true,
+    *          @OA\Schema(
+    *             type="string",
+    *         )
+    *      ),
+    *      @OA\RequestBody(
+    *          required=true,
+    *          @OA\MediaType(
+    *              mediaType="multipart/form-data",
+    *              @OA\Schema(ref="#/components/schemas/H5PContentFile")
+    *          )
+    *      ),
+    *      @OA\Response(
+    *          response=200,
+    *          description="successful operation",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          )
+    *      )
+    * )
+    */
+
+    public function __invoke(FilesStoreRequest $request, String $nonce = null): JsonResponse;
 }

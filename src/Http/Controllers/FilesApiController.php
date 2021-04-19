@@ -22,10 +22,10 @@ class FilesApiController extends Controller implements FilesApiSwagger
         $this->hh5pService = $hh5pService;
     }
 
-    public function __invoke(FilesStoreRequest $request): JsonResponse
+    public function __invoke(FilesStoreRequest $request, String $nonce = null): JsonResponse
     {
         try {
-            $result = $this->hh5pService->uploadFile($request->get('contentId'), $request->get('field'), $request->get('_token'));
+            $result = $this->hh5pService->uploadFile($request->get('contentId'), $request->get('field'), $request->get('_token'), $nonce);
             return response()->json($result);
         } catch (Exception $error) {
             return response()->json(['error'=>$error->getMessage()], 400);

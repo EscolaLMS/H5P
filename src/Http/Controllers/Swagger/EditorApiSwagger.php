@@ -246,6 +246,11 @@ interface EditorApiSwagger
      *          property="nodeVersionId",
      *          description="ID of content if editing existsing content",
      *          type="integer",
+     *      ),
+     *      @OA\Property(
+     *          property="nonce",
+     *          description="ID Hash to move and clearup files uploaded by editor",
+     *          type="integer",
      *      )
      * )
      */

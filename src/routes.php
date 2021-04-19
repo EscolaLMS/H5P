@@ -16,6 +16,8 @@ Route::group(['middleware' => ['api'], 'prefix' => 'api/hh5p'], function () {
     Route::post('libraries', [LibraryApiController::class, 'libraries'])->name('hh5p.library.libraries');
     Route::post('content', [ContentApiController::class, 'store'])->name('hh5p.content.store');
     Route::post('files', FilesApiController::class)->name('hh5p.files.upload');
+    Route::post('files/{nonce}', FilesApiController::class)->name('hh5p.files.upload.nonce');
+
 
     Route::get('/', function () {
         return 'Hello World';

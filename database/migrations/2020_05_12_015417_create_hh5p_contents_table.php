@@ -20,6 +20,8 @@ class CreateHH5pContentsTable extends Migration
             $table->string('title');
             $table->bigInteger('library_id')->unsigned(); // ADD key
             $table->text('parameters'); // TODO this can be JSON type
+            $table->string('nonce', 8)->unique(); // used for assiging temporary editor files to content
+            
 
             // TODO: do we need those ?
             $table->text('filtered')->nullable();

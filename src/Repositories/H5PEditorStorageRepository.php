@@ -4,7 +4,8 @@ namespace EscolaLms\HeadlessH5P\Repositories;
 use H5peditorStorage;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
-
+use EscolaLms\HeadlessH5P\Models\H5PContent;
+use EscolaLms\HeadlessH5P\Models\H5PTempFile;
 use EscolaLms\HeadlessH5P\Helpers\Helpers;
 
 /**
@@ -136,9 +137,17 @@ class H5PEditorStorageRepository implements H5peditorStorage
      * @param H5peditorFile
      * @param $content_id
      */
-    public static function markFileForCleanup($file, $content_id)
+    public static function markFileForCleanup($file, $nonce)
     {
+        // content_id is nonce
         // TODO implement this
+
+        $content = H5PContent::where('nonce', $nonce)->first();
+
+        $path = is_null($content) ? '/editor' : '/content/'.$content->id;
+        $path .= '/'.$file->getType().'s/'.$file->getName();
+
+        return H5PTempFile::create(['path' => $path, 'nonce' => $nonce]);
     }
     /**
      * Clean up temporary files
