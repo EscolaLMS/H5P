@@ -5,6 +5,46 @@
         "version": "0.0.1"
     },
     "paths": {
+        "/api/hh5p/content": {
+            "post": {
+                "tags": [
+                    "H5P"
+                ],
+                "summary": "Store h5p content in database",
+                "description": "Store h5p content in database",
+                "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\ContentApiSwagger::store",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/H5PContentStore"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "422": {
+                        "description": "validation error",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorised",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
         "/api/hh5p/editor": {
             "get": {
                 "tags": [
@@ -32,6 +72,72 @@
                                     "$ref": "#/components/schemas/H5PEditorSettings"
                                 }
                             }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/hh5p/files": {
+            "post": {
+                "tags": [
+                    "H5P"
+                ],
+                "summary": "Store h5p files for h5p editor",
+                "description": "Store h5p files for h5p editor",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/H5PContentFile"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/hh5p/files/{nonce}": {
+            "post": {
+                "tags": [
+                    "H5P"
+                ],
+                "summary": "Store h5p files for h5p editor",
+                "description": "Store h5p files for h5p editor",
+                "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\FilesApiSwagger::__invoke",
+                "parameters": [
+                    {
+                        "name": "nonce",
+                        "in": "path",
+                        "description": "nonce of current editing file",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/H5PContentFile"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
                         }
                     }
                 }
@@ -201,6 +307,27 @@
     },
     "components": {
         "schemas": {
+            "H5PContentStore": {
+                "properties": {
+                    "title": {
+                        "description": "Title of new content",
+                        "type": "string"
+                    },
+                    "library": {
+                        "description": "ubername of library",
+                        "type": "string"
+                    },
+                    "params": {
+                        "description": "params taken from editor",
+                        "type": "string"
+                    },
+                    "nonce": {
+                        "description": "nonce taken from editor settings (random for new, hash for exisiting)",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
             "H5PLibraryForEditor": {
                 "properties": {
                     "css": {
@@ -285,6 +412,14 @@
                     "baseUrl": {
                         "description": "",
                         "type": "string"
+                    },
+                    "l10n": {
+                        "description": "transaltions",
+                        "type": "object"
+                    },
+                    "contents": {
+                        "description": "contents if editing extisting content. key is in form of `cid-{id}`",
+                        "type": "object"
                     },
                     "editor": {
                         "description": "",
@@ -431,6 +566,34 @@
                     "version": {
                         "description": "has `major` and `minor` keys",
                         "type": "object"
+                    },
+                    "nodeVersionId": {
+                        "description": "ID of content if editing existsing content",
+                        "type": "integer"
+                    },
+                    "nonce": {
+                        "description": "ID Hash to move and clearup files uploaded by editor",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "H5PContentFile": {
+                "properties": {
+                    "file": {
+                        "description": "file uploaded by h5peditor",
+                        "type": "file",
+                        "format": "binary"
+                    },
+                    "field": {
+                        "description": "json description of file",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "contentId": {
+                        "description": "id of content",
+                        "type": "string",
+                        "format": "string"
                     }
                 },
                 "type": "object"
