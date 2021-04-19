@@ -26,6 +26,11 @@ use EscolaLms\HeadlessH5P\Http\Requests\ContentStoreRequest;
      *          description="params taken from editor",
      *          type="string"
      *      ),
+     *      @OA\Property(
+     *          property="nonce",
+     *          description="nonce taken from editor settings (random for new, hash for exisiting)",
+     *          type="string"
+     *      ),
      * )
     */
 

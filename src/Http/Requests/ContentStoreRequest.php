@@ -27,6 +27,7 @@ class ContentStoreRequest extends FormRequest
             'title'   => ['required', 'string'],
             'library' => ['required', 'string'],
             'params'  => ['required', 'string'],
+            'nonce'  => ['required', 'string'],
         ];
     }
 }
