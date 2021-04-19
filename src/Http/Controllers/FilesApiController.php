@@ -28,7 +28,7 @@ class FilesApiController extends Controller implements FilesApiSwagger
             $result = $this->hh5pService->uploadFile($request->get('contentId'), $request->get('field'), $request->get('_token'), $nonce);
             return response()->json($result);
         } catch (Exception $error) {
-            return response()->json(['error'=>$error->getMessage()], 400);
+            return response()->json(['error'=>$error->getMessage()], 422);
         }
     }
 }

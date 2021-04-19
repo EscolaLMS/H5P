@@ -25,7 +25,7 @@ class LibraryApiTest extends TestCase
             'h5p_file' => $h5pFile,
         ]);
 
-        if ($response->status() >= 400) {
+        if ($response->status() >= 422) {
             echo $response->content();
         }
 

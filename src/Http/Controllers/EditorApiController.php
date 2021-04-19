@@ -27,7 +27,7 @@ class EditorApiController extends Controller implements EditorApiSwagger
             $settings = $this->hh5pService->getEditorSettings($id);
             return response()->json($settings, 200);
         } catch (Exception $error) {
-            return response()->json(['error'=>$error->getMessage()], 400);
+            return response()->json(['error'=>$error->getMessage()], 422);
         }
     }
 }

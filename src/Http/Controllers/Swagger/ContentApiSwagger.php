@@ -58,7 +58,7 @@ interface ContentApiSwagger
     *          )
     *      ),
     *      @OA\Response(
-    *          response=400,
+    *          response=422,
     *          description="validation error",
     *          @OA\MediaType(
     *              mediaType="application/json"

@@ -41,7 +41,7 @@ class ContentApiController extends Controller implements ContentApiSwagger
         } catch (Exception $error) {
             return response()->json([
                 'error' => $error->getMessage()
-            ], 400);
+            ], 422);
         }
     
         return response()->json([
@@ -60,7 +60,7 @@ class ContentApiController extends Controller implements ContentApiSwagger
             'valid' => $valid,
             'messages' =>  $valid ? "Library $id deleted" : "",
             'errors' => !$valid ? "Library $id note deleted" : "",
-        ], $valid ? 200 : 400);
+        ], $valid ? 200 : 422);
     }
     */
 }
