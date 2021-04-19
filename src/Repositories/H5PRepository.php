@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\Log;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Models\H5PLibraryDependency;
 use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
+use EscolaLms\HeadlessH5P\Models\H5PContent;
 use EscolaLms\HeadlessH5P\Helpers\Helpers;
+use EscolaLms\HeadlessH5P\Exceptions\H5PException;
 
 class H5PRepository implements H5PFrameworkInterface
 {
@@ -171,6 +173,8 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function loadAddons()
     {
+        // TODO this should return something
+        return [];
     }
 
     /**
@@ -417,6 +421,7 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function insertContent($content, $contentMainId = null)
     {
+        return $this->updateContent($content);
     }
 
     /**
@@ -433,6 +438,13 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function updateContent($content, $contentMainId = null)
     {
+        if (isset($content['id'])) {
+            H5PContent::findOrFail($content['id'])->update($content);
+            return $content['id'];
+        } else {
+            $newContent = H5PContent::create($content);
+            return $newContent->id;
+        }
     }
 
     /**
@@ -727,6 +739,28 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function loadContent($id)
     {
+        $content = H5PContent::with('library')->where(['id' => $id])->firstOrFail();
+        if (is_null($content->library)) {
+            throw new H5PException(H5PException::LIBRARY_NOT_FOUND);
+        }
+        $content = $content->toArray();
+        $content ['contentId'] = $content['id']; // : Identifier for the content
+        $content ['params'] = json_encode($content['params']);// : json content as string
+        //$content ['embedType'] = ''; // : csv of embed types
+        //$content ['title'] // : The contents title
+        //$content ['language'] // : Language code for the content
+        $content ['libraryId'] = $content['library_id'];// : Id for the main library
+        $content ['libraryName'] = $content['library']['machineName'];// The library machine name
+        $content ['libraryMajorVersion'] = $content['library']['majorVersion'];// : The library's majorVersion
+        $content ['libraryMinorVersion'] = $content['library']['minorVersion'];// : The library's minorVersion
+        $content ['libraryEmbedTypes'] =  $content['library']['embed_types'];// : CSV of the main library's embed types
+        $content ['libraryFullscreen'] = 0;// : 1 if fullscreen is supported. 0 otherwise.
+        //$content ['metadata'] = $content ['metadata'] ?? "";
+        $content ['metadata'] = json_encode($content['metadata']);// : json content as string
+        $content ['slug'] = $content ['slug'] ?? "slug";
+
+
+        return $content;
     }
 
     /**
@@ -831,6 +865,7 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function isContentSlugAvailable($slug)
     {
+        return !!H5PContent::where(["slug"=>$slug])->first();
     }
 
     /**

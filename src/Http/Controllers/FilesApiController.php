@@ -2,17 +2,18 @@
 
 namespace EscolaLms\HeadlessH5P\Http\Controllers;
 
-//use App\Http\Controllers\Controller;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use EscolaLms\HeadlessH5P\Http\Controllers\Swagger\EditorApiSwagger;
+use Illuminate\Routing\Controller;
+use EscolaLms\HeadlessH5P\Http\Controllers\Swagger\FilesApiSwagger;
 use EscolaLms\HeadlessH5P\Services\HeadlessH5PService;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
+use EscolaLms\HeadlessH5P\Http\Requests\FilesStoreRequest;
 
-use Illuminate\Routing\Controller;
-use Exception;
+// TODO add swagger
 
-class EditorApiController extends Controller implements EditorApiSwagger
+class FilesApiController extends Controller implements FilesApiSwagger
 {
     private HeadlessH5PServiceContract $hh5pService;
 
@@ -21,11 +22,11 @@ class EditorApiController extends Controller implements EditorApiSwagger
         $this->hh5pService = $hh5pService;
     }
 
-    public function __invoke(Request $request, $id = null): JsonResponse
+    public function __invoke(FilesStoreRequest $request, String $nonce = null): JsonResponse
     {
         try {
-            $settings = $this->hh5pService->getEditorSettings($id);
-            return response()->json($settings, 200);
+            $result = $this->hh5pService->uploadFile($request->get('contentId'), $request->get('field'), $request->get('_token'), $nonce);
+            return response()->json($result);
         } catch (Exception $error) {
             return response()->json(['error'=>$error->getMessage()], 422);
         }

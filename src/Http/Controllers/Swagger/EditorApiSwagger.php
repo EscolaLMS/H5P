@@ -103,6 +103,16 @@ interface EditorApiSwagger
      *          type="string",
      *      ),
      *      @OA\Property(
+     *          property="l10n",
+     *          description="transaltions",
+     *          type="object",
+     *      ),
+     *      @OA\Property(
+     *          property="contents",
+     *          description="contents if editing extisting content. key is in form of `cid-{id}`",
+     *          type="object",
+     *      ),
+     *      @OA\Property(
      *          property="editor",
      *          description="",
      *          type="object",
@@ -231,6 +241,16 @@ interface EditorApiSwagger
      *          property="version",
      *          description="has `major` and `minor` keys",
      *          type="object",
+     *      ),
+     *      @OA\Property(
+     *          property="nodeVersionId",
+     *          description="ID of content if editing existsing content",
+     *          type="integer",
+     *      ),
+     *      @OA\Property(
+     *          property="nonce",
+     *          description="ID Hash to move and clearup files uploaded by editor",
+     *          type="integer",
      *      )
      * )
      */
@@ -260,5 +280,5 @@ interface EditorApiSwagger
     *      )
     * )
     */
-    public function __invoke(Request $request): JsonResponse;
+    public function __invoke(Request $request, int $id): JsonResponse;
 }

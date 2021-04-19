@@ -51,6 +51,8 @@ class H5PEditorAjaxRepository implements H5PEditorAjaxInterface
      */
     public function validateEditorToken($token)
     {
+        // TODO this is better resolved
+        return true;
     }
 
     /**

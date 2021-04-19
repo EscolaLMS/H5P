@@ -14,6 +14,7 @@ use EditorAjaxRepository;
 use H5peditorStorage;
 use H5PEditorAjaxInterface;
 use H5PContentValidator;
+use H5peditorFile;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
@@ -23,6 +24,8 @@ use EscolaLms\HeadlessH5P\Repositories\H5PRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PEditorAjaxRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PEditorStorageRepository;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
+use EscolaLms\HeadlessH5P\Models\H5PContent;
+use EscolaLms\HeadlessH5P\Exceptions\H5PException;
 
 class HeadlessH5PService implements HeadlessH5PServiceContract
 {
@@ -87,6 +90,11 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     {
         return $this->storage;
     }
+
+    public function getEditorStorage():H5peditorStorage
+    {
+        return $this->editorStorage;
+    }
   
     public function getContentValidator():H5PContentValidator
     {
@@ -150,6 +158,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             $config['get_h5pcore_url'] =  url($config['get_h5pcore_url']);
             $config['getCopyrightSemantics'] = $this->getContentValidator()->getCopyrightSemantics();
             $config['getMetadataSemantics'] = $this->getContentValidator()->getMetadataSemantics();
+            $config['filesPath'] = url("h5p/editor");// TODO: diffrernt name
             $this->config = $config;
         }
         return $this->config ;
@@ -162,6 +171,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     {
         $lang = config('hh5p.language');
 
+        // TODO this shoule be from config
         $libraries_url = url('h5p/libraries');
 
         if ($machineName) {
@@ -230,7 +240,11 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         ];
 
         if ($content !== null) {
-            $settings['editor']['nodeVersionId'] = $content['id'];
+            $settings['contents']["cid-$content"] = $this->getSettingsForContent($content);
+            $settings['editor']['nodeVersionId'] = $content;
+            $settings['nonce'] =  $settings['contents']["cid-$content"]['nonce'];
+        } else {
+            $settings['nonce'] = bin2hex(random_bytes(4));
         }
 
         // load core assets
@@ -281,5 +295,113 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $this->getRepository()->deleteLibrary($library);
 
         return true;
+    }
+
+    public function getSettingsForContent($id)
+    {
+        $content = $this->getCore()->loadContent($id);
+        $content['metadata']['title'] = $content['title'];
+        
+        $safe_parameters = $this->getCore()->filterParameters($content);
+        $library = $content['library'];
+
+
+        $uberName =  $library['name']." ".$library['majorVersion'].'.'.$library['minorVersion'];
+
+        $settings = [
+            'library'         => $uberName,
+            'content'         => $content,
+            'jsonContent'     => json_encode([
+                'params' => json_decode($safe_parameters),
+                'metadata' => $content['metadata']
+            ]),
+            'fullScreen'      => $content['library']['fullscreen'],
+            //'exportUrl'       => config('laravel-h5p.h5p_export') ? route('h5p.export', [$content['id']]) : '',
+            //'embedCode'       => '<iframe src="'.route('h5p.embed', ['id' => $content['id']]).'" width=":w" height=":h" frameborder="0" allowfullscreen="allowfullscreen"></iframe>',
+            //'resizeCode'      => '<script src="'.self::get_h5pcore_url('/js/h5p-resizer.js').'" charset="UTF-8"></script>',
+            //'url'             => route('h5p.embed', ['id' => $content['id']]),
+            'title'           => $content['title'],
+            //'displayOptions'  => self::$core->getDisplayOptionsForView($content['disable'], $author_id),
+            'contentUserData' => [
+                0 => [
+                    'state' => '{}',
+                ],
+            ],
+            'nonce' => $content['nonce']
+        ];
+
+        return $settings;
+
+        // Detemine embed type
+        $embed = H5PCore::determineEmbedType($content['embedType'], $content['library']['embedTypes']);
+        // Make sure content isn't added twice
+        $cid = 'cid-'.$content['id'];
+        if (!isset($settings['contents'][$cid])) {
+            $settings['contents'][$cid] = self::get_content_settings($content);
+            $core = self::$core;
+            // Get assets for this content
+            $preloaded_dependencies = $core->loadContentDependencies($content['id'], 'preloaded');
+            $files = $core->getDependenciesFiles($preloaded_dependencies);
+            self::alter_assets($files, $preloaded_dependencies, $embed);
+            if ($embed === 'div') {
+                foreach ($files['scripts'] as $script) {
+                    $url = $script->path.$script->version;
+                    if (!in_array($url, $settings['loadedJs'])) {
+                        $settings['loadedJs'][] = self::get_h5plibrary_url($url);
+                    }
+                }
+                foreach ($files['styles'] as $style) {
+                    $url = $style->path.$style->version;
+                    if (!in_array($url, $settings['loadedCss'])) {
+                        $settings['loadedCss'][] = self::get_h5plibrary_url($url);
+                    }
+                }
+            } elseif ($embed === 'iframe') {
+                $settings['contents'][$cid]['scripts'] = $core->getAssetsUrls($files['scripts']);
+                $settings['contents'][$cid]['styles'] = $core->getAssetsUrls($files['styles']);
+            }
+        }
+
+        if ($embed === 'div') {
+            return [
+               'settings' => $settings,
+               'embed'    => '<div class="h5p-content" data-content-id="'.$content['id'].'"></div>',
+           ];
+        } else {
+            return [
+               'settings' => $settings,
+               'embed'    => '<div class="h5p-iframe-wrapper"><iframe id="h5p-iframe-'.$content['id'].'" class="h5p-iframe" data-content-id="'.$content['id'].'" style="height:1px" src="about:blank" frameBorder="0" scrolling="no"></iframe></div>',
+           ];
+        }
+    }
+
+    public function uploadFile($contentId, $field, $token, $nonce = null)
+    {
+        // TODO: implmenet nonce
+        if (!$this->isValidEditorToken($token)) {
+            throw new H5PException(H5PException::LIBRARY_NOT_FOUND);
+        }
+
+        $file = new H5peditorFile($this->getRepository());
+        if (!$file->isLoaded()) {
+            throw new H5PException(H5PException::FILE_NOT_FOUND);
+        }
+    
+        // Make sure file is valid and mark it for cleanup at a later time
+        if ($file->validate()) {
+            $file_id = $this->getFileStorage()->saveFile($file, $contentId);
+            $this->getEditorStorage()->markFileForCleanup($file_id, $nonce); // TODO: IMPLEMENT THIS
+        }
+
+        $result = json_decode($file->getResult());
+        $result-> path = $file->getType() . 's/' . $file->getName() . '#tmp';
+
+        return $result;
+    }
+
+    private function isValidEditorToken(string $token = null):bool
+    {
+        $isValidToken = $this->getEditor()->ajaxInterface->validateEditorToken($token);
+        return !!$isValidToken;
     }
 }

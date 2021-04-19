@@ -5,62 +5,62 @@ namespace EscolaLms\HeadlessH5P\Http\Controllers;
 //use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use EscolaLms\HeadlessH5P\Http\Controllers\Swagger\LibraryApiSwagger;
+use EscolaLms\HeadlessH5P\Http\Controllers\Swagger\ContentApiSwagger;
 use EscolaLms\HeadlessH5P\Services\HeadlessH5PService;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 
-use EscolaLms\HeadlessH5P\Http\Requests\LibraryStoreRequest;
+use EscolaLms\HeadlessH5P\Http\Requests\ContentStoreRequest;
 use Illuminate\Routing\Controller;
+use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
+use Exception;
 
-class LibraryApiController extends Controller implements LibraryApiSwagger
+class ContentApiController extends Controller implements ContentApiSwagger
 {
     private HeadlessH5PServiceContract $hh5pService;
+    private H5PContentRepositoryContract $contentRepository;
 
-    public function __construct(HeadlessH5PServiceContract $hh5pService)
+    public function __construct(HeadlessH5PServiceContract $hh5pService, H5PContentRepositoryContract $contentRepository)
     {
         $this->hh5pService = $hh5pService;
+        $this->contentRepository = $contentRepository;
     }
 
+    /*
     public function index(Request $request): JsonResponse
     {
         $libraries = $this->hh5pService->listLibraries();
 
         return response()->json($libraries, 200);
     }
+    */
 
-    public function store(LibraryStoreRequest $request): JsonResponse
+    public function store(ContentStoreRequest $request): JsonResponse
     {
-        $valid = $this->hh5pService->validatePackage($request->file('h5p_file'));
-        if ($valid) {
-            $this->hh5pService->savePackage();
+        try {
+            $contentId = $this->contentRepository->create($request->get('title'), $request->get('library'), $request->get('params'), $request->get('nonce'));
+        } catch (Exception $error) {
+            return response()->json([
+                'error' => $error->getMessage()
+            ], 422);
         }
-
+    
         return response()->json([
-            'valid' => $valid,
-            'messages' => $this->hh5pService->getMessages('updated'),
-            'errors' => $this->hh5pService->getMessages('error'),
-        ], $valid ? 200 : 422);
+            'id' => $contentId
+        ], 200);
     }
 
-    public function libraries(Request $request): JsonResponse
-    {
-        $libraries = $this->hh5pService->getLibraries(
-            $request->get('machineName'),
-            $request->get('majorVersion'),
-            $request->get('minorVersion')
-        );
 
-        return response()->json($libraries, 200);
-    }
 
+    /*
     public function destroy(Request $request, int $id): JsonResponse
     {
         $valid = $this->hh5pService->deleteLibrary($id);
-        
+
         return response()->json([
             'valid' => $valid,
             'messages' =>  $valid ? "Library $id deleted" : "",
             'errors' => !$valid ? "Library $id note deleted" : "",
         ], $valid ? 200 : 422);
     }
+    */
 }
