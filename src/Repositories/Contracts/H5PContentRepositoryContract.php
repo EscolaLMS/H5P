@@ -9,5 +9,5 @@ use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 
 interface H5PContentRepositoryContract
 {
-    public function create(string $title, string $library, string $params):int;
+    public function create(string $title, string $library, string $params, string $nonce):int;
 }

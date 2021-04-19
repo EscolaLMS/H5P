@@ -17,7 +17,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
         $this->hh5pService = $hh5pService;
     }
 
-    public function create(string $title, string $library, string $params):int
+    public function create(string $title, string $library, string $params, string $nonce):int
     {
         $libNames = $this->hh5pService->getCore()->libraryFromString($library);
 
@@ -41,7 +41,8 @@ class H5PContentRepository implements H5PContentRepositoryContract
             'library_id'=> $libDb->id,
             'title'=>$title,
             'library'=>$library,
-            'parameters'=>$params
+            'parameters'=>$params,
+            'nonce'=>$nonce
         ]);
     }
 }
