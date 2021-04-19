@@ -39,7 +39,7 @@ class LibraryApiController extends Controller implements LibraryApiSwagger
             'valid' => $valid,
             'messages' => $this->hh5pService->getMessages('updated'),
             'errors' => $this->hh5pService->getMessages('error'),
-        ], $valid ? 200 : 400);
+        ], $valid ? 200 : 422);
     }
 
     public function libraries(Request $request): JsonResponse
@@ -61,6 +61,6 @@ class LibraryApiController extends Controller implements LibraryApiSwagger
             'valid' => $valid,
             'messages' =>  $valid ? "Library $id deleted" : "",
             'errors' => !$valid ? "Library $id note deleted" : "",
-        ], $valid ? 200 : 400);
+        ], $valid ? 200 : 422);
     }
 }
