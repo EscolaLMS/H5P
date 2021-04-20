@@ -45,7 +45,79 @@
                 }
             }
         },
+        "/api/hh5p/content/{id}": {
+            "post": {
+                "tags": [
+                    "H5P"
+                ],
+                "summary": "Updates h5p content in database",
+                "description": "Updates h5p content in database",
+                "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\ContentApiSwagger::update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of Content from DB",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/H5PContentStore"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "422": {
+                        "description": "validation error",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorised",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
         "/api/hh5p/editor": {
+            "get": {
+                "tags": [
+                    "H5P"
+                ],
+                "summary": "Editor settings ",
+                "description": "Editor settings",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/H5PEditorSettings"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/hh5p/editor/{id}": {
             "get": {
                 "tags": [
                     "H5P"
@@ -56,8 +128,9 @@
                 "parameters": [
                     {
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "description": "Id of Content from DB. For initial editor (new content) id should be null",
+                        "required": true,
                         "schema": {
                             "type": "integer"
                         }
@@ -200,7 +273,7 @@
                 }
             }
         },
-        "/api/hh5p/delete/{id}": {
+        "/api/hh5p/library/{id}": {
             "delete": {
                 "tags": [
                     "H5P"
