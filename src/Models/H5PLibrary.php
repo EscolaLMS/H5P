@@ -62,6 +62,11 @@ use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
  *          type="string",
  *      ),
  *      @OA\Property(
+ *          property="uberName",
+ *          description="params taken from editor",
+ *          type="string"
+ *      ),
+ *      @OA\Property(
  *          property="majorVersion",
  *          description="major version",
  *          type="string",
@@ -106,7 +111,6 @@ use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
  *          description="ID of library. Alias",
  *          type="integer",
  *      )
-
  * )
  */
 
