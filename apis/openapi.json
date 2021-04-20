@@ -6,6 +6,58 @@
     },
     "paths": {
         "/api/hh5p/content": {
+            "get": {
+                "tags": [
+                    "H5P"
+                ],
+                "summary": "list of h5ps content in database",
+                "description": "list of h5ps content in database",
+                "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\ContentApiSwagger::index",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "page of pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/H5PContentList"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "validation error",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorised",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            },
             "post": {
                 "tags": [
                     "H5P"
@@ -401,6 +453,47 @@
                 },
                 "type": "object"
             },
+            "H5PContentList": {
+                "properties": {
+                    "current_page": {
+                        "type": "integer"
+                    },
+                    "first_page_url": {
+                        "type": "string"
+                    },
+                    "last_page": {
+                        "type": "integer"
+                    },
+                    "last_page_url": {
+                        "type": "string"
+                    },
+                    "next_page_url": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "per_page": {
+                        "type": "integer"
+                    },
+                    "prev_page_url": {
+                        "type": "string"
+                    },
+                    "to": {
+                        "type": "integer"
+                    },
+                    "total": {
+                        "type": "integer"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/H5PContent"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "H5PLibraryForEditor": {
                 "properties": {
                     "css": {
@@ -671,6 +764,66 @@
                 },
                 "type": "object"
             },
+            "H5PContent": {
+                "properties": {
+                    "id": {
+                        "description": "Id",
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "description": "Date created at",
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "description": "Date updated at",
+                        "type": "string"
+                    },
+                    "user_id": {
+                        "description": "id of user that created/updated ",
+                        "type": "string"
+                    },
+                    "title": {
+                        "description": "Title of new content",
+                        "type": "string"
+                    },
+                    "library_id": {
+                        "description": "library_id",
+                        "type": "string"
+                    },
+                    "parameters": {
+                        "description": "JSON parameters",
+                        "type": "string"
+                    },
+                    "filtered": {
+                        "description": "filtered",
+                        "type": "string"
+                    },
+                    "slug": {
+                        "description": "slug",
+                        "type": "string"
+                    },
+                    "embed_type": {
+                        "description": "embed type",
+                        "type": "string"
+                    },
+                    "params": {
+                        "description": "parsed parameters",
+                        "type": "object"
+                    },
+                    "metadata": {
+                        "description": "parsed metadata",
+                        "type": "object"
+                    },
+                    "library": {
+                        "$ref": "#/components/schemas/H5PLibrary"
+                    },
+                    "nonce": {
+                        "description": "nonce taken from editor settings (random for new, hash for exisiting)",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
             "H5PLibrary": {
                 "properties": {
                     "id": {
@@ -711,6 +864,10 @@
                     },
                     "machineName": {
                         "description": "Machine Name",
+                        "type": "string"
+                    },
+                    "uberName": {
+                        "description": "params taken from editor",
                         "type": "string"
                     },
                     "majorVersion": {
