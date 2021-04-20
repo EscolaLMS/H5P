@@ -24,16 +24,12 @@ class ContentApiController extends Controller implements ContentApiSwagger
         $this->hh5pService = $hh5pService;
         $this->contentRepository = $contentRepository;
     }
-
-    /*
+    
     public function index(Request $request): JsonResponse
     {
-        $libraries = $this->hh5pService->listLibraries();
-
-        return response()->json($libraries, 200);
+        $list = $this->contentRepository->list($request->get('per_page'));
+        return response()->json($list, 200);
     }
-    */
-
 
     public function update(ContentStoreRequest $request, int $id): JsonResponse
     {

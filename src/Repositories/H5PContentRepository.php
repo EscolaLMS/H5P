@@ -8,6 +8,7 @@ use EscolaLms\HeadlessH5P\Models\H5PTempFile;
 use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 use EscolaLms\HeadlessH5P\Exceptions\H5PException;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class H5PContentRepository implements H5PContentRepositoryContract
 {
@@ -115,5 +116,10 @@ class H5PContentRepository implements H5PContentRepositoryContract
         }
 
         return true;
+    }
+
+    public function list($per_page = 15):LengthAwarePaginator
+    {
+        return H5PContent::with(['library'])->paginate(intval($per_page));
     }
 }
