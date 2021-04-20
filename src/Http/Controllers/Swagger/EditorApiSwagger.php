@@ -255,17 +255,34 @@ interface EditorApiSwagger
      * )
      */
 
-
     /**
     * @OA\Get(
     *      path="/api/hh5p/editor",
     *      summary="Editor settings ",
     *      tags={"H5P"},
     *      description="Editor settings",
+    *      @OA\Response(
+    *          response=200,
+    *          description="successful operation",
+    *          @OA\JsonContent(
+    *             type="object",
+    *             ref="#/components/schemas/H5PEditorSettings"
+    *         )
+    *      )
+    * )
+    */
+
+    /**
+    * @OA\Get(
+    *      path="/api/hh5p/editor/{id}",
+    *      summary="Editor settings ",
+    *      tags={"H5P"},
+    *      description="Editor settings",
     *      @OA\Parameter(
     *          name="id",
     *          description="Id of Content from DB. For initial editor (new content) id should be null",
-    *          in="query",
+    *          in="path",
+    *          required=true,
     *          @OA\Schema(
     *             type="integer",
     *         )

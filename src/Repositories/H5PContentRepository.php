@@ -51,6 +51,47 @@ class H5PContentRepository implements H5PContentRepositoryContract
         return $content;
     }
 
+    public function edit(int $id, string $title, string $library, string $params, string $nonce):int
+    {
+        $libNames = $this->hh5pService->getCore()->libraryFromString($library);
+
+        $libDb = H5PLibrary::where([
+            ['name', $libNames['machineName']],
+            ['major_version', $libNames['majorVersion']],
+            ['minor_version', $libNames['minorVersion']],
+        ])->first();
+
+        if ($libDb === null) {
+            throw new H5PException(H5PException::LIBRARY_NOT_FOUND);
+        }
+        
+        $json = json_decode($params);
+
+        if ($json === null) {
+            throw new H5PException(H5PException::INVALID_PARAMETERS_JSON);
+        }
+
+        $content = H5PLibrary::where('id', $id)->first();
+
+        if ($content === null) {
+            throw new H5PException(H5PException::CONTENT_NOT_FOUND);
+        }
+
+        $id = $this->hh5pService->getCore()->saveContent([
+            'id'=>$id,
+            'library_id'=> $libDb->id,
+            'title'=>$title,
+            'library'=>$library,
+            'parameters'=>$params,
+            //'nonce'=>$nonce
+        ], $id);
+
+    
+        $this->moveTmpFilesToContentFolders($nonce, $id);
+
+        return $id;
+    }
+
     private function moveTmpFilesToContentFolders($nonce, $contentId):bool
     {
 
@@ -61,12 +102,14 @@ class H5PContentRepository implements H5PContentRepositoryContract
 
         foreach ($files as $file) {
             $old_path = $storage_path.$file->path;
-            $new_path = $storage_path.str_replace('/editor', '/content/'.$contentId, $file->path);
-            $dir_path = dirname($new_path);
-            if (!is_dir($dir_path)) {
-                mkdir($dir_path, 0777, true);
+            if (strpos($file->path, '/editor') !== false) {
+                $new_path = $storage_path.str_replace('/editor', '/content/'.$contentId, $file->path);
+                $dir_path = dirname($new_path);
+                if (!is_dir($dir_path)) {
+                    mkdir($dir_path, 0777, true);
+                }
+                rename($old_path, $new_path);
             }
-            rename($old_path, $new_path);
 
             $file->delete();
         }

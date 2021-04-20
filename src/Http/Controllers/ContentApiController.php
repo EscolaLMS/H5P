@@ -34,6 +34,22 @@ class ContentApiController extends Controller implements ContentApiSwagger
     }
     */
 
+
+    public function update(ContentStoreRequest $request, int $id): JsonResponse
+    {
+        try {
+            $contentId = $this->contentRepository->edit($id, $request->get('title'), $request->get('library'), $request->get('params'), $request->get('nonce'));
+        } catch (Exception $error) {
+            return response()->json([
+                'error' => $error->getMessage()
+            ], 422);
+        }
+    
+        return response()->json([
+            'id' => $contentId
+        ], 200);
+    }
+
     public function store(ContentStoreRequest $request): JsonResponse
     {
         try {

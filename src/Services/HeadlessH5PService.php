@@ -222,7 +222,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         //$settings['core']['scripts'][] = $config['get_laravelh5p_url'].'/laravel-h5p.js';
 
         $settings['editor'] = [
-            'filesPath' => $config['filesPath'],
+            'filesPath' => isset($content) ? url("h5p/content/$content") : url("h5p/editor"),
             'fileIcon'  => [
                 'path'   => $config['fileIcon'],
                 'width'  => 50,

@@ -74,4 +74,51 @@ interface ContentApiSwagger
     * )
     */
     public function store(ContentStoreRequest $request): JsonResponse;
+
+    /**
+    * @OA\Post(
+    *      path="/api/hh5p/content/{id}",
+    *      summary="Updates h5p content in database",
+    *      tags={"H5P"},
+    *      description="Updates h5p content in database",
+    *      @OA\Parameter(
+    *          name="id",
+    *          description="Id of Content from DB",
+    *          in="path",
+    *          required=true,
+    *          @OA\Schema(
+    *             type="integer",
+    *         )
+    *      ),
+    *      @OA\RequestBody(
+    *          required=true,
+    *          @OA\MediaType(
+    *              mediaType="application/json",
+    *              @OA\Schema(ref="#/components/schemas/H5PContentStore")
+    *          )
+    *      ),
+    *      @OA\Response(
+    *          response=200,
+    *          description="successful operation",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          )
+    *      ),
+    *      @OA\Response(
+    *          response=422,
+    *          description="validation error",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          )
+    *      ),
+    *      @OA\Response(
+    *          response=401,
+    *          description="unauthorised",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          )
+    *      )
+    * )
+    */
+    public function store(ContentStoreRequest $request): JsonResponse;
 }
