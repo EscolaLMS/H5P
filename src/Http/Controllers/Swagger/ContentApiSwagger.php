@@ -226,4 +226,44 @@ interface ContentApiSwagger
     * )
     */
     public function index(ContentStoreRequest $request): JsonResponse;
+
+    /**
+    * @OA\Delete(
+    *      path="/api/hh5p/content/{id}",
+    *      summary="Deletes h5p content from database",
+    *      tags={"H5P"},
+    *      description="Deletes h5p content from database",
+    *      @OA\Parameter(
+    *          name="id",
+    *          description="ID of content that will be deleted",
+    *          in="path",
+    *          required=true,
+    *          @OA\Schema(
+    *             type="integer",
+    *         )
+    *      ),
+    *      @OA\Response(
+    *          response=200,
+    *          description="successful operation",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          )
+    *      ),
+    *      @OA\Response(
+    *          response=422,
+    *          description="validation error",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          )
+    *      ),
+    *      @OA\Response(
+    *          response=401,
+    *          description="unauthorised",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          )
+    *      )
+    * )
+    */
+    public function destroy(Request $request, int $id): JsonResponse;
 }
