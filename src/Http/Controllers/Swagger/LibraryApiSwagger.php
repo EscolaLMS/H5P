@@ -43,7 +43,7 @@ interface LibraryApiSwagger
 
     /**
     * @OA\Delete(
-    *      path="/api/hh5p/delete/{id}",
+    *      path="/api/hh5p/library/{id}",
     *      summary="Deletes h5p library from database",
     *      tags={"H5P"},
     *      description="Deletes h5p library from database",
