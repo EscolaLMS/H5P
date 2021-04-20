@@ -120,5 +120,5 @@ interface ContentApiSwagger
     *      )
     * )
     */
-    public function store(ContentStoreRequest $request): JsonResponse;
+    public function update(ContentStoreRequest $request, int $id): JsonResponse;
 }
