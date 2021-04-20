@@ -61,18 +61,18 @@ class ContentApiController extends Controller implements ContentApiSwagger
         ], 200);
     }
 
-
-
-    /*
     public function destroy(Request $request, int $id): JsonResponse
     {
-        $valid = $this->hh5pService->deleteLibrary($id);
+        try {
+            $contentId = $this->contentRepository->delete($id);
+        } catch (Exception $error) {
+            return response()->json([
+            'error' => $error->getMessage()
+        ], 422);
+        }
 
         return response()->json([
-            'valid' => $valid,
-            'messages' =>  $valid ? "Library $id deleted" : "",
-            'errors' => !$valid ? "Library $id note deleted" : "",
-        ], $valid ? 200 : 422);
+            'id' => $contentId
+        ], 200);
     }
-    */
 }

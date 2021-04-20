@@ -9,6 +9,7 @@ use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 use EscolaLms\HeadlessH5P\Exceptions\H5PException;
 use Illuminate\Pagination\LengthAwarePaginator;
+use EscolaLms\HeadlessH5P\Helpers\Helpers;
 
 class H5PContentRepository implements H5PContentRepositoryContract
 {
@@ -121,5 +122,18 @@ class H5PContentRepository implements H5PContentRepositoryContract
     public function list($per_page = 15):LengthAwarePaginator
     {
         return H5PContent::with(['library'])->paginate(intval($per_page));
+    }
+
+    public function delete(int $id):int
+    {
+        $content = H5PContent::findOrFail($id);
+        $content->delete();
+
+        // TODO: take this from config
+        $storage_path = storage_path("app/h5p/content/$id");
+
+        Helpers::deleteFileTree($storage_path);
+
+        return $id;
     }
 }

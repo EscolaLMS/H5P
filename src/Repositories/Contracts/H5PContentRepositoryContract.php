@@ -15,4 +15,6 @@ interface H5PContentRepositoryContract
     public function edit(int $id, string $title, string $library, string $params, string $nonce):int;
 
     public function list($per_page = 15):LengthAwarePaginator;
+
+    public function delete(int $id):int;
 }
