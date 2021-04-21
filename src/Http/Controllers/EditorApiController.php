@@ -23,12 +23,11 @@ class EditorApiController extends Controller implements EditorApiSwagger
 
     public function __invoke(Request $request, $id = null): JsonResponse
     {
-        //try {
-        $settings = $this->hh5pService->getEditorSettings($id);
-        return response()->json($settings, 200);
-        /*
+        try {
+            $settings = $this->hh5pService->getEditorSettings($id);
+            return response()->json($settings, 200);
         } catch (Exception $error) {
-        return response()->json(['error'=>$error->getMessage()], 422);
-        }*/
+            return response()->json(['error'=>$error->getMessage()], 422);
+        }
     }
 }
