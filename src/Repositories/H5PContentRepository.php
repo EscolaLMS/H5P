@@ -136,4 +136,10 @@ class H5PContentRepository implements H5PContentRepositoryContract
 
         return $id;
     }
+
+    public function show(ind $id):int
+    {
+        $content = H5PContent::findOrFail($id);
+        return $content;
+    }
 }

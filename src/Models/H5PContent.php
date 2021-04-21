@@ -5,10 +5,12 @@ namespace EscolaLms\HeadlessH5P\Models;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
+use EscolaLms\HeadlessH5P\Models\H5PContentLibrary;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-    /**
+/**
      * @OA\Schema(
      *      schema="H5PContent",
      *      type="object",
@@ -137,5 +139,10 @@ class H5PContent extends Model
     public function library():BelongsTo
     {
         return $this->belongsTo(H5PLibrary::class, 'library_id');
+    }
+
+    public function libraries()
+    {
+        return $this->hasMany(H5PContentLibrary::class, 'content_id');
     }
 }

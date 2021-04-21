@@ -18,6 +18,7 @@ Route::group(['middleware' => ['api'], 'prefix' => 'api/hh5p'], function () {
     Route::post('content/{id}', [ContentApiController::class, 'update'])->name('hh5p.content.update');
     Route::delete('content/{id}', [ContentApiController::class, 'destroy'])->name('hh5p.content.destroy');
     Route::get('content', [ContentApiController::class, 'index'])->name('hh5p.content.index');
+    Route::get('content/{id}', [ContentApiController::class, 'show'])->name('hh5p.content.show');
     Route::post('files', FilesApiController::class)->name('hh5p.files.upload');
     Route::post('files/{nonce}', FilesApiController::class)->name('hh5p.files.upload.nonce');
 

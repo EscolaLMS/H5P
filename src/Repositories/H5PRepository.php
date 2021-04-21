@@ -8,6 +8,7 @@ use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Models\H5PLibraryDependency;
 use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
 use EscolaLms\HeadlessH5P\Models\H5PContent;
+use EscolaLms\HeadlessH5P\Models\H5PContentLibrary;
 use EscolaLms\HeadlessH5P\Helpers\Helpers;
 use EscolaLms\HeadlessH5P\Exceptions\H5PException;
 
@@ -545,6 +546,29 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function saveLibraryUsage($contentId, $librariesInUse)
     {
+        $contentLibraries = array_map(function ($value) use ($contentId) {
+            return H5PContentLibrary::firstOrCreate([
+                'content_id'        => $contentId,
+                'library_id'        => $value['library']['id'],
+                'dependency_type'   => $value['type'],
+            ], [
+                'drop_css'          => boolval($value['library']['dropLibraryCss']),
+                'weight'            => $value['weight']
+                ])->toArray();
+        }, $librariesInUse);
+
+        $content = H5PContent::with('library')->findOrFail($contentId);
+
+        $libraryLibraries = array_map(function ($value) use ($contentId) {
+            return H5PContentLibrary::firstOrCreate([
+                'content_id'        => $contentId,
+                'library_id'        => $value['required_library_id'],
+                'dependency_type'   => $value['dependencyType'],
+            ], [
+                'drop_css'          => false,
+                'weight'            => 0
+                ])->toArray();
+        }, $content->library->dependencies->toArray());
     }
 
     /**
@@ -786,6 +810,22 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function loadContentDependencies($id, $type = null)
     {
+        $where = $type ? [['content_id', $id], ['dependency_type', $type]] : [['content_id', $id]] ;
+
+        $libs = H5PContentLibrary::with('library')->where($where)->get();
+
+        return array_map(function ($value) {
+            return [
+                'libraryId'=>$value['library_id'],//: The id of the library if it is an existing library.
+                'machineName'=>$value['library']['machineName'],//: The library machineName
+                'majorVersion'=>$value['library']['majorVersion'],//: The library's majorVersion
+                'minorVersion'=>$value['library']['minorVersion'],//: The library's minorVersion
+                'patchVersion'=>$value['library']['patchVersion'],//: The library's patchVersion
+                'preloadedJs'=>$value['library']['preloadedJs'],//(optional): comma separated string with js file paths
+                'preloadedCss'=>$value['library']['preloadedCss'],//(optional): comma separated sting with css file paths
+                'dropCss'=>$value['dropCss']//(optional): csv of machine names
+            ];
+        }, $libs->toArray());
     }
 
     /**

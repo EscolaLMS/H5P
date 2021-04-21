@@ -75,4 +75,19 @@ class ContentApiController extends Controller implements ContentApiSwagger
             'id' => $contentId
         ], 200);
     }
+
+    public function show(Request $request, int $id): JsonResponse
+    {
+        try {
+            $content = $this->contentRepository->show($id);
+        } catch (Exception $error) {
+            return response()->json([
+            'error' => $error->getMessage()
+        ], 422);
+        }
+
+        return response()->json([
+            $content
+        ], 200);
+    }
 }
