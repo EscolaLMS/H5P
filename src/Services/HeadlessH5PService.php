@@ -267,6 +267,42 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $settings['editor']['assets']['js'][] = $config['get_h5peditor_url'].($language_script);
 
         if ($content) {
+            $preloaded_dependencies = $this->getCore()->loadContentDependencies($content, 'preloaded');
+            $files = $this->getCore()->getDependenciesFiles($preloaded_dependencies);
+            $cid = $settings['contents']["cid-$content"];
+            $embed = H5PCore::determineEmbedType($cid ['content']['embed_type'] ?? "div", $cid['content']['library']['embedTypes']);
+
+            $scripts = array_map(function ($value) use ($config) {
+                return $config['url'].($value->path.$value->version);
+            }, $files['scripts']);
+
+            $styles = array_map(function ($value) use ($config) {
+                return $config['url'].($value->path.$value->version);
+            }, $files['styles']);
+
+            $settings['contents']["cid-$content"]['scripts'] = $scripts;
+            $settings['contents']["cid-$content"]['styles'] =  $styles;
+
+            /*
+            if ($embed === 'div') {
+            foreach ($files['scripts'] as $script) {
+                $url = $script->path.$script->version;
+                if (!in_array($url, $settings['loadedJs'])) {
+                    $settings['loadedJs'][] = $config['url'].($url);
+                }
+            }
+            foreach ($files['styles'] as $style) {
+                $url = $style->path.$style->version;
+                if (!in_array($url, $settings['loadedCss'])) {
+                    $settings['loadedCss'][] = $config['url'].($url);
+                }
+            }
+            } elseif ($embed === 'iframe') {
+            $settings['contents'][$cid]['scripts'] = $this->getCore()->getAssetsUrls($files['scripts']);
+            $settings['contents'][$cid]['styles'] = $this->getCore()->getAssetsUrls($files['styles']);
+            }
+            */
+
             //$settings = self::get_content_files($settings, $content);
         }
         
@@ -302,9 +338,9 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $content = $this->getCore()->loadContent($id);
         $content['metadata']['title'] = $content['title'];
         
-        $safe_parameters = $this->getCore()->filterParameters($content);
-        $library = $content['library'];
+        $safe_parameters = $this->getCore()->filterParameters($content); // TODO: actually this is inserting stuff in Database, it shouldn'e instert anything since this is a GET
 
+        $library = $content['library'];
 
         $uberName =  $library['name']." ".$library['majorVersion'].'.'.$library['minorVersion'];
 
@@ -321,7 +357,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             //'resizeCode'      => '<script src="'.self::get_h5pcore_url('/js/h5p-resizer.js').'" charset="UTF-8"></script>',
             //'url'             => route('h5p.embed', ['id' => $content['id']]),
             'title'           => $content['title'],
-            //'displayOptions'  => self::$core->getDisplayOptionsForView($content['disable'], $author_id),
+            'displayOptions'  => $this->getCore()->getDisplayOptionsForView(0, $content['id']),
             'contentUserData' => [
                 0 => [
                     'state' => '{}',
@@ -331,48 +367,6 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         ];
 
         return $settings;
-
-        // Detemine embed type
-        $embed = H5PCore::determineEmbedType($content['embedType'], $content['library']['embedTypes']);
-        // Make sure content isn't added twice
-        $cid = 'cid-'.$content['id'];
-        if (!isset($settings['contents'][$cid])) {
-            $settings['contents'][$cid] = self::get_content_settings($content);
-            $core = self::$core;
-            // Get assets for this content
-            $preloaded_dependencies = $core->loadContentDependencies($content['id'], 'preloaded');
-            $files = $core->getDependenciesFiles($preloaded_dependencies);
-            self::alter_assets($files, $preloaded_dependencies, $embed);
-            if ($embed === 'div') {
-                foreach ($files['scripts'] as $script) {
-                    $url = $script->path.$script->version;
-                    if (!in_array($url, $settings['loadedJs'])) {
-                        $settings['loadedJs'][] = self::get_h5plibrary_url($url);
-                    }
-                }
-                foreach ($files['styles'] as $style) {
-                    $url = $style->path.$style->version;
-                    if (!in_array($url, $settings['loadedCss'])) {
-                        $settings['loadedCss'][] = self::get_h5plibrary_url($url);
-                    }
-                }
-            } elseif ($embed === 'iframe') {
-                $settings['contents'][$cid]['scripts'] = $core->getAssetsUrls($files['scripts']);
-                $settings['contents'][$cid]['styles'] = $core->getAssetsUrls($files['styles']);
-            }
-        }
-
-        if ($embed === 'div') {
-            return [
-               'settings' => $settings,
-               'embed'    => '<div class="h5p-content" data-content-id="'.$content['id'].'"></div>',
-           ];
-        } else {
-            return [
-               'settings' => $settings,
-               'embed'    => '<div class="h5p-iframe-wrapper"><iframe id="h5p-iframe-'.$content['id'].'" class="h5p-iframe" data-content-id="'.$content['id'].'" style="height:1px" src="about:blank" frameBorder="0" scrolling="no"></iframe></div>',
-           ];
-        }
     }
 
     public function uploadFile($contentId, $field, $token, $nonce = null)
