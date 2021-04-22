@@ -9,7 +9,7 @@ return [
     'filesPath'=> 'filesPath',
     'fileIcon' => 'fileIcon',
     'ajaxPath'=> 'hh5p.index',
-    'libraryUrl' => 'hh5p.library.libraries',
+    'libraryUrl' => 'h5p-editor',
     'get_laravelh5p_url' => 'editor',
     'get_h5peditor_url' => 'h5p-editor',
     'get_language' => 'en',
