@@ -152,9 +152,9 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             $config = (array)config('hh5p');
             $config['url'] = asset($config['url']);
             $config['ajaxPath'] = route($config['ajaxPath']).'/';
-            $config['libraryUrl'] =  route($config['libraryUrl']);
+            $config['libraryUrl'] =  url($config['libraryUrl']).'/';
             $config['get_laravelh5p_url'] =  url($config['get_laravelh5p_url']);
-            $config['get_h5peditor_url'] =  url($config['get_h5peditor_url']);
+            $config['get_h5peditor_url'] =  url($config['get_h5peditor_url']).'/';
             $config['get_h5pcore_url'] =  url($config['get_h5pcore_url']);
             $config['getCopyrightSemantics'] = $this->getContentValidator()->getCopyrightSemantics();
             $config['getMetadataSemantics'] = $this->getContentValidator()->getMetadataSemantics();
