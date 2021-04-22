@@ -236,4 +236,11 @@ class ContentApiTest extends TestCase
 
         $this->assertTrue($id === $data->id);
     }
+
+    public function test_content_show_non_exisiting()
+    {
+        $id = 999999;
+        $response = $this->get("/api/hh5p/content/$id");
+        $response->assertStatus(422);
+    }
 }
