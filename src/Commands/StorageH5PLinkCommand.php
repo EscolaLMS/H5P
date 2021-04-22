@@ -11,7 +11,7 @@ class StorageH5PLinkCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'h5p-storage:link {--relative : Create the symbolic link using relative paths}';
+    protected $signature = 'h5p:storage-link {--relative : Create the symbolic link using relative paths}';
 
     /**
      * The console command description.
