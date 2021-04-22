@@ -86,8 +86,9 @@ class ContentApiController extends Controller implements ContentApiSwagger
         ], 422);
         }
 
-        return response()->json([
-            $content
-        ], 200);
+        return response()->json(
+            $content,
+            200
+        );
     }
 }

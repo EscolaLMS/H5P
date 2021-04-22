@@ -224,4 +224,23 @@ class ContentApiTest extends TestCase
         $response = $this->delete("/api/hh5p/content/$id");
         $response->assertStatus(422);
     }
+
+    public function test_content_show()
+    {
+        $content = H5PContent::first();
+        $id = $content->id;
+        $response = $this->get("/api/hh5p/content/$id");
+        $response->assertStatus(200);
+       
+        $data = json_decode($response->getContent());
+
+        $this->assertTrue($id === $data->id);
+    }
+
+    public function test_content_show_non_exisiting()
+    {
+        $id = 999999;
+        $response = $this->get("/api/hh5p/content/$id");
+        $response->assertStatus(422);
+    }
 }
