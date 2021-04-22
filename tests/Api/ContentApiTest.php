@@ -225,7 +225,7 @@ class ContentApiTest extends TestCase
         $response->assertStatus(422);
     }
 
-    public function test_content_sjpow()
+    public function test_content_show()
     {
         $content = H5PContent::first();
         $id = $content->id;
