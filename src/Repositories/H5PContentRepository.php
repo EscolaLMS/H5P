@@ -141,4 +141,28 @@ class H5PContentRepository implements H5PContentRepositoryContract
     {
         return H5PContent::findOrFail($id);
     }
+
+    public function upload($file, $content = null, $only_upgrade = null, $disable_h5p_security = false):H5PContent
+    {
+        if ($disable_h5p_security) {
+            // Make it possible to disable file extension check
+            $this->hh5pService->getCore()->disableFileCheck = (filter_input(INPUT_POST, 'h5p_disable_file_check', FILTER_VALIDATE_BOOLEAN) ? true : false);
+        }
+
+        $valid = $this->hh5pService->validatePackage($file, false, false);
+
+        if ($valid) {
+            $this->hh5pService->getStorage()->savePackage();
+            // $this->hh5pService->getRepository()->deleteLibraryUsage($content['id']);
+            $id = $this->hh5pService->getStorage()->contentId;
+            return H5PContent::findOrFail($id);
+        } else {
+            @unlink($this->hh5pService->getRepository()->getUploadedH5pPath());
+            throw new H5PException(H5PException::LIBRARY_NOT_FOUND);
+        }
+
+        return false;
+
+        // The uploaded file was not a valid H5P package
+    }
 }

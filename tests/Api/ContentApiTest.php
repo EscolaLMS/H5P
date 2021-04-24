@@ -234,7 +234,9 @@ class ContentApiTest extends TestCase
        
         $data = json_decode($response->getContent());
 
-        $this->assertTrue($id === $data->id);
+        $cid ="cid-$id";
+
+        $this->assertTrue(is_object($data->contents->$cid));
     }
 
     public function test_content_show_non_exisiting()
@@ -242,5 +244,31 @@ class ContentApiTest extends TestCase
         $id = 999999;
         $response = $this->get("/api/hh5p/content/$id");
         $response->assertStatus(422);
+    }
+
+    public function test_content_uploadig()
+    {
+        $filename = 'arithmetic-quiz.h5p';
+        $filepath = realpath(__DIR__.'/../mocks/'.$filename);
+        $storage_path = storage_path($filename);
+
+        copy($filepath, $storage_path);
+
+        $h5pFile = new UploadedFile($storage_path, 'arithmetic-quiz.h5p', 'application/pdf', null, true);
+
+        $response = $this->post('/api/hh5p/content/upload', [
+            'h5p_file' => $h5pFile,
+        ]);
+
+        if ($response->status() >= 422) {
+            echo $response->content();
+        }
+
+        $response->assertStatus(200);
+
+        $data = json_decode($response->getContent());
+
+        $this->assertTrue(is_integer($data->id));
+        $this->assertTrue(is_object($data->params));
     }
 }

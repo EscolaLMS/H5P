@@ -280,6 +280,9 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
                 return $config['url'].($value->path.$value->version);
             }, $files['styles']);
 
+            // Error with scripts order
+           
+           
             $settings['contents']["cid-$content"]['scripts'] = $scripts;
             $settings['contents']["cid-$content"]['styles'] =  $styles;
 
@@ -305,6 +308,120 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
             //$settings = self::get_content_files($settings, $content);
         }
+        
+        return $settings;
+    }
+
+    public function getContentSettings($id):array
+    {
+        $config = $this->getConfig();
+
+        $settings =  [
+            'baseUrl'            => $config['domain'],
+            'url'                => $config['url'],
+            'postUserStatistics' => false,
+            'ajax'               => [
+                'setFinished'     => $config['ajaxSetFinished'],
+                'contentUserData' => $config['ajaxContentUserData'],
+            ],
+            'saveFreq' => false,
+            'siteUrl'  => $config['domain'],
+            'l10n'     => [
+                'H5P' => __('h5p::h5p')
+            ],
+            'hubIsEnabled' => false,
+            'crossorigin' => 'anonymous'
+        ];
+
+        $settings['loadedJs'] = [];
+        $settings['loadedCss'] = [];
+
+        $settings['core'] = [
+            'styles'  => [],
+            'scripts' => [],
+        ];
+        foreach (H5PCore::$styles as $style) {
+            $settings['core']['styles'][] = $config['get_h5pcore_url'].'/'.$style;
+        }
+        foreach (H5PCore::$scripts as $script) {
+            $settings['core']['scripts'][] = $config['get_h5pcore_url'].'/'.$script;
+        }
+        //$settings['core']['scripts'][] = $config['get_h5peditor_url'].'/language/en.js'; // TODO this lang should vary depending on config
+
+        // get settings start
+        
+        $content = $this->getCore()->loadContent($id);
+        $content['metadata']['title'] = $content['title'];
+        
+        $safe_parameters = $this->getCore()->filterParameters($content); // TODO: actually this is inserting stuff in Database, it shouldn'e instert anything since this is a GET
+
+        $library = $content['library'];
+
+        $uberName =  $library['name']." ".$library['majorVersion'].'.'.$library['minorVersion'];
+
+        $settings['contents']["cid-$id"] = [
+            'library'         => $uberName,
+            'content'         => $content,
+            'jsonContent'     => $safe_parameters,
+            'fullScreen'      => $content['library']['fullscreen'],
+            //'exportUrl'       => config('laravel-h5p.h5p_export') ? route('h5p.export', [$content['id']]) : '',
+            //'embedCode'       => '<iframe src="'.route('h5p.embed', ['id' => $content['id']]).'" width=":w" height=":h" frameborder="0" allowfullscreen="allowfullscreen"></iframe>',
+            //'resizeCode'      => '<script src="'.self::get_h5pcore_url('/js/h5p-resizer.js').'" charset="UTF-8"></script>',
+            //'url'             => route('h5p.embed', ['id' => $content['id']]),
+            'title'           => $content['title'],
+            'displayOptions'  => $this->getCore()->getDisplayOptionsForView(0, $content['id']),
+            'contentUserData' => [
+                0 => [
+                    'state' => '{}',
+                ],
+            ],
+            'nonce' => $content['nonce']
+        ];
+
+        // get settings stop
+
+        $settings['nonce'] =  $settings['contents']["cid-$id"]['nonce'];
+        
+        $language_script = '/language/'.$config['get_language'].'.js';
+    
+        $preloaded_dependencies = $this->getCore()->loadContentDependencies($id, 'preloaded');
+        $files = $this->getCore()->getDependenciesFiles($preloaded_dependencies);
+        $cid = $settings['contents']["cid-$id"];
+        $embed = H5PCore::determineEmbedType($cid ['content']['embed_type'] ?? "div", $cid['content']['library']['embedTypes']);
+
+        $scripts = array_map(function ($value) use ($config) {
+            return $config['url'].($value->path.$value->version);
+        }, $files['scripts']);
+
+        $styles = array_map(function ($value) use ($config) {
+            return $config['url'].($value->path.$value->version);
+        }, $files['styles']);
+
+        // Error with scripts order
+
+        $scripts2 = [
+             "http://localhost:1000/h5p/libraries/Tether-1.0/scripts/tether.min.js?ver=1.0.2"
+            ,"http://localhost:1000/h5p/libraries/Drop-1.0/js/drop.min.js?ver=1.0.2"
+       ,"http://localhost:1000/h5p/libraries/H5P.JoubelUI-1.3/js/joubel-help-dialog.js?ver=1.3.10"
+        , "http://localhost:1000/h5p/libraries/H5P.JoubelUI-1.3/js/joubel-message-dialog.js?ver=1.3.10"
+        , "http://localhost:1000/h5p/libraries/H5P.JoubelUI-1.3/js/joubel-progress-circle.js?ver=1.3.10"
+        , "http://localhost:1000/h5p/libraries/H5P.JoubelUI-1.3/js/joubel-simple-rounded-button.js?ver=1.3.10"
+        , "http://localhost:1000/h5p/libraries/H5P.JoubelUI-1.3/js/joubel-speech-bubble.js?ver=1.3.10"
+        , "http://localhost:1000/h5p/libraries/H5P.JoubelUI-1.3/js/joubel-throbber.js?ver=1.3.10"
+        , "http://localhost:1000/h5p/libraries/H5P.JoubelUI-1.3/js/joubel-tip.js?ver=1.3.10"
+        , "http://localhost:1000/h5p/libraries/H5P.JoubelUI-1.3/js/joubel-slider.js?ver=1.3.10"
+        , "http://localhost:1000/h5p/libraries/H5P.JoubelUI-1.3/js/joubel-score-bar.js?ver=1.3.10"
+        , "http://localhost:1000/h5p/libraries/H5P.JoubelUI-1.3/js/joubel-progressbar.js?ver=1.3.10"
+        , "http://localhost:1000/h5p/libraries/H5P.JoubelUI-1.3/js/joubel-ui.js?ver=1.3.10"
+        , "http://localhost:1000/h5p/libraries/H5P.Question-1.4/scripts/question.js?ver=1.4.8"
+        , "http://localhost:1000/h5p/libraries/H5P.Question-1.4/scripts/explainer.js?ver=1.4.8"
+        , "http://localhost:1000/h5p/libraries/H5P.Question-1.4/scripts/score-points.js?ver=1.4.8"
+        , "http://localhost:1000/h5p/libraries/H5P.Transition-1.0/transition.js?ver=1.0.4"
+        , "http://localhost:1000/h5p/libraries/H5P.Image-1.1/image.js?ver=1.1.10"
+        , "http://localhost:1000/h5p/libraries/H5P.Agamotto-1.5/dist/h5p-agamotto.js?ver=1.5.2"];
+        
+        $settings['contents']["cid-$id"]['scripts'] = $scripts;
+        $settings['contents']["cid-$id"]['styles'] =  $styles;
         
         return $settings;
     }

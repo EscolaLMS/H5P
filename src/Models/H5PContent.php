@@ -121,13 +121,13 @@ class H5PContent extends Model
     public function getParamsAttribute($value)
     {
         $parameters = json_decode($this->parameters);
-        return $parameters->params;
+        return isset($parameters->params) ? $parameters->params : $parameters;
     }
-
 
     public function getMetadataAttribute($value)
     {
         $parameters = json_decode($this->parameters);
+        return isset($parameters->metadata) ? $parameters->metadata : [];
         return $parameters->metadata;
     }
 

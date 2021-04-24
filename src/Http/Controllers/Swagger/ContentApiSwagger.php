@@ -6,6 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 use EscolaLms\HeadlessH5P\Http\Requests\ContentStoreRequest;
+use EscolaLms\HeadlessH5P\Http\Requests\LibraryStoreRequest;
 
     /**
      * @OA\Schema(
@@ -129,6 +130,33 @@ interface ContentApiSwagger
     * )
     */
     public function store(ContentStoreRequest $request): JsonResponse;
+
+    /**
+    * @OA\Get(
+    *      path="/api/hh5p/content/{id}",
+    *      summary="Content settings for player",
+    *      tags={"H5P"},
+    *      description="Content settings for player",
+    *      @OA\Parameter(
+    *          name="id",
+    *          description="Id of Content",
+    *          in="path",
+    *          required=true,
+    *          @OA\Schema(
+    *             type="integer",
+    *         )
+    *      ),
+    *      @OA\Response(
+    *          response=200,
+    *          description="successful operation",
+    *          @OA\JsonContent(
+    *             type="object",
+    *             ref="#/components/schemas/H5PEditorSettings"
+    *         )
+    *      )
+    * )
+    */
+    public function show(Request $request, int $id): JsonResponse;
 
     /**
     * @OA\Post(
@@ -266,4 +294,35 @@ interface ContentApiSwagger
     * )
     */
     public function destroy(Request $request, int $id): JsonResponse;
+
+    /**
+    * @OA\Post(
+    *      path="/api/hh5p/content/upload",
+    *      summary="Store h5p content from file in database",
+    *      tags={"H5P"},
+    *      description="Store h5p content from file in database",
+    *      @OA\RequestBody(
+    *          required=true,
+    *          @OA\MediaType(
+    *              mediaType="multipart/form-data",
+    *              @OA\Schema(
+    *                  type="object",
+    *                  @OA\Property(
+    *                      property="h5p_file",
+    *                      type="string",
+    *                      format="binary"
+    *                  )
+    *              )
+    *          )
+    *      ),
+    *      @OA\Response(
+    *          response=200,
+    *          description="successful operation",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          )
+    *      )
+    * )
+    */
+    public function upload(LibraryStoreRequest $request): JsonResponse;
 }

@@ -5,14 +5,14 @@ namespace EscolaLms\HeadlessH5P\Commands;
 use Illuminate\Console\Command;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 
-class H5PLibrarySeedCommand extends Command
+class H5PContentSeedCommand extends Command
 {
     /**
      * The console command signature.
      *
      * @var string
      */
-    protected $signature = 'h5p:library-seed';
+    protected $signature = 'h5p:content-seed';
 
     /**
      * The console command description.
@@ -45,7 +45,7 @@ class H5PLibrarySeedCommand extends Command
 
         // Content update is skipped because it is new registration
         $content = null;
-        $skipContent = true;
+        $skipContent = false;
         $h5p_upgrade_only = false;
 
         if ($this->hh5pService->getValidator()->isValidPackage($skipContent, $h5p_upgrade_only)) {
