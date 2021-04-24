@@ -98,6 +98,37 @@
             }
         },
         "/api/hh5p/content/{id}": {
+            "get": {
+                "tags": [
+                    "H5P"
+                ],
+                "summary": "Content settings for player",
+                "description": "Content settings for player",
+                "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\ContentApiSwagger::show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of Content",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/H5PEditorSettings"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "tags": [
                     "H5P"
@@ -180,6 +211,40 @@
                     },
                     "401": {
                         "description": "unauthorised",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/hh5p/content/upload": {
+            "post": {
+                "tags": [
+                    "H5P"
+                ],
+                "summary": "Store h5p content from file in database",
+                "description": "Store h5p content from file in database",
+                "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\ContentApiSwagger::upload",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "h5p_file": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
                         "content": {
                             "application/json": {}
                         }
