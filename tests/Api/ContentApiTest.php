@@ -30,7 +30,7 @@ class ContentApiTest extends TestCase
             'h5p_file' => $h5pFile,
         ]);
 
-        $library = H5PLibrary::first();
+        $library = H5PLibrary::where('runnable', 1)->first();
 
         // TODO this should be from factory ?
         $response = $this->postJson('/api/hh5p/content', [
@@ -40,9 +40,7 @@ class ContentApiTest extends TestCase
             "params"=>"{\"params\":{\"taskDescription\":\"Documentation tool\",\"pagesList\":[{\"params\":{\"elementList\":[{\"params\":{},\"library\":\"H5P.Text 1.1\",\"metadata\":{\"contentType\":\"Text\",\"license\":\"U\",\"title\":\"Untitled Text\",\"authors\":[],\"changes\":[],\"extraTitle\":\"Untitled Text\"},\"subContentId\":\"da3387da-355a-49fb-92bc-3a9a4e4646a9\"}],\"helpTextLabel\":\"More information\",\"helpText\":\"\"},\"library\":\"H5P.StandardPage 1.5\",\"metadata\":{\"contentType\":\"Standard page\",\"license\":\"U\",\"title\":\"Untitled Standard page\",\"authors\":[],\"changes\":[],\"extraTitle\":\"Untitled Standard page\"},\"subContentId\":\"ac6ffdac-be02-448c-861c-969e6a09dbd5\"}],\"i10n\":{\"previousLabel\":\"poprzedni\",\"nextLabel\":\"Next\",\"closeLabel\":\"Close\"}},\"metadata\":{\"license\":\"U\",\"authors\":[],\"changes\":[],\"extraTitle\":\"fdsfds\",\"title\":\"fdsfds\"}}"
         ]);
 
-        if ($response->status() >= 422) {
-            echo $response->content();
-        }
+       
 
         $response->assertStatus(200);
         $response->assertJsonStructure(['id']);
@@ -50,8 +48,6 @@ class ContentApiTest extends TestCase
 
     public function test_content_create_no_nonce()
     {
-        $library = H5PLibrary::first();
-
         $response = $this->postJson('/api/hh5p/content', [
             "title"=>"The Title",
             "library"=>"Invalid lib name",
@@ -63,8 +59,6 @@ class ContentApiTest extends TestCase
 
     public function test_content_create_invalid_library()
     {
-        $library = H5PLibrary::first();
-
         $response = $this->postJson('/api/hh5p/content', [
             "nonce"=>bin2hex(random_bytes(4)),
             "title"=>"The Title",
@@ -77,7 +71,7 @@ class ContentApiTest extends TestCase
 
     public function test_content_create_invalid_json()
     {
-        $library = H5PLibrary::first();
+        $library = H5PLibrary::where('runnable', 1)->first();
 
         $response = $this->postJson('/api/hh5p/content', [
             "nonce"=>bin2hex(random_bytes(4)),
@@ -94,7 +88,7 @@ class ContentApiTest extends TestCase
     public function test_content_update()
     {
         $content = H5PContent::first();
-        $library = H5PLibrary::first();
+        $library = H5PLibrary::where('runnable', 1)->first();
         $id = $content->id;
 
         // TODO this should be from factory ?
@@ -105,9 +99,7 @@ class ContentApiTest extends TestCase
           "params"=>"{\"params\":{\"taskDescription\":\"Documentation tool\",\"pagesList\":[{\"params\":{\"elementList\":[{\"params\":{},\"library\":\"H5P.Text 1.1\",\"metadata\":{\"contentType\":\"Text\",\"license\":\"U\",\"title\":\"Untitled Text\",\"authors\":[],\"changes\":[],\"extraTitle\":\"Untitled Text\"},\"subContentId\":\"da3387da-355a-49fb-92bc-3a9a4e4646a9\"}],\"helpTextLabel\":\"More information\",\"helpText\":\"\"},\"library\":\"H5P.StandardPage 1.5\",\"metadata\":{\"contentType\":\"Standard page\",\"license\":\"U\",\"title\":\"Untitled Standard page\",\"authors\":[],\"changes\":[],\"extraTitle\":\"Untitled Standard page\"},\"subContentId\":\"ac6ffdac-be02-448c-861c-969e6a09dbd5\"}],\"i10n\":{\"previousLabel\":\"poprzedni\",\"nextLabel\":\"Next\",\"closeLabel\":\"Close\"}},\"metadata\":{\"license\":\"U\",\"authors\":[],\"changes\":[],\"extraTitle\":\"fdsfds\",\"title\":\"fdsfds\"}}"
       ]);
 
-        if ($response->status() >= 422) {
-            echo $response->content();
-        }
+       
 
         $response->assertStatus(200);
         $response->assertJsonStructure(['id']);
@@ -144,7 +136,7 @@ class ContentApiTest extends TestCase
 
     public function test_content_update_invalid_json()
     {
-        $library = H5PLibrary::first();
+        $library = H5PLibrary::where('runnable', 1)->first();
         $content = H5PContent::first();
         $id = $content->id;
 
@@ -203,7 +195,7 @@ class ContentApiTest extends TestCase
     
     public function test_content_delete()
     {
-        $library = H5PLibrary::first();
+        $library = H5PLibrary::where('runnable', 1)->first();
 
         
         // TODO this should be from factory ?
@@ -227,14 +219,17 @@ class ContentApiTest extends TestCase
 
     public function test_content_show()
     {
-        $content = H5PContent::first();
+        $content = H5PContent::latest()->first();
+
         $id = $content->id;
         $response = $this->get("/api/hh5p/content/$id");
         $response->assertStatus(200);
        
         $data = json_decode($response->getContent());
 
-        $this->assertTrue($id === $data->id);
+        $cid ="cid-$id";
+
+        $this->assertTrue(is_object($data->contents->$cid));
     }
 
     public function test_content_show_non_exisiting()
@@ -242,5 +237,27 @@ class ContentApiTest extends TestCase
         $id = 999999;
         $response = $this->get("/api/hh5p/content/$id");
         $response->assertStatus(422);
+    }
+
+    public function test_content_uploadig()
+    {
+        $filename = 'arithmetic-quiz.h5p';
+        $filepath = realpath(__DIR__.'/../mocks/'.$filename);
+        $storage_path = storage_path($filename);
+
+        copy($filepath, $storage_path);
+
+        $h5pFile = new UploadedFile($storage_path, 'arithmetic-quiz.h5p', 'application/pdf', null, true);
+
+        $response = $this->post('/api/hh5p/content/upload', [
+            'h5p_file' => $h5pFile,
+        ]);
+
+        $response->assertStatus(200);
+
+        $data = json_decode($response->getContent());
+
+        $this->assertTrue(is_integer($data->id));
+        $this->assertTrue(is_object($data->params));
     }
 }

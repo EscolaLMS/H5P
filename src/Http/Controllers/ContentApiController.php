@@ -10,6 +10,7 @@ use EscolaLms\HeadlessH5P\Services\HeadlessH5PService;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 
 use EscolaLms\HeadlessH5P\Http\Requests\ContentStoreRequest;
+use EscolaLms\HeadlessH5P\Http\Requests\LibraryStoreRequest;
 use Illuminate\Routing\Controller;
 use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
 use Exception;
@@ -79,7 +80,23 @@ class ContentApiController extends Controller implements ContentApiSwagger
     public function show(Request $request, int $id): JsonResponse
     {
         try {
-            $content = $this->contentRepository->show($id);
+            $settings = $this->hh5pService->getContentSettings($id);
+        } catch (Exception $error) {
+            return response()->json([
+            'error' => $error->getMessage()
+        ], 422);
+        }
+
+        return response()->json(
+            $settings,
+            200
+        );
+    }
+
+    public function upload(LibraryStoreRequest $request): JsonResponse
+    {
+        try {
+            $content = $this->contentRepository->upload($request->file('h5p_file'));
         } catch (Exception $error) {
             return response()->json([
             'error' => $error->getMessage()

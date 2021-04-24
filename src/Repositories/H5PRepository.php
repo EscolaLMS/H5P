@@ -422,7 +422,80 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function insertContent($content, $contentMainId = null)
     {
-        return $this->updateContent($content);
+        return $this->updateContent($content, $contentMainId = null);
+    }
+
+    private function fixContentParamsMetadataLibraryTitle($content)
+    {
+        $defaultTitle = "New Content (from file)";
+
+        if (is_array($content['library'])) {
+            $content['library_id'] = isset($content['library']['libraryId']) ? $content['library']['libraryId'] : $content['library']['id'];
+        }
+
+        // `parameters` is string, encode
+        if (isset($content['parameters']) && is_string($content['parameters'])) {
+            $parameters = json_decode($content['parameters']);
+            if (is_object($parameters) && isset($parameters->params)) {
+                $parameters = $parameters->params;
+            }
+            if (is_object($parameters) && isset($parameters->metadata)) {
+                $metadata = $parameters->metadata;
+            }
+            if (is_array($parameters) && isset($parameters['params'])) {
+                $parameters = $parameters['params'];
+            }
+            if (is_array($parameters) && isset($parameters['metadata'])) {
+                $metadata = $parameters['metadata'];
+            }
+        }
+
+        // `params` is string, encode
+        if (!isset($parameters) && is_string($content['params'])) {
+            $parameters = json_decode($content['params']);
+            if (is_object($parameters) && isset($parameters->params)) {
+                $parameters = $parameters->params;
+            }
+            if (is_object($parameters) && isset($parameters->metadata)) {
+                $metadata = $parameters->metadata;
+            }
+            if (is_array($parameters) && isset($parameters['params'])) {
+                $parameters = $parameters['params'];
+            }
+            if (is_array($parameters) && isset($parameters['metadata'])) {
+                $metadata = $parameters['metadata'];
+            }
+        }
+        // `params is array
+        if (!isset($parameters) && is_array($content['params'])) {
+            if (is_array($content['params']['params'])) {
+                $parameters = $parameters['params']['params'];
+            } else {
+                $parameters = $parameters['params'];
+            }
+        }
+
+        //
+        if (!isset($content['nonce'])) {
+            $content['nonce'] = bin2hex(random_bytes(4));
+        }
+        //
+        if (!isset($content['title'])) {
+            $content['title'] = $defaultTitle;
+        }
+
+        if (!isset($metadata)) {
+            $metadata = ["license"=>"U","authors"=>[],"changes"=>[],"extraTitle"=>$defaultTitle,"title"=>$defaultTitle];
+        }
+
+        $parameters = [
+            'params' => $parameters,
+            'metadata' => $metadata
+        ];
+
+        $content['parameters'] = json_encode($parameters);
+
+        return $content;
     }
 
     /**
@@ -439,6 +512,7 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function updateContent($content, $contentMainId = null)
     {
+        $content = $this->fixContentParamsMetadataLibraryTitle($content);
         if (isset($content['id'])) {
             H5PContent::findOrFail($content['id'])->update($content);
             return $content['id'];
