@@ -58,3 +58,13 @@ You can seed library and content with build-in seeders that are accessible with
 
 - `php artisan h5p:seed` to add just libraries
 - `php artisan h5p:seed --addContent` to add content with libraries
+
+## Road map 
+
+- caching 
+- content export 
+- some transaltions are missing 
+- casading delete 
+- sql foreign keys indexing 
+- clearup task - deleting temp files, marked for delete 
+- in some contents, js libs content is invalid 
