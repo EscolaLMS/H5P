@@ -8,7 +8,7 @@
 
 ## Features
 
-The lib allows to
+The lib allows headlessly 
 
 - play all h5p content - exposed all essential data, yet player is needed
 - edit all h5p content - exposed all essential data, yet editor is needed
@@ -18,6 +18,10 @@ The lib allows to
 - upload content from `.h5p` file
 
 See [Swagger](https://escolalms.github.io/H5P/) documented endpoints.
+
+Some [tests](tests) can also be a great point of start. 
+
+To play the content you can use [EscolaLMS H5P Player](https://github.com/EscolaLMS/H5P-player)
 
 ## Install
 
