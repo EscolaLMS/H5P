@@ -5,26 +5,26 @@ namespace EscolaLms\HeadlessH5P\Commands;
 use Illuminate\Console\Command;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 
-class H5PLibrarySeedCommand extends Command
+class H5PSeedCommand extends Command
 {
     /**
      * The console command signature.
      *
      * @var string
      */
-    protected $signature = 'h5p:library-seed';
+    protected $signature = 'h5p:seed {--addContent : Should content be added or just the library}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Seed the database and files with most of h5plibraries. Fetched from h5p.org';
+    protected $description = 'Seed the database and files with most of h5p libraries and content. Fetched from h5p.org';
 
     private HeadlessH5PServiceContract $hh5pService;
 
 
-    private function downloadAndSeed($lib)
+    private function downloadAndSeed($lib, $addContent = false)
     {
         // eg https://h5p.org/sites/default/files/h5p/exports/interactive-video-2-618.h5p
         $url = "https://h5p.org/sites/default/files/h5p/exports/$lib";
@@ -45,7 +45,7 @@ class H5PLibrarySeedCommand extends Command
 
         // Content update is skipped because it is new registration
         $content = null;
-        $skipContent = true;
+        $skipContent = !$addContent;
         $h5p_upgrade_only = false;
 
         if ($this->hh5pService->getValidator()->isValidPackage($skipContent, $h5p_upgrade_only)) {
@@ -66,6 +66,8 @@ class H5PLibrarySeedCommand extends Command
      */
     public function handle(HeadlessH5PServiceContract $hh5pService)
     {
+        $addContent = $this->option('addContent');
+
         $this->hh5pService = $hh5pService;
         $libs = [
             "example-content-arts-of-europe-443085.h5p",
@@ -118,7 +120,7 @@ class H5PLibrarySeedCommand extends Command
 
         foreach ($libs as $lib) {
             echo "seeding $lib \n";
-            $this->downloadAndSeed($lib);
+            $this->downloadAndSeed($lib, $addContent);
         }
     }
 }

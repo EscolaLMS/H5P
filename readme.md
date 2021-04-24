@@ -17,7 +17,7 @@ The lib allows to
 - upload library from `.h5p` file
 - upload content from `.h5p` file
 
-See swagger [Swagger](https://escolalms.github.io/H5P/) endpoints.
+See [Swagger](https://escolalms.github.io/H5P/) documented endpoints.
 
 ## Install
 
@@ -44,7 +44,7 @@ location ~* \.(eot|ttf|woff|woff2|jpg|jpeg|gif|png|wav|mp3|mp4|mov|ogg|webv)$ {
 
 ### Seeder
 
-you can seed library and content with build-in seeders that are accessible with
+You can seed library and content with build-in seeders that are accessible with
 
-- `php artisan h5p:library-seed`
-- `php artisan h5p:content-seed`
+- `php artisan h5p:seed` to add just libraries
+- `php artisan h5p:seed --addContent` to add content with libraries
