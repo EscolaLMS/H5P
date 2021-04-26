@@ -19,6 +19,9 @@ jobs:
       - name: Setup environment
         run: cp -r env/codecov/. .
 
+      - name: add Swagger main annotaion
+        run: php -r "file_put_contents('src/HeadlessH5PServiceProvider.php', str_replace('SWAGGER_VERSION', '@OA\Info(title=\"EscolaLMS\", version=\"0.0.1\")', file_get_contents('src/HeadlessH5PServiceProvider.php')));"
+
       - name: Update composer
         run: composer update
 

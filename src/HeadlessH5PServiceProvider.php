@@ -28,7 +28,7 @@ use EscolaLms\HeadlessH5P\Repositories\H5PEditorStorageRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PContentRepository;
 
 /**
-* @OA\Info(title="EscolaLMS", version="0.0.1")
+* SWAGGER_VERSION
 */
 
 class HeadlessH5PServiceProvider extends ServiceProvider
