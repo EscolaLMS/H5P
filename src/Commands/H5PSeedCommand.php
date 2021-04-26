@@ -29,8 +29,13 @@ class H5PSeedCommand extends Command
         // eg https://h5p.org/sites/default/files/h5p/exports/interactive-video-2-618.h5p
         $url = "https://h5p.org/sites/default/files/h5p/exports/$lib";
 
-        $filename = realpath(__dir__."/../../storage/h5p/temp")."/$lib";
         $filename = storage_path("app/h5p/temp/$lib");
+
+        $dirname = dirname($filename);
+
+        if (!is_dir($dirname)) {
+            mkdir($dirname, 0777, true);
+        }
 
         if (!is_file($filename)) {
             if (file_put_contents($filename, file_get_contents($url))) {
