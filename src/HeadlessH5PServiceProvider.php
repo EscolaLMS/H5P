@@ -17,6 +17,7 @@ use H5PContentValidator;
 
 use Illuminate\Support\ServiceProvider;
 use EscolaLms\HeadlessH5P\Commands\H5PSeedCommand;
+use EscolaLms\HeadlessH5P\Commands\StorageH5PLinkCommand;
 use EscolaLms\HeadlessH5P\Services\HeadlessH5PService;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
@@ -38,7 +39,7 @@ class HeadlessH5PServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-        $this->commands([H5PSeedCommand::class]);
+        $this->commands([H5PSeedCommand::class, StorageH5PLinkCommand::class]);
         $this->bindH5P();
     }
 
