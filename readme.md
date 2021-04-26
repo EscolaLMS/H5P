@@ -8,7 +8,7 @@
 
 ## Features
 
-The lib allows to
+The lib allows headlessly 
 
 - play all h5p content - exposed all essential data, yet player is needed
 - edit all h5p content - exposed all essential data, yet editor is needed
@@ -19,16 +19,26 @@ The lib allows to
 
 See [Swagger](https://escolalms.github.io/H5P/) documented endpoints.
 
+Some [tests](tests) can also be a great point of start. 
+
+To play the content you can use [EscolaLMS H5P Player](https://github.com/EscolaLMS/H5P-player)
+
 ## Install
 
-1. `composer require escolalms/laravel-headless-h5p`
+1. `composer require escolalms/headless-h5p`
 2. `php artisan migrate`
 
 ### Storage links
 
 You need to publish many of files to be availabe as public link.
 
-`php artisan h5p:link` which creates a symbolic link from `storage/app/h5` and `vendor/h5p/h5p-core` and `vendor/h5p/h5p-editor` to be accesible to public.
+`php artisan h5p:link` which creates a symbolic link from `storage/app/h5` and `vendor/h5p/h5p-core` and `vendor/h5p/h5p-editor` to be accesible to public, as follows
+
+ ```
+public_path('h5p') => storage_path('app/h5p'),
+public_path('h5p-core') => base_path().'vendor/h5p/h5p-core',
+public_path('h5p-editor') => base_path().'vendor/h5p/h5p-editor',
+```
 
 ### Cors
 
@@ -48,3 +58,13 @@ You can seed library and content with build-in seeders that are accessible with
 
 - `php artisan h5p:seed` to add just libraries
 - `php artisan h5p:seed --addContent` to add content with libraries
+
+## Road map 
+
+- caching 
+- content export 
+- some transaltions are missing 
+- casading delete 
+- sql foreign keys indexing 
+- clearup task - deleting temp files, marked for delete 
+- in some contents, js libs content is invalid 
