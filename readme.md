@@ -55,7 +55,13 @@ location ~* \.(eot|ttf|woff|woff2|jpg|jpeg|gif|png|wav|mp3|mp4|mov|ogg|webv)$ {
 
 ### Seeder
 
-You can seed library and content with build-in seeders that are accessible with
+To seed content and library 
+
+```
+php artisan db:seed --class="\EscolaLms\HeadlessH5P\Database\Seeders\ContentLibrarySeeder"
+```
+
+You can seed library and content with build-in seeders as command that are accessible with
 
 - `php artisan h5p:seed` to add just libraries
 - `php artisan h5p:seed --addContent` to add content with libraries
