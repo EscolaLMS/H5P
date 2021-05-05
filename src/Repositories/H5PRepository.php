@@ -517,6 +517,9 @@ class H5PRepository implements H5PFrameworkInterface
             H5PContent::findOrFail($content['id'])->update($content);
             return $content['id'];
         } else {
+            unset($content['params']);
+            unset($content['library']);
+            
             $newContent = H5PContent::create($content);
             return $newContent->id;
         }
