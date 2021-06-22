@@ -222,7 +222,7 @@ interface ContentApiSwagger
     *      ),
     *      @OA\Parameter(
     *          name="per_page",
-    *          description="items per page",
+    *          description="items per page. If set to 0, returns ALL contents ",
     *          in="query",
     *          required=false,
     *          @OA\Schema(
