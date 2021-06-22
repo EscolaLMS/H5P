@@ -10,6 +10,7 @@ use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 use EscolaLms\HeadlessH5P\Exceptions\H5PException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use EscolaLms\HeadlessH5P\Helpers\Helpers;
+use Illuminate\Support\Collection;
 
 class H5PContentRepository implements H5PContentRepositoryContract
 {
@@ -33,7 +34,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
         if ($libDb === null) {
             throw new H5PException(H5PException::LIBRARY_NOT_FOUND);
         }
-        
+
         $json = json_decode($params);
 
         if ($json === null) {
@@ -66,7 +67,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
         if ($libDb === null) {
             throw new H5PException(H5PException::LIBRARY_NOT_FOUND);
         }
-        
+
         $json = json_decode($params);
 
         if ($json === null) {
@@ -88,7 +89,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
             //'nonce'=>$nonce
         ], $id);
 
-    
+
         $this->moveTmpFilesToContentFolders($nonce, $id);
 
         return $id;
@@ -119,9 +120,32 @@ class H5PContentRepository implements H5PContentRepositoryContract
         return true;
     }
 
-    public function list($per_page = 15):LengthAwarePaginator
+    public function list($per_page = 15, array $columns = ['*']):LengthAwarePaginator
     {
-        return H5PContent::with(['library'])->paginate(intval($per_page));
+        $paginator = H5PContent::with(
+            ['library']
+        )->select($columns)->paginate(intval($per_page));
+        $paginator->getCollection()->transform(function ($content) {
+            // Your code here
+            $content->library->makeHidden(['semantics']);
+            $content->library->setAppends([]);
+            return $content;
+        });
+        return $paginator;
+    }
+
+    public function unpaginatedList(array $columns = ['*']):Collection
+    {
+        $list = H5PContent::with(
+            ['library']
+        )->select($columns)->get();
+        $list->transform(function ($content) {
+            // Your code here
+            $content->library->makeHidden(['semantics']);
+            $content->library->setAppends([]);
+            return $content;
+        });
+        return $list;
     }
 
     public function delete(int $id):int

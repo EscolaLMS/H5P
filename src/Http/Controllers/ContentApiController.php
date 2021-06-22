@@ -25,10 +25,11 @@ class ContentApiController extends Controller implements ContentApiSwagger
         $this->hh5pService = $hh5pService;
         $this->contentRepository = $contentRepository;
     }
-    
+
     public function index(Request $request): JsonResponse
     {
-        $list = $this->contentRepository->list($request->get('per_page'));
+        $columns = ['title', 'id', 'library_id'];
+        $list = $request->get('per_page') !== null && $request->get('per_page') == 0 ?  $this->contentRepository->unpaginatedList($columns) :  $this->contentRepository->list($request->get('per_page'), $columns);
         return response()->json($list, 200);
     }
 
@@ -41,7 +42,7 @@ class ContentApiController extends Controller implements ContentApiSwagger
                 'error' => $error->getMessage()
             ], 422);
         }
-    
+
         return response()->json([
             'id' => $contentId
         ], 200);
@@ -56,7 +57,7 @@ class ContentApiController extends Controller implements ContentApiSwagger
                 'error' => $error->getMessage()
             ], 422);
         }
-    
+
         return response()->json([
             'id' => $contentId
         ], 200);
