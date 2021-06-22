@@ -26,7 +26,7 @@
                     {
                         "name": "per_page",
                         "in": "query",
-                        "description": "items per page",
+                        "description": "items per page. If set to 0, returns ALL contents ",
                         "required": false,
                         "schema": {
                             "type": "integer"
