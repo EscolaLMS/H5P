@@ -29,7 +29,7 @@ class ContentApiController extends Controller implements ContentApiSwagger
     public function index(Request $request): JsonResponse
     {
         $columns = ['title', 'id', 'library_id'];
-        $list = $request->get('per_page') == 0 ?  $this->contentRepository->unpaginatedList($columns) :  $this->contentRepository->list($request->get('per_page'), $columns);
+        $list = $request->get('per_page') !== null && $request->get('per_page') == 0 ?  $this->contentRepository->unpaginatedList($columns) :  $this->contentRepository->list($request->get('per_page'), $columns);
         return response()->json($list, 200);
     }
 
