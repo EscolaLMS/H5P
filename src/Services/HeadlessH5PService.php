@@ -219,7 +219,6 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $settings['core']['scripts'][] = $config['get_h5peditor_url'].'/scripts/h5peditor-init.js';
         $settings['core']['scripts'][] = $config['get_h5peditor_url'].'/language/en.js'; // TODO this lang should vary depending on config
 
-        //$settings['core']['scripts'][] = $config['get_laravelh5p_url'].'/laravel-h5p.js';
 
         $settings['editor'] = [
             'filesPath' => isset($content) ? url("h5p/content/$content") : url("h5p/editor"),
@@ -402,8 +401,8 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             $settings['contents']["cid-$id"]['scripts'] = $scripts;
             $settings['contents']["cid-$id"]['styles'] =  $styles;
         } else {
-            $settings['loadedCss'][] = $styles;
-            $settings['loadedJs'][] = $scripts;
+            $settings['loadedCss'] = $styles;
+            $settings['loadedJs'] = $scripts;
         }
 
         return $settings;
