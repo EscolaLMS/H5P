@@ -179,6 +179,12 @@ class H5PContentRepository implements H5PContentRepositoryContract
             $this->hh5pService->getStorage()->savePackage();
             // $this->hh5pService->getRepository()->deleteLibraryUsage($content['id']);
             $id = $this->hh5pService->getStorage()->contentId;
+
+            $content = $this->hh5pService->getCore()->loadContent($id);
+            $content['metadata']['title'] = $content['title'];
+
+            $safe_parameters = $this->hh5pService->getCore()->filterParameters($content);
+
             return H5PContent::findOrFail($id);
         } else {
             @unlink($this->hh5pService->getRepository()->getUploadedH5pPath());
