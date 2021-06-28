@@ -38,7 +38,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     private H5PEditorAjaxInterface $editorAjaxRepository;
     private H5PContentValidator $contentValidator;
     private array $config;
-    
+
     public function __construct(
         H5PFrameworkInterface $repository,
         H5PFileStorage $fileStorage,
@@ -60,32 +60,32 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $this->editor = $editor;
         $this->contentValidator = $contentValidator;
     }
-  
+
     public function getEditor():H5peditor
     {
         return $this->editor;
     }
-  
+
     public function getRepository():H5PFrameworkInterface
     {
         return $this->repository;
     }
-  
+
     public function getFileStorage():H5PFileStorage
     {
         return $this->fileStorage;
     }
-      
+
     public function getCore():H5PCore
     {
         return $this->core;
     }
-      
+
     public function getValidator():H5PValidator
     {
         return $this->validator;
     }
-  
+
     public function getStorage():H5PStorage
     {
         return $this->storage;
@@ -95,7 +95,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     {
         return $this->editorStorage;
     }
-  
+
     public function getContentValidator():H5PContentValidator
     {
         return $this->contentValidator;
@@ -281,8 +281,8 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             }, $files['styles']);
 
             // Error with scripts order
-           
-           
+
+
             $settings['contents']["cid-$content"]['scripts'] = $scripts;
             $settings['contents']["cid-$content"]['styles'] =  $styles;
 
@@ -308,7 +308,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
             //$settings = self::get_content_files($settings, $content);
         }
-        
+
         return $settings;
     }
 
@@ -349,10 +349,10 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         //$settings['core']['scripts'][] = $config['get_h5peditor_url'].'/language/en.js'; // TODO this lang should vary depending on config
 
         // get settings start
-        
+
         $content = $this->getCore()->loadContent($id);
         $content['metadata']['title'] = $content['title'];
-        
+
         $safe_parameters = $this->getCore()->filterParameters($content); // TODO: actually this is inserting stuff in Database, it shouldn'e instert anything since this is a GET
 
         $library = $content['library'];
@@ -381,11 +381,12 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         // get settings stop
 
         $settings['nonce'] =  $settings['contents']["cid-$id"]['nonce'];
-        
+
         $language_script = '/language/'.$config['get_language'].'.js';
-    
+
         $preloaded_dependencies = $this->getCore()->loadContentDependencies($id, 'preloaded');
         $files = $this->getCore()->getDependenciesFiles($preloaded_dependencies);
+
         $cid = $settings['contents']["cid-$id"];
         $embed = H5PCore::determineEmbedType($cid ['content']['embed_type'] ?? "div", $cid['content']['library']['embedTypes']);
 
@@ -419,13 +420,13 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         , "http://localhost:1000/h5p/libraries/H5P.Transition-1.0/transition.js?ver=1.0.4"
         , "http://localhost:1000/h5p/libraries/H5P.Image-1.1/image.js?ver=1.1.10"
         , "http://localhost:1000/h5p/libraries/H5P.Agamotto-1.5/dist/h5p-agamotto.js?ver=1.5.2"];
-        
+
         $settings['contents']["cid-$id"]['scripts'] = $scripts;
         $settings['contents']["cid-$id"]['styles'] =  $styles;
-        
+
         return $settings;
     }
-    
+
 
     public function deleteLibrary($id):bool
     {
@@ -454,7 +455,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     {
         $content = $this->getCore()->loadContent($id);
         $content['metadata']['title'] = $content['title'];
-        
+
         $safe_parameters = $this->getCore()->filterParameters($content); // TODO: actually this is inserting stuff in Database, it shouldn'e instert anything since this is a GET
 
         $library = $content['library'];
@@ -497,7 +498,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         if (!$file->isLoaded()) {
             throw new H5PException(H5PException::FILE_NOT_FOUND);
         }
-    
+
         // Make sure file is valid and mark it for cleanup at a later time
         if ($file->validate()) {
             $file_id = $this->getFileStorage()->saveFile($file, $contentId);

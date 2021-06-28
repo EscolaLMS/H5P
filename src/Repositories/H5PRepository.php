@@ -383,7 +383,7 @@ class H5PRepository implements H5PFrameworkInterface
         ];
 
         $libObj = H5PLibrary::firstOrCreate($library);
-        
+
         $library['libraryId'] = $libObj->id;
         $this->deleteLibraryDependencies($library['libraryId']);
 
@@ -519,7 +519,7 @@ class H5PRepository implements H5PFrameworkInterface
         } else {
             unset($content['params']);
             unset($content['library']);
-            
+
             $newContent = H5PContent::create($content);
             return $newContent->id;
         }
@@ -889,7 +889,7 @@ class H5PRepository implements H5PFrameworkInterface
     {
         $where = $type ? [['content_id', $id], ['dependency_type', $type]] : [['content_id', $id]] ;
 
-        $libs = H5PContentLibrary::with('library')->where($where)->get();
+        $libs = H5PContentLibrary::with('library')->where($where)->orderBy('weight')->get();
 
         return array_map(function ($value) {
             return [
