@@ -12,7 +12,7 @@
                 ],
                 "summary": "list of h5ps content in database",
                 "description": "list of h5ps content in database",
-                "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\ContentApiSwagger::index",
+                "operationId": "719f246c822185fa2c350733c2939184",
                 "parameters": [
                     {
                         "name": "page",
@@ -64,7 +64,7 @@
                 ],
                 "summary": "Store h5p content in database",
                 "description": "Store h5p content in database",
-                "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\ContentApiSwagger::store",
+                "operationId": "a840b07625134cffa37abe1cdd0cac25",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -104,7 +104,7 @@
                 ],
                 "summary": "Content settings for player",
                 "description": "Content settings for player",
-                "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\ContentApiSwagger::show",
+                "operationId": "c4d9cfec6bc0a14c4488b6fb1d9787e7",
                 "parameters": [
                     {
                         "name": "id",
@@ -135,7 +135,7 @@
                 ],
                 "summary": "Updates h5p content in database",
                 "description": "Updates h5p content in database",
-                "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\ContentApiSwagger::update",
+                "operationId": "6e9a9228ed9cdf4a2a974c1d3cb2aee6",
                 "parameters": [
                     {
                         "name": "id",
@@ -184,7 +184,7 @@
                 ],
                 "summary": "Deletes h5p content from database",
                 "description": "Deletes h5p content from database",
-                "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\ContentApiSwagger::destroy",
+                "operationId": "9a5a28403c33e310e4e01d52a8fe3340",
                 "parameters": [
                     {
                         "name": "id",
@@ -225,7 +225,7 @@
                 ],
                 "summary": "Store h5p content from file in database",
                 "description": "Store h5p content from file in database",
-                "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\ContentApiSwagger::upload",
+                "operationId": "953f11e50e63df512b1c11802b266b5f",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -280,7 +280,7 @@
                 ],
                 "summary": "Editor settings ",
                 "description": "Editor settings",
-                "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\EditorApiSwagger::__invoke",
+                "operationId": "1c27ee51f9335ae3502191d03edf63a3",
                 "parameters": [
                     {
                         "name": "id",
@@ -340,7 +340,7 @@
                 ],
                 "summary": "Store h5p files for h5p editor",
                 "description": "Store h5p files for h5p editor",
-                "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\FilesApiSwagger::__invoke",
+                "operationId": "3c846d6b407b8633faa0f834799f1d99",
                 "parameters": [
                     {
                         "name": "nonce",
@@ -379,7 +379,7 @@
                 ],
                 "summary": "Gets all h5p libraries in the database",
                 "description": "Gets all h5p libraries in the database",
-                "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\LibraryApiSwagger::index",
+                "operationId": "3682a0e1eb87ab549ae806a8013e000c",
                 "responses": {
                     "200": {
                         "description": "successful operation",
@@ -402,7 +402,7 @@
                 ],
                 "summary": "Store h5p library in database",
                 "description": "Store h5p library in database",
-                "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\LibraryApiSwagger::store",
+                "operationId": "7a9d900af5e5ad9cd3cc95b9175c62b9",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -436,7 +436,7 @@
                 ],
                 "summary": "Deletes h5p library from database",
                 "description": "Deletes h5p library from database",
-                "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\LibraryApiSwagger::destroy",
+                "operationId": "42ae6ced35eaca98b5e2a55d4b16b245",
                 "parameters": [
                     {
                         "name": "id",
@@ -489,7 +489,7 @@
                 ],
                 "summary": "H5P Editor Endpoint. Get specific library object  ",
                 "description": "Get specific library object",
-                "operationId": "EscolaLms\\HeadlessH5P\\Http\\Controllers\\Swagger\\LibraryApiSwagger::libraries",
+                "operationId": "39b4dbd13b76b07e8170bb826e44c052",
                 "parameters": [
                     {
                         "name": "machineName",
