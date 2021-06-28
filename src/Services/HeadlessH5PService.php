@@ -398,31 +398,13 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             return $config['url'].($value->path.$value->version);
         }, $files['styles']);
 
-        // Error with scripts order
-
-        $scripts2 = [
-             "http://localhost:1000/h5p/libraries/Tether-1.0/scripts/tether.min.js?ver=1.0.2"
-            ,"http://localhost:1000/h5p/libraries/Drop-1.0/js/drop.min.js?ver=1.0.2"
-       ,"http://localhost:1000/h5p/libraries/H5P.JoubelUI-1.3/js/joubel-help-dialog.js?ver=1.3.10"
-        , "http://localhost:1000/h5p/libraries/H5P.JoubelUI-1.3/js/joubel-message-dialog.js?ver=1.3.10"
-        , "http://localhost:1000/h5p/libraries/H5P.JoubelUI-1.3/js/joubel-progress-circle.js?ver=1.3.10"
-        , "http://localhost:1000/h5p/libraries/H5P.JoubelUI-1.3/js/joubel-simple-rounded-button.js?ver=1.3.10"
-        , "http://localhost:1000/h5p/libraries/H5P.JoubelUI-1.3/js/joubel-speech-bubble.js?ver=1.3.10"
-        , "http://localhost:1000/h5p/libraries/H5P.JoubelUI-1.3/js/joubel-throbber.js?ver=1.3.10"
-        , "http://localhost:1000/h5p/libraries/H5P.JoubelUI-1.3/js/joubel-tip.js?ver=1.3.10"
-        , "http://localhost:1000/h5p/libraries/H5P.JoubelUI-1.3/js/joubel-slider.js?ver=1.3.10"
-        , "http://localhost:1000/h5p/libraries/H5P.JoubelUI-1.3/js/joubel-score-bar.js?ver=1.3.10"
-        , "http://localhost:1000/h5p/libraries/H5P.JoubelUI-1.3/js/joubel-progressbar.js?ver=1.3.10"
-        , "http://localhost:1000/h5p/libraries/H5P.JoubelUI-1.3/js/joubel-ui.js?ver=1.3.10"
-        , "http://localhost:1000/h5p/libraries/H5P.Question-1.4/scripts/question.js?ver=1.4.8"
-        , "http://localhost:1000/h5p/libraries/H5P.Question-1.4/scripts/explainer.js?ver=1.4.8"
-        , "http://localhost:1000/h5p/libraries/H5P.Question-1.4/scripts/score-points.js?ver=1.4.8"
-        , "http://localhost:1000/h5p/libraries/H5P.Transition-1.0/transition.js?ver=1.0.4"
-        , "http://localhost:1000/h5p/libraries/H5P.Image-1.1/image.js?ver=1.1.10"
-        , "http://localhost:1000/h5p/libraries/H5P.Agamotto-1.5/dist/h5p-agamotto.js?ver=1.5.2"];
-
-        $settings['contents']["cid-$id"]['scripts'] = $scripts;
-        $settings['contents']["cid-$id"]['styles'] =  $styles;
+        if ($embed === 'iframe') {
+            $settings['contents']["cid-$id"]['scripts'] = $scripts;
+            $settings['contents']["cid-$id"]['styles'] =  $styles;
+        } else {
+            $settings['loadedCss'][] = $styles;
+            $settings['loadedJs'][] = $scripts;
+        }
 
         return $settings;
     }
