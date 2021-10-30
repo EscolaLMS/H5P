@@ -6,6 +6,7 @@
 [![downloads](https://img.shields.io/packagist/dt/escolalms/headless-h5p)](https://packagist.org/packages/escolalms/headless-h5p)
 [![downloads](https://img.shields.io/packagist/v/escolalms/headless-h5p)](https://packagist.org/packages/escolalms/headless-h5p)
 [![downloads](https://img.shields.io/packagist/l/escolalms/headless-h5p)](https://packagist.org/packages/escolalms/headless-h5p)
+[![Maintainability](https://api.codeclimate.com/v1/badges/6316e8dc93a06d28c6a0/maintainability)](https://codeclimate.com/github/EscolaLMS/H5P/maintainability)
 
 ## Features
 
