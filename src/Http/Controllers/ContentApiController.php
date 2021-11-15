@@ -3,17 +3,15 @@
 namespace EscolaLms\HeadlessH5P\Http\Controllers;
 
 //use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use EscolaLms\HeadlessH5P\Http\Controllers\Swagger\ContentApiSwagger;
-use EscolaLms\HeadlessH5P\Services\HeadlessH5PService;
-use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
-
 use EscolaLms\HeadlessH5P\Http\Requests\ContentStoreRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\LibraryStoreRequest;
-use Illuminate\Routing\Controller;
 use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
+use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class ContentApiController extends Controller implements ContentApiSwagger
 {
@@ -29,7 +27,8 @@ class ContentApiController extends Controller implements ContentApiSwagger
     public function index(Request $request): JsonResponse
     {
         $columns = ['title', 'id', 'library_id'];
-        $list = $request->get('per_page') !== null && $request->get('per_page') == 0 ?  $this->contentRepository->unpaginatedList($columns) :  $this->contentRepository->list($request->get('per_page'), $columns);
+        $list = $request->get('per_page') !== null && $request->get('per_page') == 0 ? $this->contentRepository->unpaginatedList($columns) : $this->contentRepository->list($request->get('per_page'), $columns);
+
         return response()->json($list, 200);
     }
 
@@ -39,12 +38,12 @@ class ContentApiController extends Controller implements ContentApiSwagger
             $contentId = $this->contentRepository->edit($id, $request->get('title'), $request->get('library'), $request->get('params'), $request->get('nonce'));
         } catch (Exception $error) {
             return response()->json([
-                'error' => $error->getMessage()
+                'error' => $error->getMessage(),
             ], 422);
         }
 
         return response()->json([
-            'id' => $contentId
+            'id' => $contentId,
         ], 200);
     }
 
@@ -54,12 +53,12 @@ class ContentApiController extends Controller implements ContentApiSwagger
             $contentId = $this->contentRepository->create($request->get('title'), $request->get('library'), $request->get('params'), $request->get('nonce'));
         } catch (Exception $error) {
             return response()->json([
-                'error' => $error->getMessage()
+                'error' => $error->getMessage(),
             ], 422);
         }
 
         return response()->json([
-            'id' => $contentId
+            'id' => $contentId,
         ], 200);
     }
 
@@ -69,12 +68,12 @@ class ContentApiController extends Controller implements ContentApiSwagger
             $contentId = $this->contentRepository->delete($id);
         } catch (Exception $error) {
             return response()->json([
-            'error' => $error->getMessage()
+            'error' => $error->getMessage(),
         ], 422);
         }
 
         return response()->json([
-            'id' => $contentId
+            'id' => $contentId,
         ], 200);
     }
 
@@ -84,7 +83,7 @@ class ContentApiController extends Controller implements ContentApiSwagger
             $settings = $this->hh5pService->getContentSettings($id);
         } catch (Exception $error) {
             return response()->json([
-            'error' => $error->getMessage()
+            'error' => $error->getMessage(),
         ], 422);
         }
 
@@ -100,7 +99,7 @@ class ContentApiController extends Controller implements ContentApiSwagger
             $content = $this->contentRepository->upload($request->file('h5p_file'));
         } catch (Exception $error) {
             return response()->json([
-            'error' => $error->getMessage()
+            'error' => $error->getMessage(),
         ], 422);
         }
 
@@ -108,5 +107,16 @@ class ContentApiController extends Controller implements ContentApiSwagger
             $content,
             200
         );
+    }
+
+    public function download(Request $request, $id)
+    {
+        $filepath = $this->contentRepository->download($id);
+
+        return response()
+            ->download($filepath, '', [
+                'Content-Type' => 'application/zip',
+                'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
+            ]);
     }
 }

@@ -2,30 +2,22 @@
 
 namespace EscolaLms\HeadlessH5P\Services;
 
+use EscolaLms\HeadlessH5P\Exceptions\H5PException;
+use EscolaLms\HeadlessH5P\Models\H5PLibrary;
+use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
+use H5PContentValidator;
 use H5PCore;
 use H5peditor;
-use H5PEditorEndpoints;
-use H5PFrameworkInterface;
+use H5PEditorAjaxInterface;
+use H5peditorFile;
+use H5peditorStorage;
 use H5PFileStorage;
+use H5PFrameworkInterface;
 use H5PStorage;
 use H5PValidator;
-use EditorStorage;
-use EditorAjaxRepository;
-use H5peditorStorage;
-use H5PEditorAjaxInterface;
-use H5PContentValidator;
-use H5peditorFile;
-
+//use EscolaLms\HeadlessH5P\Repositories\H5PFileStorageRepository;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
-use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
-use EscolaLms\HeadlessH5P\Repositories\H5PRepository;
-//use EscolaLms\HeadlessH5P\Repositories\H5PFileStorageRepository;
-use EscolaLms\HeadlessH5P\Repositories\H5PEditorAjaxRepository;
-use EscolaLms\HeadlessH5P\Repositories\H5PEditorStorageRepository;
-use EscolaLms\HeadlessH5P\Models\H5PLibrary;
-use EscolaLms\HeadlessH5P\Models\H5PContent;
-use EscolaLms\HeadlessH5P\Exceptions\H5PException;
 
 class HeadlessH5PService implements HeadlessH5PServiceContract
 {
@@ -61,42 +53,42 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $this->contentValidator = $contentValidator;
     }
 
-    public function getEditor():H5peditor
+    public function getEditor(): H5peditor
     {
         return $this->editor;
     }
 
-    public function getRepository():H5PFrameworkInterface
+    public function getRepository(): H5PFrameworkInterface
     {
         return $this->repository;
     }
 
-    public function getFileStorage():H5PFileStorage
+    public function getFileStorage(): H5PFileStorage
     {
         return $this->fileStorage;
     }
 
-    public function getCore():H5PCore
+    public function getCore(): H5PCore
     {
         return $this->core;
     }
 
-    public function getValidator():H5PValidator
+    public function getValidator(): H5PValidator
     {
         return $this->validator;
     }
 
-    public function getStorage():H5PStorage
+    public function getStorage(): H5PStorage
     {
         return $this->storage;
     }
 
-    public function getEditorStorage():H5peditorStorage
+    public function getEditorStorage(): H5peditorStorage
     {
         return $this->editorStorage;
     }
 
-    public function getContentValidator():H5PContentValidator
+    public function getContentValidator(): H5PContentValidator
     {
         return $this->contentValidator;
     }
@@ -110,22 +102,22 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         } catch (Exception $err) {
             var_dump($err);
         }
+
         return $isValid;
     }
 
     /**
-   * Saves a H5P file
-   *
-   * @param null $content
-   * @param int $contentMainId
-   *  The main id for the content we are saving. This is used if the framework
-   *  we're integrating with uses content id's and version id's
-   * @param bool $skipContent
-   * @param array $options
-   * @return bool TRUE if one or more libraries were updated
-   * TRUE if one or more libraries were updated
-   * FALSE otherwise
-   */
+     * Saves a H5P file.
+     *
+     * @param null $content
+     * @param int  $contentMainId
+     *                            The main id for the content we are saving. This is used if the framework
+     *                            we're integrating with uses content id's and version id's
+     *
+     * @return bool TRUE if one or more libraries were updated
+     *              TRUE if one or more libraries were updated
+     *              FALSE otherwise
+     */
     public function savePackage(object $content = null, int $contentMainId = null, bool $skipContent = true, array $options = []): bool
     { // this is crazy, it does save package from `getUploadedH5pPath` path
         try {
@@ -133,6 +125,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         } catch (Exception $err) {
             return false;
         }
+
         return true;
     }
 
@@ -141,31 +134,32 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         return $this->getRepository()->getMessages($type);
     }
 
-    public function listLibraries():Collection
+    public function listLibraries(): Collection
     {
         return H5PLibrary::all();
     }
 
-    public function getConfig():array
+    public function getConfig(): array
     {
         if (!isset($this->config)) {
-            $config = (array)config('hh5p');
+            $config = (array) config('hh5p');
             $config['url'] = asset($config['url']);
             $config['ajaxPath'] = route($config['ajaxPath']).'/';
-            $config['libraryUrl'] =  url($config['libraryUrl']).'/';
-            $config['get_laravelh5p_url'] =  url($config['get_laravelh5p_url']);
-            $config['get_h5peditor_url'] =  url($config['get_h5peditor_url']).'/';
-            $config['get_h5pcore_url'] =  url($config['get_h5pcore_url']);
+            $config['libraryUrl'] = url($config['libraryUrl']).'/';
+            $config['get_laravelh5p_url'] = url($config['get_laravelh5p_url']);
+            $config['get_h5peditor_url'] = url($config['get_h5peditor_url']).'/';
+            $config['get_h5pcore_url'] = url($config['get_h5pcore_url']);
             $config['getCopyrightSemantics'] = $this->getContentValidator()->getCopyrightSemantics();
             $config['getMetadataSemantics'] = $this->getContentValidator()->getMetadataSemantics();
-            $config['filesPath'] = url("h5p/editor");// TODO: diffrernt name
+            $config['filesPath'] = url('h5p/editor'); // TODO: diffrernt name
             $this->config = $config;
         }
-        return $this->config ;
+
+        return $this->config;
     }
 
     /**
-     * Calls editor ajax actions
+     * Calls editor ajax actions.
      */
     public function getLibraries(string $machineName = null, string $major_version = null, string $minor_version = null)
     {
@@ -176,28 +170,29 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
         if ($machineName) {
             $defaultLang = $this->getEditor()->getLibraryLanguage($machineName, $major_version, $minor_version, $lang);
+
             return $this->getEditor()->getLibraryData($machineName, $major_version, $minor_version, $lang, '', $libraries_url, $defaultLang);
         } else {
             return $this->getEditor()->getLibraries();
         }
     }
 
-    public function getEditorSettings($content = null):array
+    public function getEditorSettings($content = null): array
     {
         $config = $this->getConfig();
 
-        $settings =  [
-            'baseUrl'            => $config['domain'],
-            'url'                => $config['url'],
+        $settings = [
+            'baseUrl' => $config['domain'],
+            'url' => $config['url'],
             'postUserStatistics' => false,
-            'ajax'               => [
-                'setFinished'     => $config['ajaxSetFinished'],
+            'ajax' => [
+                'setFinished' => $config['ajaxSetFinished'],
                 'contentUserData' => $config['ajaxContentUserData'],
             ],
             'saveFreq' => false,
-            'siteUrl'  => $config['domain'],
-            'l10n'     => [
-                'H5P' => __('h5p::h5p')
+            'siteUrl' => $config['domain'],
+            'l10n' => [
+                'H5P' => __('h5p::h5p'),
             ],
             'hubIsEnabled' => false,
         ];
@@ -206,7 +201,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $settings['loadedCss'] = [];
 
         $settings['core'] = [
-            'styles'  => [],
+            'styles' => [],
             'scripts' => [],
         ];
         foreach (H5PCore::$styles as $style) {
@@ -219,29 +214,28 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $settings['core']['scripts'][] = $config['get_h5peditor_url'].'/scripts/h5peditor-init.js';
         $settings['core']['scripts'][] = $config['get_h5peditor_url'].'/language/en.js'; // TODO this lang should vary depending on config
 
-
         $settings['editor'] = [
-            'filesPath' => isset($content) ? url("h5p/content/$content") : url("h5p/editor"),
-            'fileIcon'  => [
-                'path'   => $config['fileIcon'],
-                'width'  => 50,
+            'filesPath' => isset($content) ? url("h5p/content/$content") : url('h5p/editor'),
+            'fileIcon' => [
+                'path' => $config['fileIcon'],
+                'width' => 50,
                 'height' => 50,
             ],
             //'ajaxPath' => route('h5p.ajax').'/?_token=' . $token ,
             'ajaxPath' => $config['ajaxPath'],
             // for checkeditor,
-            'libraryUrl'         => $config['libraryUrl'],
+            'libraryUrl' => $config['libraryUrl'],
             'copyrightSemantics' => $config['getCopyrightSemantics'],
-            'metadataSemantics'  => $config['getMetadataSemantics'],
-            'assets'             => [],
-            'deleteMessage'      => trans('laravel-h5p.content.destoryed'),
-            'apiVersion'         => H5PCore::$coreApi,
+            'metadataSemantics' => $config['getMetadataSemantics'],
+            'assets' => [],
+            'deleteMessage' => trans('laravel-h5p.content.destoryed'),
+            'apiVersion' => H5PCore::$coreApi,
         ];
 
         if ($content !== null) {
             $settings['contents']["cid-$content"] = $this->getSettingsForContent($content);
             $settings['editor']['nodeVersionId'] = $content;
-            $settings['nonce'] =  $settings['contents']["cid-$content"]['nonce'];
+            $settings['nonce'] = $settings['contents']["cid-$content"]['nonce'];
         } else {
             $settings['nonce'] = bin2hex(random_bytes(4));
         }
@@ -252,7 +246,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
         // add editor styles
         foreach (H5peditor::$styles as $style) {
-            $settings['editor']['assets']['css'][] = $config['get_h5peditor_url']. ('/'.$style);
+            $settings['editor']['assets']['css'][] = $config['get_h5peditor_url'].('/'.$style);
         }
         // Add editor JavaScript
         foreach (H5peditor::$scripts as $script) {
@@ -269,7 +263,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             $preloaded_dependencies = $this->getCore()->loadContentDependencies($content, 'preloaded');
             $files = $this->getCore()->getDependenciesFiles($preloaded_dependencies);
             $cid = $settings['contents']["cid-$content"];
-            $embed = H5PCore::determineEmbedType($cid ['content']['embed_type'] ?? "div", $cid['content']['library']['embedTypes']);
+            $embed = H5PCore::determineEmbedType($cid['content']['embed_type'] ?? 'div', $cid['content']['library']['embedTypes']);
 
             $scripts = array_map(function ($value) use ($config) {
                 return $config['url'].($value->path.$value->version);
@@ -281,9 +275,8 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
             // Error with scripts order
 
-
             $settings['contents']["cid-$content"]['scripts'] = $scripts;
-            $settings['contents']["cid-$content"]['styles'] =  $styles;
+            $settings['contents']["cid-$content"]['styles'] = $styles;
 
             /*
             if ($embed === 'div') {
@@ -311,32 +304,32 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         return $settings;
     }
 
-    public function getContentSettings($id):array
+    public function getContentSettings($id): array
     {
         $config = $this->getConfig();
 
-        $settings =  [
-            'baseUrl'            => $config['domain'],
-            'url'                => $config['url'],
+        $settings = [
+            'baseUrl' => $config['domain'],
+            'url' => $config['url'],
             'postUserStatistics' => false,
-            'ajax'               => [
-                'setFinished'     => $config['ajaxSetFinished'],
+            'ajax' => [
+                'setFinished' => $config['ajaxSetFinished'],
                 'contentUserData' => $config['ajaxContentUserData'],
             ],
             'saveFreq' => false,
-            'siteUrl'  => $config['domain'],
-            'l10n'     => [
-                'H5P' => __('h5p::h5p')
+            'siteUrl' => $config['domain'],
+            'l10n' => [
+                'H5P' => __('h5p::h5p'),
             ],
             'hubIsEnabled' => false,
-            'crossorigin' => 'anonymous'
+            'crossorigin' => 'anonymous',
         ];
 
         $settings['loadedJs'] = [];
         $settings['loadedCss'] = [];
 
         $settings['core'] = [
-            'styles'  => [],
+            'styles' => [],
             'scripts' => [],
         ];
         foreach (H5PCore::$styles as $style) {
@@ -356,30 +349,30 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
         $library = $content['library'];
 
-        $uberName =  $library['name']." ".$library['majorVersion'].'.'.$library['minorVersion'];
+        $uberName = $library['name'].' '.$library['majorVersion'].'.'.$library['minorVersion'];
 
         $settings['contents']["cid-$id"] = [
-            'library'         => $uberName,
-            'content'         => $content,
-            'jsonContent'     => $safe_parameters,
-            'fullScreen'      => $content['library']['fullscreen'],
-            //'exportUrl'       => config('laravel-h5p.h5p_export') ? route('h5p.export', [$content['id']]) : '',
+            'library' => $uberName,
+            'content' => $content,
+            'jsonContent' => $safe_parameters,
+            'fullScreen' => $content['library']['fullscreen'],
+            'exportUrl' => route('hh5p.content.export', [$content['id']]),
             //'embedCode'       => '<iframe src="'.route('h5p.embed', ['id' => $content['id']]).'" width=":w" height=":h" frameborder="0" allowfullscreen="allowfullscreen"></iframe>',
             //'resizeCode'      => '<script src="'.self::get_h5pcore_url('/js/h5p-resizer.js').'" charset="UTF-8"></script>',
             //'url'             => route('h5p.embed', ['id' => $content['id']]),
-            'title'           => $content['title'],
-            'displayOptions'  => $this->getCore()->getDisplayOptionsForView(0, $content['id']),
+            'title' => $content['title'],
+            'displayOptions' => $this->getCore()->getDisplayOptionsForView(0, $content['id']),
             'contentUserData' => [
                 0 => [
                     'state' => '{}',
                 ],
             ],
-            'nonce' => $content['nonce']
+            'nonce' => $content['nonce'],
         ];
 
         // get settings stop
 
-        $settings['nonce'] =  $settings['contents']["cid-$id"]['nonce'];
+        $settings['nonce'] = $settings['contents']["cid-$id"]['nonce'];
 
         $language_script = '/language/'.$config['get_language'].'.js';
 
@@ -387,7 +380,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $files = $this->getCore()->getDependenciesFiles($preloaded_dependencies);
 
         $cid = $settings['contents']["cid-$id"];
-        $embed = H5PCore::determineEmbedType($cid ['content']['embed_type'] ?? "div", $cid['content']['library']['embedTypes']);
+        $embed = H5PCore::determineEmbedType($cid['content']['embed_type'] ?? 'div', $cid['content']['library']['embedTypes']);
 
         $scripts = array_map(function ($value) use ($config) {
             return $config['url'].($value->path.$value->version);
@@ -399,7 +392,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
         if ($embed === 'iframe') {
             $settings['contents']["cid-$id"]['scripts'] = $scripts;
-            $settings['contents']["cid-$id"]['styles'] =  $styles;
+            $settings['contents']["cid-$id"]['styles'] = $styles;
         } else {
             $settings['loadedCss'] = $styles;
             $settings['loadedJs'] = $scripts;
@@ -408,14 +401,12 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         return $settings;
     }
 
-
-    public function deleteLibrary($id):bool
+    public function deleteLibrary($id): bool
     {
         $library = H5pLibrary::findOrFail($id);
 
         // TODO: check if runnable
         // TODO: check is usable, against content. If yes should ne be deleted
-
 
         // Error if in use
         // TODO implement getLibraryUsage, once content is ready
@@ -441,28 +432,29 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
         $library = $content['library'];
 
-        $uberName =  $library['name']." ".$library['majorVersion'].'.'.$library['minorVersion'];
+        $uberName = $library['name'].' '.$library['majorVersion'].'.'.$library['minorVersion'];
 
         $settings = [
-            'library'         => $uberName,
-            'content'         => $content,
-            'jsonContent'     => json_encode([
+            'library' => $uberName,
+            'content' => $content,
+            'jsonContent' => json_encode([
                 'params' => json_decode($safe_parameters),
-                'metadata' => $content['metadata']
+                'metadata' => $content['metadata'],
             ]),
-            'fullScreen'      => $content['library']['fullscreen'],
-            //'exportUrl'       => config('laravel-h5p.h5p_export') ? route('h5p.export', [$content['id']]) : '',
+            'fullScreen' => $content['library']['fullscreen'],
+            'exportUrl' => route('hh5p.content.export', [$content['id']]),
+
             //'embedCode'       => '<iframe src="'.route('h5p.embed', ['id' => $content['id']]).'" width=":w" height=":h" frameborder="0" allowfullscreen="allowfullscreen"></iframe>',
             //'resizeCode'      => '<script src="'.self::get_h5pcore_url('/js/h5p-resizer.js').'" charset="UTF-8"></script>',
             //'url'             => route('h5p.embed', ['id' => $content['id']]),
-            'title'           => $content['title'],
-            'displayOptions'  => $this->getCore()->getDisplayOptionsForView(0, $content['id']),
+            'title' => $content['title'],
+            'displayOptions' => $this->getCore()->getDisplayOptionsForView(0, $content['id']),
             'contentUserData' => [
                 0 => [
                     'state' => '{}',
                 ],
             ],
-            'nonce' => $content['nonce']
+            'nonce' => $content['nonce'],
         ];
 
         return $settings;
@@ -487,14 +479,15 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         }
 
         $result = json_decode($file->getResult());
-        $result-> path = $file->getType() . 's/' . $file->getName() . '#tmp';
+        $result->path = $file->getType().'s/'.$file->getName().'#tmp';
 
         return $result;
     }
 
-    private function isValidEditorToken(string $token = null):bool
+    private function isValidEditorToken(string $token = null): bool
     {
         $isValidToken = $this->getEditor()->ajaxInterface->validateEditorToken($token);
-        return !!$isValidToken;
+
+        return (bool) $isValidToken;
     }
 }

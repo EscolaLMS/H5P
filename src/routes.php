@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use EscolaLms\HeadlessH5P\Http\Controllers\LibraryApiController;
-use EscolaLms\HeadlessH5P\Http\Controllers\EditorApiController;
 use EscolaLms\HeadlessH5P\Http\Controllers\ContentApiController;
+use EscolaLms\HeadlessH5P\Http\Controllers\EditorApiController;
 use EscolaLms\HeadlessH5P\Http\Controllers\FilesApiController;
+use EscolaLms\HeadlessH5P\Http\Controllers\LibraryApiController;
+use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => ['api'], 'prefix' => 'api/hh5p'], function () {
     Route::post('library', [LibraryApiController::class, 'store'])->name('hh5p.library.store');
@@ -19,10 +19,10 @@ Route::group(['middleware' => ['api'], 'prefix' => 'api/hh5p'], function () {
     Route::post('content/{id}', [ContentApiController::class, 'update'])->name('hh5p.content.update');
     Route::delete('content/{id}', [ContentApiController::class, 'destroy'])->name('hh5p.content.destroy');
     Route::get('content', [ContentApiController::class, 'index'])->name('hh5p.content.index');
+    Route::get('content/{id}/export', [ContentApiController::class, 'download'])->name('hh5p.content.export');
     Route::get('content/{id}', [ContentApiController::class, 'show'])->name('hh5p.content.show');
     Route::post('files', FilesApiController::class)->name('hh5p.files.upload');
     Route::post('files/{nonce}', FilesApiController::class)->name('hh5p.files.upload.nonce');
-
 
     Route::get('/', function () {
         return 'Hello World';

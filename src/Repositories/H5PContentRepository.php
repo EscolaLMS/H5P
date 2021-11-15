@@ -2,14 +2,14 @@
 
 namespace EscolaLms\HeadlessH5P\Repositories;
 
+use EscolaLms\HeadlessH5P\Exceptions\H5PException;
+use EscolaLms\HeadlessH5P\Helpers\Helpers;
 use EscolaLms\HeadlessH5P\Models\H5PContent;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Models\H5PTempFile;
 use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
-use EscolaLms\HeadlessH5P\Exceptions\H5PException;
 use Illuminate\Pagination\LengthAwarePaginator;
-use EscolaLms\HeadlessH5P\Helpers\Helpers;
 use Illuminate\Support\Collection;
 
 class H5PContentRepository implements H5PContentRepositoryContract
@@ -21,7 +21,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
         $this->hh5pService = $hh5pService;
     }
 
-    public function create(string $title, string $library, string $params, string $nonce):int
+    public function create(string $title, string $library, string $params, string $nonce): int
     {
         $libNames = $this->hh5pService->getCore()->libraryFromString($library);
 
@@ -42,11 +42,11 @@ class H5PContentRepository implements H5PContentRepositoryContract
         }
 
         $content = $this->hh5pService->getCore()->saveContent([
-            'library_id'=> $libDb->id,
-            'title'=>$title,
-            'library'=>$library,
-            'parameters'=>$params,
-            'nonce'=>$nonce
+            'library_id' => $libDb->id,
+            'title' => $title,
+            'library' => $library,
+            'parameters' => $params,
+            'nonce' => $nonce,
         ]);
 
         $this->moveTmpFilesToContentFolders($nonce, $content);
@@ -54,7 +54,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
         return $content;
     }
 
-    public function edit(int $id, string $title, string $library, string $params, string $nonce):int
+    public function edit(int $id, string $title, string $library, string $params, string $nonce): int
     {
         $libNames = $this->hh5pService->getCore()->libraryFromString($library);
 
@@ -74,30 +74,28 @@ class H5PContentRepository implements H5PContentRepositoryContract
             throw new H5PException(H5PException::INVALID_PARAMETERS_JSON);
         }
 
-        $content = H5PLibrary::where('id', $id)->first();
+        $content = H5PContent::where('id', $id)->first();
 
         if ($content === null) {
             throw new H5PException(H5PException::CONTENT_NOT_FOUND);
         }
 
         $id = $this->hh5pService->getCore()->saveContent([
-            'id'=>$id,
-            'library_id'=> $libDb->id,
-            'title'=>$title,
-            'library'=>$library,
-            'parameters'=>$params,
+            'id' => $id,
+            'library_id' => $libDb->id,
+            'title' => $title,
+            'library' => $library,
+            'parameters' => $params,
             //'nonce'=>$nonce
         ], $id);
-
 
         $this->moveTmpFilesToContentFolders($nonce, $id);
 
         return $id;
     }
 
-    private function moveTmpFilesToContentFolders($nonce, $contentId):bool
+    private function moveTmpFilesToContentFolders($nonce, $contentId): bool
     {
-
         // TODO: take this from config
         $storage_path = storage_path('app/h5p');
 
@@ -120,7 +118,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
         return true;
     }
 
-    public function list($per_page = 15, array $columns = ['*']):LengthAwarePaginator
+    public function list($per_page = 15, array $columns = ['*']): LengthAwarePaginator
     {
         $paginator = H5PContent::with(
             ['library']
@@ -129,12 +127,14 @@ class H5PContentRepository implements H5PContentRepositoryContract
             // Your code here
             $content->library->makeHidden(['semantics']);
             $content->library->setAppends([]);
+
             return $content;
         });
+
         return $paginator;
     }
 
-    public function unpaginatedList(array $columns = ['*']):Collection
+    public function unpaginatedList(array $columns = ['*']): Collection
     {
         $list = H5PContent::with(
             ['library']
@@ -143,12 +143,14 @@ class H5PContentRepository implements H5PContentRepositoryContract
             // Your code here
             $content->library->makeHidden(['semantics']);
             $content->library->setAppends([]);
+
             return $content;
         });
+
         return $list;
     }
 
-    public function delete(int $id):int
+    public function delete(int $id): int
     {
         $content = H5PContent::findOrFail($id);
         $content->delete();
@@ -161,12 +163,12 @@ class H5PContentRepository implements H5PContentRepositoryContract
         return $id;
     }
 
-    public function show(int $id):H5PContent
+    public function show(int $id): H5PContent
     {
         return H5PContent::findOrFail($id);
     }
 
-    public function upload($file, $content = null, $only_upgrade = null, $disable_h5p_security = false):H5PContent
+    public function upload($file, $content = null, $only_upgrade = null, $disable_h5p_security = false): H5PContent
     {
         if ($disable_h5p_security) {
             // Make it possible to disable file extension check
@@ -194,5 +196,16 @@ class H5PContentRepository implements H5PContentRepositoryContract
         return false;
 
         // The uploaded file was not a valid H5P package
+    }
+
+    public function download($id): string
+    {
+        $content = $this->hh5pService->getCore()->loadContent($id);
+        $content['filtered'] = '';
+        $this->hh5pService->getCore()->filterParameters($content);
+
+        $filename = $this->hh5pService->getRepository()->getDownloadFile($id);
+
+        return storage_path('app/h5p/exports/'.$filename);
     }
 }
