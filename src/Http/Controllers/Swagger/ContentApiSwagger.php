@@ -325,4 +325,44 @@ interface ContentApiSwagger
     * )
     */
     public function upload(LibraryStoreRequest $request): JsonResponse;
+    
+    /**
+    * @OA\Get(
+    *      path="/api/hh5p/content/{id}/export",
+    *      summary="Downloads h5p content to packagee",
+    *      tags={"H5P"},
+    *      description="Downloads h5p content to package",
+    *      @OA\Parameter(
+    *          name="id",
+    *          description="ID of content that will be exported",
+    *          in="path",
+    *          required=true,
+    *          @OA\Schema(
+    *             type="integer",
+    *         )
+    *      ),
+    *      @OA\Response(
+    *          response=200,
+    *          description="successful operation",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          )
+    *      ),
+    *      @OA\Response(
+    *          response=422,
+    *          description="validation error",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          )
+    *      ),
+    *      @OA\Response(
+    *          response=401,
+    *          description="unauthorised",
+    *          @OA\MediaType(
+    *              mediaType="application/json"
+    *          )
+    *      )
+    * )
+    */
+    public function download(Request $request, int $id)
 }
