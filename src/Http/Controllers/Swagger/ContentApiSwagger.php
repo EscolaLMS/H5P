@@ -364,5 +364,5 @@ interface ContentApiSwagger
     *      )
     * )
     */
-    public function download(Request $request, int $id)
+    public function download(Request $request, int $id);
 }
