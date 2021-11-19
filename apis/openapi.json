@@ -252,6 +252,47 @@
                 }
             }
         },
+        "/api/hh5p/content/{id}/export": {
+            "get": {
+                "tags": [
+                    "H5P"
+                ],
+                "summary": "Downloads h5p content to packagee",
+                "description": "Downloads h5p content to package",
+                "operationId": "fd8617215b5d9c1831428a7fdcceda86",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of content that will be exported",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "422": {
+                        "description": "validation error",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorised",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
         "/api/hh5p/editor": {
             "get": {
                 "tags": [
