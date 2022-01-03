@@ -21,7 +21,7 @@ class LibraryApiTest extends TestCase
 
         $h5pFile = new UploadedFile($storage_path, 'arithmetic-quiz.h5p', 'application/pdf', null, true);
 
-        $response = $this->post('/api/hh5p/library', [
+        $response = $this->post('/api/admin/hh5p/library', [
             'h5p_file' => $h5pFile,
         ]);
 
@@ -34,7 +34,7 @@ class LibraryApiTest extends TestCase
 
     public function test_library_index()
     {
-        $response = $this->get('/api/hh5p/library');
+        $response = $this->get('/api/admin/hh5p/library');
 
         $response->assertStatus(200);
         $response->assertJsonStructure([
@@ -49,10 +49,10 @@ class LibraryApiTest extends TestCase
         $library = H5PLibrary::where('runnable', 1)->first();
         $id = $library->id;
 
-        $response = $this->delete("/api/hh5p/library/$id");
+        $response = $this->delete("/api/admin/hh5p/library/$id");
         $response->assertStatus(200);
 
-        $response = $this->delete("/api/hh5p/library/$id");
+        $response = $this->delete("/api/admin/hh5p/library/$id");
         $response->assertStatus(404);
     }
 }
