@@ -2,6 +2,9 @@
 
 namespace EscolaLms\HeadlessH5P\Http\Controllers\Swagger;
 
+use EscolaLms\HeadlessH5P\Http\Requests\ContentDeleteRequest;
+use EscolaLms\HeadlessH5P\Http\Requests\ContentListRequest;
+use EscolaLms\HeadlessH5P\Http\Requests\ContentReadRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -156,7 +159,7 @@ interface ContentApiSwagger
     *      )
     * )
     */
-    public function show(Request $request, int $id): JsonResponse;
+    public function show(ContentReadRequest $request, int $id): JsonResponse;
 
     /**
     * @OA\Post(
@@ -253,7 +256,7 @@ interface ContentApiSwagger
     *      )
     * )
     */
-    public function index(ContentStoreRequest $request): JsonResponse;
+    public function index(ContentListRequest $request): JsonResponse;
 
     /**
     * @OA\Delete(
@@ -293,7 +296,7 @@ interface ContentApiSwagger
     *      )
     * )
     */
-    public function destroy(Request $request, int $id): JsonResponse;
+    public function destroy(ContentDeleteRequest $request, int $id): JsonResponse;
 
     /**
     * @OA\Post(
@@ -325,7 +328,7 @@ interface ContentApiSwagger
     * )
     */
     public function upload(LibraryStoreRequest $request): JsonResponse;
-    
+
     /**
     * @OA\Get(
     *      path="/api/hh5p/content/{id}/export",
@@ -364,5 +367,5 @@ interface ContentApiSwagger
     *      )
     * )
     */
-    public function download(Request $request, int $id);
+    public function download(ContentReadRequest $request, int $id);
 }

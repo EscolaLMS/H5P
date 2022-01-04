@@ -13,7 +13,8 @@ class EditorApiTest extends TestCase
 {
     public function test_editor_config_new()
     {
-        $response = $this->get('/api/admin/hh5p/editor');
+        $this->authenticateAsAdmin();
+        $response = $this->actingAs($this->user, 'api')->get('/api/admin/hh5p/editor');
 
         $response->assertStatus(200);
         $data = json_decode($response->getContent());
@@ -23,6 +24,7 @@ class EditorApiTest extends TestCase
 
     public function test_editor_config_content()
     {
+        $this->authenticateAsAdmin();
         $data = [
             "library"=> "H5P.ArithmeticQuiz 1.1",
             "nonce"=>bin2hex(random_bytes(4)),
@@ -30,11 +32,11 @@ class EditorApiTest extends TestCase
             "title"=> "Artimethic quiz"
         ];
 
-        $response = $this->postJson('/api/admin/hh5p/content', $data);
+        $response = $this->actingAs($this->user, 'api')->postJson('/api/admin/hh5p/content', $data);
 
         $data = json_decode($response->getContent());
 
-        $response = $this->get('/api/admin/hh5p/editor/'.$data->id);
+        $response = $this->actingAs($this->user, 'api')->get('/api/admin/hh5p/editor/'.$data->id);
         $response->assertStatus(200);
 
         $data = json_decode($response->getContent());
