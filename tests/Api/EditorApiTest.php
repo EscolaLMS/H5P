@@ -2,16 +2,11 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use EscolaLms\HeadlessH5P\Tests\TestCase;
-use EscolaLms\HeadlessH5P\Models\H5PContent;
 
 class EditorApiTest extends TestCase
 {
-    public function test_editor_config_new()
+    public function test_editor_config_new(): void
     {
         $this->authenticateAsAdmin();
         $response = $this->actingAs($this->user, 'api')->get('/api/admin/hh5p/editor');
@@ -19,10 +14,10 @@ class EditorApiTest extends TestCase
         $response->assertStatus(200);
         $data = json_decode($response->getContent());
 
-        $this->assertTrue(isset($data->editor));
+        $this->assertTrue(isset($data->data->editor));
     }
 
-    public function test_editor_config_content()
+    public function test_editor_config_content(): void
     {
         $this->authenticateAsAdmin();
         $data = [
@@ -36,11 +31,11 @@ class EditorApiTest extends TestCase
 
         $data = json_decode($response->getContent());
 
-        $response = $this->actingAs($this->user, 'api')->get('/api/admin/hh5p/editor/'.$data->id);
+        $response = $this->actingAs($this->user, 'api')->get('/api/admin/hh5p/editor/'.$data->data->id);
         $response->assertStatus(200);
 
         $data = json_decode($response->getContent());
 
-        $this->assertTrue(isset($data->editor));
+        $this->assertTrue(isset($data->data->editor));
     }
 }
