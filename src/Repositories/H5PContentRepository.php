@@ -2,6 +2,8 @@
 
 namespace EscolaLms\HeadlessH5P\Repositories;
 
+use EscolaLms\Core\Repositories\Criteria\Criterion;
+use EscolaLms\HeadlessH5P\Dtos\ContentFilterCriteriaDto;
 use EscolaLms\HeadlessH5P\Exceptions\H5PException;
 use EscolaLms\HeadlessH5P\Helpers\Helpers;
 use EscolaLms\HeadlessH5P\Models\H5PContent;
@@ -9,6 +11,7 @@ use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Models\H5PTempFile;
 use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
@@ -118,11 +121,14 @@ class H5PContentRepository implements H5PContentRepositoryContract
         return true;
     }
 
-    public function list($per_page = 15, array $columns = ['*']): LengthAwarePaginator
-    {
-        $paginator = H5PContent::with(
-            ['library']
-        )->select($columns)->paginate(intval($per_page));
+    public function list(
+        ContentFilterCriteriaDto $contentFilterDto,
+        $per_page = 15,
+        array $columns = ['*']
+    ): LengthAwarePaginator {
+        $query = $this->getQueryContent($contentFilterDto, $columns);
+        $paginator = $query->paginate(intval($per_page));
+
         $paginator->getCollection()->transform(function ($content) {
             // Your code here
             if ($content->library) {
@@ -136,11 +142,11 @@ class H5PContentRepository implements H5PContentRepositoryContract
         return $paginator;
     }
 
-    public function unpaginatedList(array $columns = ['*']): Collection
+    public function unpaginatedList(ContentFilterCriteriaDto $contentFilterDto, array $columns = ['*']): Collection
     {
-        $list = H5PContent::with(
-            ['library']
-        )->select($columns)->get();
+        $query = $this->getQueryContent($contentFilterDto, $columns);
+        $list = $query->get();
+
         $list->transform(function ($content) {
             // Your code here
             $content->library->makeHidden(['semantics']);
@@ -214,5 +220,25 @@ class H5PContentRepository implements H5PContentRepositoryContract
     public function getLibraryById(int $id): H5PLibrary
     {
         return H5PLibrary::findOrFail($id);
+    }
+
+    private function applyCriteria(Builder $query, array $criteria): Builder
+    {
+        foreach ($criteria as $criterion) {
+            if ($criterion instanceof Criterion) {
+                $query = $criterion->apply($query);
+            }
+        }
+
+        return $query;
+    }
+
+    private function getQueryContent(ContentFilterCriteriaDto $contentFilterDto, array $columns = ['*']): Builder
+    {
+        $query = H5PContent::with(
+            ['library']
+        )->select($columns);
+
+        return $this->applyCriteria($query, $contentFilterDto->toArray());
     }
 }

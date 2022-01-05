@@ -232,6 +232,24 @@ interface ContentApiSwagger
     *             type="integer",
     *         )
     *      ),
+    *     @OA\Parameter(
+    *          name="title",
+    *          description="search items by title",
+    *          in="query",
+    *          required=false,
+    *          @OA\Schema(
+    *             type="string",
+    *         )
+    *      ),
+    *     @OA\Parameter(
+    *          name="library_id",
+    *          description="search items by library_id",
+    *          in="query",
+    *          required=false,
+    *          @OA\Schema(
+    *             type="integer",
+    *         )
+    *      ),
     *      @OA\Response(
     *          response=200,
     *          description="successful operation",
