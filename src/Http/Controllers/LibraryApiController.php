@@ -3,6 +3,8 @@
 namespace EscolaLms\HeadlessH5P\Http\Controllers;
 
 //use App\Http\Controllers\Controller;
+use EscolaLms\HeadlessH5P\Http\Requests\LibraryDeleteRequest;
+use EscolaLms\HeadlessH5P\Http\Requests\LibraryListRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use EscolaLms\HeadlessH5P\Http\Controllers\Swagger\LibraryApiSwagger;
@@ -21,7 +23,7 @@ class LibraryApiController extends Controller implements LibraryApiSwagger
         $this->hh5pService = $hh5pService;
     }
 
-    public function index(Request $request): JsonResponse
+    public function index(LibraryListRequest $request): JsonResponse
     {
         $libraries = $this->hh5pService->listLibraries();
 
@@ -42,7 +44,7 @@ class LibraryApiController extends Controller implements LibraryApiSwagger
         ], $valid ? 200 : 422);
     }
 
-    public function libraries(Request $request): JsonResponse
+    public function libraries(LibraryListRequest $request): JsonResponse
     {
         $libraries = $this->hh5pService->getLibraries(
             $request->get('machineName'),
@@ -53,10 +55,10 @@ class LibraryApiController extends Controller implements LibraryApiSwagger
         return response()->json($libraries, 200);
     }
 
-    public function destroy(Request $request, int $id): JsonResponse
+    public function destroy(LibraryDeleteRequest $request, int $id): JsonResponse
     {
         $valid = $this->hh5pService->deleteLibrary($id);
-        
+
         return response()->json([
             'valid' => $valid,
             'messages' =>  $valid ? "Library $id deleted" : "",

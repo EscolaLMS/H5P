@@ -2,6 +2,8 @@
 
 namespace EscolaLms\HeadlessH5P\Http\Controllers\Swagger;
 
+use EscolaLms\HeadlessH5P\Http\Requests\LibraryDeleteRequest;
+use EscolaLms\HeadlessH5P\Http\Requests\LibraryListRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -65,7 +67,7 @@ interface LibraryApiSwagger
     *      )
     * )
     */
-    public function destroy(Request $request, int $id): JsonResponse;
+    public function destroy(LibraryDeleteRequest $request, int $id): JsonResponse;
 
     /**
     * @OA\Get(
@@ -83,7 +85,7 @@ interface LibraryApiSwagger
     *      )
     * )
     */
-    public function index(Request $request): JsonResponse;
+    public function index(LibraryListRequest $request): JsonResponse;
 
     /**
     * @OA\Get(
@@ -145,5 +147,5 @@ interface LibraryApiSwagger
     *      )
     * )
     */
-    public function libraries(Request $request);
+    public function libraries(LibraryListRequest $request);
 }

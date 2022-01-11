@@ -2,26 +2,26 @@
 
 namespace EscolaLms\HeadlessH5P\Http\Requests;
 
+use EscolaLms\HeadlessH5P\Models\H5PContent;
+use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class ContentStoreRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
+    public function authorize(): bool
     {
-        return true;
+        if ($this->route('id')) {
+            $h5PContentRepository = app(H5PContentRepositoryContract::class);
+            $h5pContent = $h5PContentRepository->show($this->route('id'));
+
+            return Gate::allows('update', $h5pContent);
+        }
+
+        return Gate::allows('update', H5PContent::class);
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules()
+    public function rules(): array
     {
         return [
             'title'   => ['required', 'string'],

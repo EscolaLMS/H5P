@@ -125,8 +125,10 @@ class H5PContentRepository implements H5PContentRepositoryContract
         )->select($columns)->paginate(intval($per_page));
         $paginator->getCollection()->transform(function ($content) {
             // Your code here
-            $content->library->makeHidden(['semantics']);
-            $content->library->setAppends([]);
+            if ($content->library) {
+                $content->library->makeHidden(['semantics']);
+                $content->library->setAppends([]);
+            }
 
             return $content;
         });
@@ -207,5 +209,10 @@ class H5PContentRepository implements H5PContentRepositoryContract
         $filename = $this->hh5pService->getRepository()->getDownloadFile($id);
 
         return storage_path('app/h5p/exports/'.$filename);
+    }
+
+    public function getLibraryById(int $id): H5PLibrary
+    {
+        return H5PLibrary::findOrFail($id);
     }
 }
