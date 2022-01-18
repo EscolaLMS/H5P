@@ -2,17 +2,14 @@
 
 namespace EscolaLms\HeadlessH5P\Http\Controllers;
 
-//use App\Http\Controllers\Controller;
+use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use EscolaLms\HeadlessH5P\Http\Controllers\Swagger\EditorApiSwagger;
-use EscolaLms\HeadlessH5P\Services\HeadlessH5PService;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
-
-use Illuminate\Routing\Controller;
 use Exception;
 
-class EditorApiController extends Controller implements EditorApiSwagger
+class EditorApiController extends EscolaLmsBaseController implements EditorApiSwagger
 {
     private HeadlessH5PServiceContract $hh5pService;
 
@@ -25,9 +22,10 @@ class EditorApiController extends Controller implements EditorApiSwagger
     {
         try {
             $settings = $this->hh5pService->getEditorSettings($id);
-            return response()->json($settings, 200);
+
+            return $this->sendResponse($settings);
         } catch (Exception $error) {
-            return response()->json(['error'=>$error->getMessage()], 422);
+            return $this->sendError($error->getMessage(), 422);
         }
     }
 }

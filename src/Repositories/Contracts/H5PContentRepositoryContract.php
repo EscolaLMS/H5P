@@ -1,6 +1,7 @@
 <?php
 namespace EscolaLms\HeadlessH5P\Repositories\Contracts;
 
+use EscolaLms\HeadlessH5P\Dtos\ContentFilterCriteriaDto;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 
@@ -14,9 +15,9 @@ interface H5PContentRepositoryContract
 
     public function edit(int $id, string $title, string $library, string $params, string $nonce): int;
 
-    public function list($per_page = 15, array $columns = ['*']): LengthAwarePaginator;
+    public function list(ContentFilterCriteriaDto $contentFilterDto, $per_page = 15, array $columns = ['*']): LengthAwarePaginator;
 
-    public function unpaginatedList(array $columns = ['*']): Collection;
+    public function unpaginatedList(ContentFilterCriteriaDto $contentFilterDto, array $columns = ['*']): Collection;
 
     public function delete(int $id): int;
 

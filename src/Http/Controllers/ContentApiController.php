@@ -2,21 +2,23 @@
 
 namespace EscolaLms\HeadlessH5P\Http\Controllers;
 
-//use App\Http\Controllers\Controller;
+use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use EscolaLms\HeadlessH5P\Dtos\ContentFilterCriteriaDto;
 use EscolaLms\HeadlessH5P\Http\Controllers\Swagger\ContentApiSwagger;
 use EscolaLms\HeadlessH5P\Http\Requests\ContentDeleteRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\ContentListRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\ContentReadRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\ContentStoreRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\LibraryStoreRequest;
+use EscolaLms\HeadlessH5P\Http\Resources\ContentIndexResource;
+use EscolaLms\HeadlessH5P\Http\Resources\ContentResource;
 use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class ContentApiController extends Controller implements ContentApiSwagger
+class ContentApiController extends EscolaLmsBaseController implements ContentApiSwagger
 {
     private HeadlessH5PServiceContract $hh5pService;
     private H5PContentRepositoryContract $contentRepository;
@@ -29,10 +31,13 @@ class ContentApiController extends Controller implements ContentApiSwagger
 
     public function index(ContentListRequest $request): JsonResponse
     {
+        $contentFilterDto = ContentFilterCriteriaDto::instantiateFromRequest($request);
         $columns = ['title', 'id', 'library_id'];
-        $list = $request->get('per_page') !== null && $request->get('per_page') == 0 ? $this->contentRepository->unpaginatedList($columns) : $this->contentRepository->list($request->get('per_page'), $columns);
+        $list = $request->get('per_page') !== null && $request->get('per_page') == 0 ?
+            $this->contentRepository->unpaginatedList($contentFilterDto, $columns) :
+            $this->contentRepository->list($contentFilterDto, $request->get('per_page'), $columns);
 
-        return response()->json($list, 200);
+        return $this->sendResponseForResource(ContentIndexResource::collection($list));
     }
 
     public function update(ContentStoreRequest $request, int $id): JsonResponse
@@ -40,14 +45,10 @@ class ContentApiController extends Controller implements ContentApiSwagger
         try {
             $contentId = $this->contentRepository->edit($id, $request->get('title'), $request->get('library'), $request->get('params'), $request->get('nonce'));
         } catch (Exception $error) {
-            return response()->json([
-                'error' => $error->getMessage(),
-            ], 422);
+            return $this->sendError($error->getMessage(), 422);
         }
 
-        return response()->json([
-            'id' => $contentId,
-        ], 200);
+        return $this->sendResponse(['id' => $contentId]);
     }
 
     public function store(ContentStoreRequest $request): JsonResponse
@@ -55,14 +56,10 @@ class ContentApiController extends Controller implements ContentApiSwagger
         try {
             $contentId = $this->contentRepository->create($request->get('title'), $request->get('library'), $request->get('params'), $request->get('nonce'));
         } catch (Exception $error) {
-            return response()->json([
-                'error' => $error->getMessage(),
-            ], 422);
+            return $this->sendError($error->getMessage(), 422);
         }
 
-        return response()->json([
-            'id' => $contentId,
-        ], 200);
+        return $this->sendResponse(['id' => $contentId]);
     }
 
     public function destroy(ContentDeleteRequest $request, int $id): JsonResponse
@@ -70,14 +67,10 @@ class ContentApiController extends Controller implements ContentApiSwagger
         try {
             $contentId = $this->contentRepository->delete($id);
         } catch (Exception $error) {
-            return response()->json([
-                'error' => $error->getMessage(),
-            ], 422);
+            return $this->sendError($error->getMessage(), 422);
         }
 
-        return response()->json([
-            'id' => $contentId,
-        ], 200);
+        return $this->sendResponse(['id' => $contentId]);
     }
 
     public function show(ContentReadRequest $request, int $id): JsonResponse
@@ -85,15 +78,10 @@ class ContentApiController extends Controller implements ContentApiSwagger
         try {
             $settings = $this->hh5pService->getContentSettings($id);
         } catch (Exception $error) {
-            return response()->json([
-                'error' => $error->getMessage(),
-            ], 422);
+            return $this->sendError($error->getMessage(), 422);
         }
 
-        return response()->json(
-            $settings,
-            200
-        );
+        return $this->sendResponse($settings);
     }
 
     public function upload(LibraryStoreRequest $request): JsonResponse
@@ -101,18 +89,13 @@ class ContentApiController extends Controller implements ContentApiSwagger
         try {
             $content = $this->contentRepository->upload($request->file('h5p_file'));
         } catch (Exception $error) {
-            return response()->json([
-                'error' => $error->getMessage(),
-            ], 422);
+            return $this->sendError($error->getMessage(), 422);
         }
 
-        return response()->json(
-            $content,
-            200
-        );
+        return $this->sendResponseForResource(ContentResource::make($content));
     }
 
-    public function download(ContentReadRequest $request, $id)
+    public function download(ContentReadRequest $request, $id): BinaryFileResponse
     {
         $filepath = $this->contentRepository->download($id);
 

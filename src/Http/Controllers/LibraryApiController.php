@@ -2,19 +2,16 @@
 
 namespace EscolaLms\HeadlessH5P\Http\Controllers;
 
-//use App\Http\Controllers\Controller;
+use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
 use EscolaLms\HeadlessH5P\Http\Requests\LibraryDeleteRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\LibraryListRequest;
+use EscolaLms\HeadlessH5P\Http\Resources\LibraryResource;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use EscolaLms\HeadlessH5P\Http\Controllers\Swagger\LibraryApiSwagger;
-use EscolaLms\HeadlessH5P\Services\HeadlessH5PService;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
-
 use EscolaLms\HeadlessH5P\Http\Requests\LibraryStoreRequest;
-use Illuminate\Routing\Controller;
 
-class LibraryApiController extends Controller implements LibraryApiSwagger
+class LibraryApiController extends EscolaLmsBaseController implements LibraryApiSwagger
 {
     private HeadlessH5PServiceContract $hh5pService;
 
@@ -27,7 +24,7 @@ class LibraryApiController extends Controller implements LibraryApiSwagger
     {
         $libraries = $this->hh5pService->listLibraries();
 
-        return response()->json($libraries, 200);
+        return $this->sendResponseForResource(LibraryResource::collection($libraries));
     }
 
     public function store(LibraryStoreRequest $request): JsonResponse
@@ -35,13 +32,11 @@ class LibraryApiController extends Controller implements LibraryApiSwagger
         $valid = $this->hh5pService->validatePackage($request->file('h5p_file'));
         if ($valid) {
             $this->hh5pService->savePackage();
+
+            return $this->sendResponse($this->hh5pService->getMessages('updated'));
         }
 
-        return response()->json([
-            'valid' => $valid,
-            'messages' => $this->hh5pService->getMessages('updated'),
-            'errors' => $this->hh5pService->getMessages('error'),
-        ], $valid ? 200 : 422);
+        return $this->sendError($this->hh5pService->getMessages('error'), 422);
     }
 
     public function libraries(LibraryListRequest $request): JsonResponse
@@ -52,17 +47,17 @@ class LibraryApiController extends Controller implements LibraryApiSwagger
             $request->get('minorVersion')
         );
 
-        return response()->json($libraries, 200);
+        return $this->sendResponseForResource(LibraryResource::collection($libraries));
     }
 
     public function destroy(LibraryDeleteRequest $request, int $id): JsonResponse
     {
         $valid = $this->hh5pService->deleteLibrary($id);
 
-        return response()->json([
-            'valid' => $valid,
-            'messages' =>  $valid ? "Library $id deleted" : "",
-            'errors' => !$valid ? "Library $id note deleted" : "",
-        ], $valid ? 200 : 422);
+        if ($valid) {
+            return $this->sendSuccess("Library $id deleted");
+        }
+
+        return $this->sendError("Library $id note deleted", 422);
     }
 }
