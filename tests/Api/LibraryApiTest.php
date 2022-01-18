@@ -2,16 +2,13 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use EscolaLms\HeadlessH5P\Tests\TestCase;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 
 class LibraryApiTest extends TestCase
 {
-    public function test_library_uploadig()
+    public function test_library_uploading(): void
     {
         $this->authenticateAsAdmin();
         $filename = 'arithmetic-quiz.h5p';
@@ -33,20 +30,22 @@ class LibraryApiTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_library_index()
+    public function test_library_index(): void
     {
         $this->authenticateAsAdmin();
         $response = $this->actingAs($this->user, 'api')->get('/api/admin/hh5p/library');
 
         $response->assertStatus(200);
         $response->assertJsonStructure([
-            [
-                'id', 'machineName', 'majorVersion', 'minorVersion'
+            'data' => [
+                [
+                    'id', 'machineName', 'majorVersion', 'minorVersion'
+                ]
             ]
         ]);
     }
 
-    public function test_library_delete()
+    public function test_library_delete(): void
     {
         $this->authenticateAsAdmin();
         $library = H5PLibrary::where('runnable', 1)->first();
