@@ -204,7 +204,6 @@ class H5PContentRepository implements H5PContentRepositoryContract
     {
         $content = $this->hh5pService->getCore()->loadContent($id);
         $content['filtered'] = '';
-        $content['embedType'] = empty($content['embedType']) ? 'div' : $content['embedType'];
         $this->hh5pService->getCore()->filterParameters($content);
 
         $filename = $this->hh5pService->getRepository()->getDownloadFile($id);

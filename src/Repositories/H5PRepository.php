@@ -441,6 +441,8 @@ class H5PRepository implements H5PFrameworkInterface
 
         if (is_array($content['library'])) {
             $content['library_id'] = isset($content['library']['libraryId']) ? $content['library']['libraryId'] : $content['library']['id'];
+            $lib = $this->loadLibrary($content['library']['machineName'], $content['library']['majorVersion'], $content['library']['minorVersion']);
+            $content['embed_type'] = $lib['embed_types'];
         }
 
         // `parameters` is string, encode
@@ -531,7 +533,6 @@ class H5PRepository implements H5PFrameworkInterface
             unset($content['library']);
 
             $newContent = H5PContent::create($content);
-
             return $newContent->id;
         }
     }
@@ -860,7 +861,10 @@ class H5PRepository implements H5PFrameworkInterface
         $content = $content->toArray();
         $content['contentId'] = $content['id']; // : Identifier for the content
         $content['params'] = json_encode($content['params']); // : json content as string
-        $content['embedType'] = ''; // : csv of embed types
+        $content['embedType'] =
+            !$content['embed_type']
+            ? $content['embed_type']
+            : \H5PCore::determineEmbedType($content['embed_type'], $content['library']['embed_types']); // : csv of embed types
         //$content ['title'] // : The contents title
         //$content ['language'] // : Language code for the content
         $content['libraryId'] = $content['library_id']; // : Id for the main library
@@ -872,7 +876,6 @@ class H5PRepository implements H5PFrameworkInterface
         //$content ['metadata'] = $content ['metadata'] ?? "";
         $content['metadata'] = json_encode($content['metadata']); // : json content as string
         $content['slug'] = $content['slug'] ?? 'slug';
-
         return $content;
     }
 
