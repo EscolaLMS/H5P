@@ -192,6 +192,48 @@ class ContentApiTest extends TestCase
         ]]);
     }
 
+    public function testContentListSearchTitle(): void
+    {
+        $count = H5PContent::where('title', 'LIKE', '%Title%')->count();
+        $this->authenticateAsAdmin();
+        $response = $this->actingAs($this->user, 'api')->get('/api/admin/hh5p/content?title=Title');
+
+        $response->assertStatus(200);
+        $response->assertJsonCount($count < 15 ? $count : 15, 'data');
+    }
+
+    public function testContentListSearchLibraryId(): void
+    {
+        $content = H5PContent::first();
+        $count = H5PContent::where('library_id', $content->library_id)->count();
+        $this->authenticateAsAdmin();
+        $response = $this->actingAs($this->user, 'api')->get('/api/admin/hh5p/content?library_id='.$content->library_id);
+
+        $response->assertStatus(200);
+        $response->assertJsonCount($count < 15 ? $count : 15, 'data');
+    }
+
+    public function testContentListPageSearchTitle(): void
+    {
+        $count = H5PContent::where('title', 'LIKE', '%Title%')->count();
+        $this->authenticateAsAdmin();
+        $response = $this->actingAs($this->user, 'api')->get('/api/admin/hh5p/content?page=2&title=Title');
+
+        $response->assertStatus(200);
+        $response->assertJsonCount($count > 15 ? ($count < 30 ? ($count-15) : 15) : 0, 'data');
+    }
+
+    public function testContentListPageSearchLibraryId(): void
+    {
+        $content = H5PContent::first();
+        $count = H5PContent::where('library_id', $content->library_id)->count();
+        $this->authenticateAsAdmin();
+        $response = $this->actingAs($this->user, 'api')->get('/api/admin/hh5p/content?page=2&library_id='.$content->library_id);
+
+        $response->assertStatus(200);
+        $response->assertJsonCount($count > 15 ? ($count < 30 ? ($count-15) : 15) : 0, 'data');
+    }
+
     public function testContentDelete(): void
     {
         $this->authenticateAsAdmin();

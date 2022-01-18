@@ -15,6 +15,9 @@ class ContentListRequest extends FormRequest
 
     public function rules(): array
     {
-        return [];
+        return [
+            'title' => ['sometimes', 'nullable', 'string'],
+            'library_id' => ['sometimes', 'nullable', 'integer'],
+        ];
     }
 }
