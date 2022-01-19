@@ -16,10 +16,10 @@ class ContentFilterCriteriaDto extends CriteriaDto implements InstantiateFromReq
         $criteria = new Collection();
 
         if ($request->has('title')) {
-            $criteria->push(new LikeCriterion('title', $request->input('title')));
+            $criteria->push(new LikeCriterion('hh5p_contents.title', $request->input('title')));
         }
         if ($request->has('library_id')) {
-            $criteria->push(new EqualCriterion('library_id', $request->input('library_id')));
+            $criteria->push(new EqualCriterion('hh5p_contents.library_id', $request->input('library_id')));
         }
 
         return new self($criteria);

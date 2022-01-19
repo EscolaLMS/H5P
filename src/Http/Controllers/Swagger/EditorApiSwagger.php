@@ -7,8 +7,6 @@ use Illuminate\Http\Request;
 
 interface EditorApiSwagger
 {
-
-
     /**
      *
      * @OA\Schema(

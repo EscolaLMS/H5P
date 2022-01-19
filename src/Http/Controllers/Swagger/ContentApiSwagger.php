@@ -95,7 +95,6 @@ use EscolaLms\HeadlessH5P\Http\Requests\LibraryStoreRequest;
 
 interface ContentApiSwagger
 {
-
     /**
     * @OA\Post(
     *      path="/api/hh5p/content",
