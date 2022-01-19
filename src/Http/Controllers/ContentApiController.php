@@ -16,6 +16,7 @@ use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ContentApiController extends EscolaLmsBaseController implements ContentApiSwagger
@@ -74,6 +75,17 @@ class ContentApiController extends EscolaLmsBaseController implements ContentApi
     }
 
     public function show(ContentReadRequest $request, int $id): JsonResponse
+    {
+        try {
+            $settings = $this->hh5pService->getContentSettings($id);
+        } catch (Exception $error) {
+            return $this->sendError($error->getMessage(), 422);
+        }
+
+        return $this->sendResponse($settings);
+    }
+
+    public function frontShow(Request $request, int $id): JsonResponse
     {
         try {
             $settings = $this->hh5pService->getContentSettings($id);

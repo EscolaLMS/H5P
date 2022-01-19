@@ -27,9 +27,9 @@ Route::group(['middleware' => ['api'], 'prefix' => 'api'], function () {
     });
 
     Route::group(['prefix' => 'hh5p'], function () {
-        Route::get('hh5p/content/{id}', [ContentApiController::class, 'show'])->name('hh5p.content.show');
+        Route::get('content/{id}', [ContentApiController::class, 'frontShow'])->name('hh5p.content.show');
 
-        Route::get('hh5p/', function () {
+        Route::get('/', function () {
             return 'Hello World';
         })->name('hh5p.index'); // DO not remove this is needed as prefix for editor ajax calls
     });
