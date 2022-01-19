@@ -3,11 +3,10 @@
 namespace EscolaLms\HeadlessH5P\Models;
 
 use App\User;
+use EscolaLms\HeadlessH5P\Database\Factories\H5PContentFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use EscolaLms\HeadlessH5P\Models\H5PLibrary;
-use EscolaLms\HeadlessH5P\Models\H5PContentLibrary;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -89,6 +88,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class H5PContent extends Model
 {
+    use HasFactory;
+
     protected $table = 'hh5p_contents';
 
     protected $primaryKey = 'id';
@@ -128,7 +129,6 @@ class H5PContent extends Model
     {
         $parameters = json_decode($this->parameters);
         return isset($parameters->metadata) ? $parameters->metadata : [];
-        return $parameters->metadata;
     }
 
     public function user(): BelongsTo
@@ -141,8 +141,13 @@ class H5PContent extends Model
         return $this->belongsTo(H5PLibrary::class, 'library_id');
     }
 
-    public function libraries()
+    public function libraries(): HasMany
     {
         return $this->hasMany(H5PContentLibrary::class, 'content_id');
+    }
+
+    protected static function newFactory(): H5PContentFactory
+    {
+        return H5PContentFactory::new();
     }
 }

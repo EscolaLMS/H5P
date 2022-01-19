@@ -24,9 +24,9 @@ trait QueryExtendable
         return $query;
     }
 
-    public static function extendQuerySelect(callable $extension): void
+    public static function extendQuerySelect(callable $extension, string $index): void
     {
-        self::$extensionsSelect[] = $extension;
+        self::$extensionsSelect[$index] = $extension;
     }
 
     public static function applyQuerySelect(Builder $query): Builder
@@ -38,9 +38,9 @@ trait QueryExtendable
         return $query;
     }
 
-    public static function extendQueryGroupBy(callable $extension): void
+    public static function extendQueryGroupBy(callable $extension, string $index): void
     {
-        self::$extendQueryGroupBy[] = $extension;
+        self::$extendQueryGroupBy[$index] = $extension;
     }
 
     public static function applyQueryGroupBy(Builder $query): Builder
