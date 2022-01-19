@@ -41,15 +41,6 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
     {
         $this->user = config('auth.providers.users.model')::factory()->create();
         $this->user->guard_name = 'api';
-        $this->user->givePermissionTo(H5PPermissionsEnum::H5P_LIST);
-        $this->user->givePermissionTo(H5PPermissionsEnum::H5P_READ);
-        $this->user->givePermissionTo(H5PPermissionsEnum::H5P_DELETE);
-        $this->user->givePermissionTo(H5PPermissionsEnum::H5P_UPDATE);
-        $this->user->givePermissionTo(H5PPermissionsEnum::H5P_CREATE);
-        $this->user->givePermissionTo(H5PPermissionsEnum::H5P_LIBRARY_LIST);
-        $this->user->givePermissionTo(H5PPermissionsEnum::H5P_LIBRARY_READ);
-        $this->user->givePermissionTo(H5PPermissionsEnum::H5P_LIBRARY_DELETE);
-        $this->user->givePermissionTo(H5PPermissionsEnum::H5P_LIBRARY_UPDATE);
-        $this->user->givePermissionTo(H5PPermissionsEnum::H5P_LIBRARY_CREATE);
+        $this->user->assignRole('admin');
     }
 }
