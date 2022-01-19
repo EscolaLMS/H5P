@@ -9,7 +9,6 @@ use EscolaLms\HeadlessH5P\Http\Requests\FilesStoreRequest;
 
 interface FilesApiSwagger
 {
-
     /**
     * @OA\Schema(
     *      schema="H5PContentFile",

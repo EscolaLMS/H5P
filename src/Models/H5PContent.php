@@ -131,12 +131,12 @@ class H5PContent extends Model
         return $parameters->metadata;
     }
 
-    public function user():BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function library():BelongsTo
+    public function library(): BelongsTo
     {
         return $this->belongsTo(H5PLibrary::class, 'library_id');
     }

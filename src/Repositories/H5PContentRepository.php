@@ -11,12 +11,15 @@ use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Models\H5PTempFile;
 use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
+use EscolaLms\HeadlessH5P\Traits\QueryExtendable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 class H5PContentRepository implements H5PContentRepositoryContract
 {
+    use QueryExtendable;
+
     private HeadlessH5PServiceContract $hh5pService;
 
     public function __construct(HeadlessH5PServiceContract $hh5pService)
@@ -124,7 +127,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
     public function list(
         ContentFilterCriteriaDto $contentFilterDto,
         $per_page = 15,
-        array $columns = ['*']
+        array $columns = ['hh5p_contents.*']
     ): LengthAwarePaginator {
         $query = $this->getQueryContent($contentFilterDto, $columns);
         $paginator = $query->paginate(intval($per_page));
@@ -238,6 +241,10 @@ class H5PContentRepository implements H5PContentRepositoryContract
         $query = H5PContent::with(
             ['library']
         )->select($columns);
+
+        $query = self::applyQueryJoin($query);
+        $query = self::applyQuerySelect($query);
+        $query = self::applyQueryGroupBy($query);
 
         return $this->applyCriteria($query, $contentFilterDto->toArray());
     }

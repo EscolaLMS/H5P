@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use EscolaLms\HeadlessH5P\Models\H5PContent;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
+use EscolaLms\HeadlessH5P\Repositories\H5PContentRepository;
 use EscolaLms\HeadlessH5P\Tests\TestCase;
 use Illuminate\Http\UploadedFile;
 

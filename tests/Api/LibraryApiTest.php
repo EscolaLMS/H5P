@@ -75,7 +75,7 @@ class LibraryApiTest extends TestCase
         $response->assertForbidden();
     }
 
-    public function testGuestCannotUploadLibrary()
+    public function testGuestCannotUploadLibrary(): void
     {
         $filename = 'arithmetic-quiz.h5p';
         $filepath = realpath(__DIR__.'/../mocks/'.$filename);
