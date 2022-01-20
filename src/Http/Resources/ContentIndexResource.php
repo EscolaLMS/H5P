@@ -4,7 +4,7 @@ namespace EscolaLms\HeadlessH5P\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
-use EscolaLms\HeadlessH5P\Http\Resources\LibraryResource
+use EscolaLms\HeadlessH5P\Http\Resources\LibraryResource;
 
 class ContentIndexResource extends JsonResource
 {
