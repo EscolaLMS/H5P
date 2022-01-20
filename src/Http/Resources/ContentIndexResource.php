@@ -4,7 +4,7 @@ namespace EscolaLms\HeadlessH5P\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
-use EscolaLms\HeadlessH5P\Http\Resources\LibraryResource;
+use EscolaLms\HeadlessH5P\Http\Resources\LibraryIndexResource;
 
 class ContentIndexResource extends JsonResource
 {
@@ -19,7 +19,7 @@ class ContentIndexResource extends JsonResource
             'user_id' => $this->user_id,
             'title' => $this->title,
             'library_id' => $this->library_id,
-            'library' => isset($lib) ? (new LibraryResource($lib))->toArray() : null,
+            'library' => isset($lib) ? (new LibraryIndexResource($lib))->toArray() : null,
             'parameters' => $this->parameters,
             'params' => $this->params,
             'metadata' => $this->metadata,
