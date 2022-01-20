@@ -12,7 +12,7 @@ class LibraryResource extends JsonResource
         $this->resource = $library;
     }
 
-    public function toArray($request): array
+    public function toArray($request = null): array
     {
         return [
             'id' => $this->id,
