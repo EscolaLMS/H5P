@@ -2,10 +2,9 @@
 
 namespace EscolaLms\HeadlessH5P\Models;
 
+use EscolaLms\HeadlessH5P\Database\Factories\H5PLibraryFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
-use EscolaLms\HeadlessH5P\Models\H5PLibraryDependency;
-use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
 
 /**
  * @OA\Schema(
@@ -116,6 +115,8 @@ use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
 
 class H5PLibrary extends Model
 {
+    use HasFactory;
+
     protected $table = 'hh5p_libraries';
     //protected $primaryKey = 'id';
     protected $fillable = [
@@ -171,7 +172,7 @@ class H5PLibrary extends Model
         'children',
         'languages'
     ];
-    
+
     protected $appends = [
         'machineName',
         'uberName',
@@ -185,7 +186,7 @@ class H5PLibrary extends Model
         'hasIcon',
         'libraryId'
     ];
-    
+
     protected $hidden = [
         'major_version',
         'minor_version',
@@ -196,36 +197,32 @@ class H5PLibrary extends Model
         'tutorial_url',
         'has_icon',
     ];
-        
 
     public function getSemanticsAttribute($value)
     {
         return json_decode($value);
     }
-    
+
     public function getLibraryIdAttribute()
     {
         return $this->getKey();
-        return isset($this->attributes['id']) ? $this->attributes['id'] : '';
     }
 
     public function getMachineNameAttribute():string
     {
         return $this->getAttributeValue('name');
-        return isset($this->attributes['name']) ? $this->attributes['name'] : '';
-        return $this->attributes['name'];
     }
 
     public function getUberNameAttribute():string
     {
         return $this->getAttributeValue('name')." ".$this->getAttributeValue('major_version').".".$this->getAttributeValue('minor_version');
     }
-    
+
     public function getMajorVersionAttribute():int
     {
         return isset($this->attributes['major_version']) ? $this->attributes['major_version'] : 0;
     }
-    
+
     public function getMinorVersionAttribute():int
     {
         return isset($this->attributes['minor_version']) ? $this->attributes['minor_version'] : '';
@@ -255,7 +252,7 @@ class H5PLibrary extends Model
     {
         return isset($this->attributes['tutorial_url']) ? $this->attributes['tutorial_url'] : '';
     }
-    
+
     public function getHasIconAttribute():string
     {
         return isset($this->attributes['has_icon']) ? $this->attributes['has_icon'] : '';
@@ -271,9 +268,13 @@ class H5PLibrary extends Model
         return $this->belongsToMany(H5PLibrary::class, 'hh5p_libraries_dependencies', 'library_id', 'required_library_id')->with('children');
     }
 
-
     public function languages()
     {
         return $this->hasMany(H5PLibraryLanguage::class, 'library_id');
+    }
+
+    protected static function newFactory(): H5PLibraryFactory
+    {
+        return H5PLibraryFactory::new();
     }
 }
