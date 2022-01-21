@@ -34,3 +34,8 @@ Route::group(['middleware' => ['api'], 'prefix' => 'api'], function () {
         })->name('hh5p.index'); // DO not remove this is needed as prefix for editor ajax calls
     });
 });
+
+Route::group(['prefix' => 'api/hh5p'], function () {
+    Route::get('libraries', [LibraryApiController::class, 'libraries'])->name('hh5p.library.libraries');
+    Route::post('libraries', [LibraryApiController::class, 'libraries'])->name('hh5p.library.libraries');
+});
