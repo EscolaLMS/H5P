@@ -12,7 +12,7 @@ class LibraryApiTest extends TestCase
     {
         $this->authenticateAsAdmin();
         $filename = 'arithmetic-quiz.h5p';
-        $filepath = realpath(__DIR__.'/../mocks/'.$filename);
+        $filepath = realpath(__DIR__ . '/../mocks/' . $filename);
         $storage_path = storage_path($filename);
 
         copy($filepath, $storage_path);
@@ -68,17 +68,17 @@ class LibraryApiTest extends TestCase
         $response->assertForbidden();
     }
 
-    public function testGuestCannotIndexLibrary(): void
+    public function testGuestCanIndexLibrary(): void
     {
         $response = $this->get('/api/admin/hh5p/library');
 
-        $response->assertForbidden();
+        $response->assertOk();
     }
 
     public function testGuestCannotUploadLibrary(): void
     {
         $filename = 'arithmetic-quiz.h5p';
-        $filepath = realpath(__DIR__.'/../mocks/'.$filename);
+        $filepath = realpath(__DIR__ . '/../mocks/' . $filename);
         $storage_path = storage_path($filename);
 
         copy($filepath, $storage_path);
