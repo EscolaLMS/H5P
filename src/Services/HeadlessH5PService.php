@@ -194,7 +194,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'saveFreq' => false,
             'siteUrl' => $config['domain'],
             'l10n' => [
-                'H5P' => __('h5p::h5p'),
+                'H5P' => __('h5p::h5p')['h5p'],
             ],
             'hubIsEnabled' => false,
         ];
