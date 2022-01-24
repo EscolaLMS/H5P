@@ -18,6 +18,8 @@ use H5PValidator;
 //use EscolaLms\HeadlessH5P\Repositories\H5PFileStorageRepository;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Auth;
 
 class HeadlessH5PService implements HeadlessH5PServiceContract
 {
@@ -144,10 +146,10 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         if (!isset($this->config)) {
             $config = (array) config('hh5p');
             $config['url'] = asset($config['url']);
-            $config['ajaxPath'] = route($config['ajaxPath']).'/';
-            $config['libraryUrl'] = url($config['libraryUrl']).'/';
+            $config['ajaxPath'] = route($config['ajaxPath']) . '/';
+            $config['libraryUrl'] = url($config['libraryUrl']) . '/';
             $config['get_laravelh5p_url'] = url($config['get_laravelh5p_url']);
-            $config['get_h5peditor_url'] = url($config['get_h5peditor_url']).'/';
+            $config['get_h5peditor_url'] = url($config['get_h5peditor_url']) . '/';
             $config['get_h5pcore_url'] = url($config['get_h5pcore_url']);
             $config['getCopyrightSemantics'] = $this->getContentValidator()->getCopyrightSemantics();
             $config['getMetadataSemantics'] = $this->getContentValidator()->getMetadataSemantics();
@@ -205,14 +207,14 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'scripts' => [],
         ];
         foreach (H5PCore::$styles as $style) {
-            $settings['core']['styles'][] = $config['get_h5pcore_url'].'/'.$style;
+            $settings['core']['styles'][] = $config['get_h5pcore_url'] . '/' . $style;
         }
         foreach (H5PCore::$scripts as $script) {
-            $settings['core']['scripts'][] = $config['get_h5pcore_url'].'/'.$script;
+            $settings['core']['scripts'][] = $config['get_h5pcore_url'] . '/' . $script;
         }
-        $settings['core']['scripts'][] = $config['get_h5peditor_url'].'/scripts/h5peditor-editor.js';
-        $settings['core']['scripts'][] = $config['get_h5peditor_url'].'/scripts/h5peditor-init.js';
-        $settings['core']['scripts'][] = $config['get_h5peditor_url'].'/language/en.js'; // TODO this lang should vary depending on config
+        $settings['core']['scripts'][] = $config['get_h5peditor_url'] . '/scripts/h5peditor-editor.js';
+        $settings['core']['scripts'][] = $config['get_h5peditor_url'] . '/scripts/h5peditor-init.js';
+        $settings['core']['scripts'][] = $config['get_h5peditor_url'] . '/language/en.js'; // TODO this lang should vary depending on config
 
         $settings['editor'] = [
             'filesPath' => isset($content) ? url("h5p/content/$content") : url('h5p/editor'),
@@ -240,24 +242,30 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             $settings['nonce'] = bin2hex(random_bytes(4));
         }
 
+        $settings['filesAjaxPath'] = URL::temporarySignedRoute(
+            'hh5p.files.upload.nonce',
+            now()->addMinutes(30),
+            ['nonce' =>  $settings['nonce']]
+        );
+
         // load core assets
         $settings['editor']['assets']['css'] = $settings['core']['styles'];
         $settings['editor']['assets']['js'] = $settings['core']['scripts'];
 
         // add editor styles
         foreach (H5peditor::$styles as $style) {
-            $settings['editor']['assets']['css'][] = $config['get_h5peditor_url'].('/'.$style);
+            $settings['editor']['assets']['css'][] = $config['get_h5peditor_url'] . ('/' . $style);
         }
         // Add editor JavaScript
         foreach (H5peditor::$scripts as $script) {
             // We do not want the creator of the iframe inside the iframe
             if ($script !== 'scripts/h5peditor-editor.js') {
-                $settings['editor']['assets']['js'][] = $config['get_h5peditor_url'].('/'.$script);
+                $settings['editor']['assets']['js'][] = $config['get_h5peditor_url'] . ('/' . $script);
             }
         }
 
-        $language_script = '/language/'.$config['get_language'].'.js';
-        $settings['editor']['assets']['js'][] = $config['get_h5peditor_url'].($language_script);
+        $language_script = '/language/' . $config['get_language'] . '.js';
+        $settings['editor']['assets']['js'][] = $config['get_h5peditor_url'] . ($language_script);
 
         if ($content) {
             $preloaded_dependencies = $this->getCore()->loadContentDependencies($content, 'preloaded');
@@ -266,11 +274,11 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             $embed = H5PCore::determineEmbedType($cid['content']['embed_type'] ?? 'div', $cid['content']['library']['embedTypes']);
 
             $scripts = array_map(function ($value) use ($config) {
-                return $config['url'].($value->path.$value->version);
+                return $config['url'] . ($value->path . $value->version);
             }, $files['scripts']);
 
             $styles = array_map(function ($value) use ($config) {
-                return $config['url'].($value->path.$value->version);
+                return $config['url'] . ($value->path . $value->version);
             }, $files['styles']);
 
             // Error with scripts order
@@ -333,10 +341,10 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'scripts' => [],
         ];
         foreach (H5PCore::$styles as $style) {
-            $settings['core']['styles'][] = $config['get_h5pcore_url'].'/'.$style;
+            $settings['core']['styles'][] = $config['get_h5pcore_url'] . '/' . $style;
         }
         foreach (H5PCore::$scripts as $script) {
-            $settings['core']['scripts'][] = $config['get_h5pcore_url'].'/'.$script;
+            $settings['core']['scripts'][] = $config['get_h5pcore_url'] . '/' . $script;
         }
         //$settings['core']['scripts'][] = $config['get_h5peditor_url'].'/language/en.js'; // TODO this lang should vary depending on config
 
@@ -349,7 +357,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
         $library = $content['library'];
 
-        $uberName = $library['name'].' '.$library['majorVersion'].'.'.$library['minorVersion'];
+        $uberName = $library['name'] . ' ' . $library['majorVersion'] . '.' . $library['minorVersion'];
 
         $settings['contents']["cid-$id"] = [
             'library' => $uberName,
@@ -374,7 +382,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
         $settings['nonce'] = $settings['contents']["cid-$id"]['nonce'];
 
-        $language_script = '/language/'.$config['get_language'].'.js';
+        $language_script = '/language/' . $config['get_language'] . '.js';
 
         $preloaded_dependencies = $this->getCore()->loadContentDependencies($id, 'preloaded');
         $files = $this->getCore()->getDependenciesFiles($preloaded_dependencies);
@@ -383,11 +391,11 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $embed = H5PCore::determineEmbedType($cid['content']['embed_type'] ?? 'div', $cid['content']['library']['embedTypes']);
 
         $scripts = array_map(function ($value) use ($config) {
-            return $config['url'].($value->path.$value->version);
+            return $config['url'] . ($value->path . $value->version);
         }, $files['scripts']);
 
         $styles = array_map(function ($value) use ($config) {
-            return $config['url'].($value->path.$value->version);
+            return $config['url'] . ($value->path . $value->version);
         }, $files['styles']);
 
         if ($embed === 'iframe') {
@@ -432,7 +440,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
         $library = $content['library'];
 
-        $uberName = $library['name'].' '.$library['majorVersion'].'.'.$library['minorVersion'];
+        $uberName = $library['name'] . ' ' . $library['majorVersion'] . '.' . $library['minorVersion'];
 
         $settings = [
             'library' => $uberName,
@@ -479,7 +487,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         }
 
         $result = json_decode($file->getResult());
-        $result->path = $file->getType().'s/'.$file->getName().'#tmp';
+        $result->path = $file->getType() . 's/' . $file->getName() . '#tmp';
 
         return $result;
     }

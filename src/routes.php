@@ -23,7 +23,6 @@ Route::group(['middleware' => ['api'], 'prefix' => 'api'], function () {
         Route::get('content/{id}/export', [ContentApiController::class, 'download'])->name('hh5p.content.export');
         Route::get('content/{id}', [ContentApiController::class, 'show'])->name('hh5p.content.show');
         Route::post('files', FilesApiController::class)->name('hh5p.files.upload');
-        Route::post('files/{nonce}', FilesApiController::class)->name('hh5p.files.upload.nonce');
     });
 
     Route::group(['prefix' => 'hh5p'], function () {
@@ -38,4 +37,5 @@ Route::group(['middleware' => ['api'], 'prefix' => 'api'], function () {
 Route::group(['prefix' => 'api/hh5p'], function () {
     Route::get('libraries', [LibraryApiController::class, 'libraries'])->name('hh5p.library.libraries');
     Route::post('libraries', [LibraryApiController::class, 'libraries'])->name('hh5p.library.libraries');
+    Route::post('files/{nonce}', FilesApiController::class)->name('hh5p.files.upload.nonce');
 });
