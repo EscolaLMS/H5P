@@ -5,7 +5,7 @@ namespace EscolaLms\HeadlessH5P\Http\Resources;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class LibraryResource extends JsonResource
+class LibraryIndexResource extends JsonResource
 {
     public function __construct(H5PLibrary $library)
     {
@@ -44,7 +44,6 @@ class LibraryResource extends JsonResource
             'tutorialUrl' => $this->tutorialUrl,
             'hasIcon' => $this->hasIcon,
             'libraryId' => $this->libraryId,
-            'children' => $this->children,
             'languages' => $this->languages,
         ];
     }

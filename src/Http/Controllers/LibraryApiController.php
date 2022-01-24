@@ -47,7 +47,7 @@ class LibraryApiController extends EscolaLmsBaseController implements LibraryApi
             $request->get('minorVersion')
         );
 
-        return $this->sendResponseForResource(LibraryResource::collection($libraries));
+        return response()->json($libraries, 200);
     }
 
     public function destroy(LibraryDeleteRequest $request, int $id): JsonResponse
