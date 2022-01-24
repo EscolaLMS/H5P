@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
+
 class H5PContentRepository implements H5PContentRepositoryContract
 {
     use QueryExtendable;
@@ -53,6 +54,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
             'library' => $library,
             'parameters' => $params,
             'nonce' => $nonce,
+
         ]);
 
         $this->moveTmpFilesToContentFolders($nonce, $content);
@@ -108,9 +110,9 @@ class H5PContentRepository implements H5PContentRepositoryContract
         $files = H5PTempFile::where(['nonce' => $nonce])->get();
 
         foreach ($files as $file) {
-            $old_path = $storage_path.$file->path;
+            $old_path = $storage_path . $file->path;
             if (strpos($file->path, '/editor') !== false) {
-                $new_path = $storage_path.str_replace('/editor', '/content/'.$contentId, $file->path);
+                $new_path = $storage_path . str_replace('/editor', '/content/' . $contentId, $file->path);
                 $dir_path = dirname($new_path);
                 if (!is_dir($dir_path)) {
                     mkdir($dir_path, 0777, true);
@@ -217,7 +219,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
 
         $filename = $this->hh5pService->getRepository()->getDownloadFile($id);
 
-        return storage_path('app/h5p/exports/'.$filename);
+        return storage_path('app/h5p/exports/' . $filename);
     }
 
     public function getLibraryById(int $id): H5PLibrary

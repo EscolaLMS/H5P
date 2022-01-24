@@ -20,6 +20,9 @@ class FilesApiController extends EscolaLmsBaseController implements FilesApiSwag
 
     public function __invoke(FilesStoreRequest $request, String $nonce = null): JsonResponse
     {
+        if (!$request->hasValidSignature()) {
+            abort(401);
+        }
         try {
             $result = $this->hh5pService->uploadFile(
                 $request->get('contentId'),
@@ -28,9 +31,9 @@ class FilesApiController extends EscolaLmsBaseController implements FilesApiSwag
                 $nonce
             );
 
-            return $this->sendResponse($result);
+            return response()->json($result);
         } catch (Exception $error) {
-            return $this->sendError($error->getMessage(), 422);
+            return response()->json(['error' => $error->getMessage()], 422);
         }
     }
 }
