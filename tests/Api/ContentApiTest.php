@@ -4,11 +4,9 @@ namespace Tests\Feature;
 
 use EscolaLms\HeadlessH5P\Models\H5PContent;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
-use EscolaLms\HeadlessH5P\Repositories\H5PContentRepository;
 use EscolaLms\HeadlessH5P\Tests\TestCase;
-use EscolaLms\TopicTypes\Database\Factories\TopicContent\H5PFactory;
-use EscolaLms\TopicTypes\Models\TopicContent\H5P;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
 class ContentApiTest extends TestCase
@@ -386,8 +384,8 @@ class ContentApiTest extends TestCase
         $response = $this->uploadH5PFile();
         $h5pSecondId = $response['id'];
 
-        H5P::factory()->create([
-            'value' => $h5pFirstId
+        DB::table('topic_h5ps')->insert([
+            'value' => $h5pFirstId,
         ]);
 
         $response = $this->delete('/api/admin/hh5p/unused');
