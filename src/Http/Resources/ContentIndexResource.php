@@ -2,17 +2,19 @@
 
 namespace EscolaLms\HeadlessH5P\Http\Resources;
 
+use EscolaLms\HeadlessH5P\Traits\ResourceExtendable;
 use Illuminate\Http\Resources\Json\JsonResource;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
-use EscolaLms\HeadlessH5P\Http\Resources\LibraryIndexResource;
 
 class ContentIndexResource extends JsonResource
 {
+    use ResourceExtendable;
+
     public function toArray($request): array
     {
         $lib = H5PLibrary::find($this->library_id);
-        
-        return [
+
+        $fields = [
             'id' => $this->id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
@@ -29,5 +31,7 @@ class ContentIndexResource extends JsonResource
             'embed_type' => $this->embed_type,
             'nonce' => $this->nonce,
         ];
+
+        return self::apply($fields, $this);
     }
 }
