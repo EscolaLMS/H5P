@@ -147,8 +147,10 @@ class H5PContentRepository implements H5PContentRepositoryContract
         return $paginator;
     }
 
-    public function unpaginatedList(ContentFilterCriteriaDto $contentFilterDto, array $columns = ['*']): Collection
-    {
+    public function unpaginatedList(
+        ContentFilterCriteriaDto $contentFilterDto,
+        array $columns = ['hh5p_contents.*']
+    ): Collection {
         $query = $this->getQueryContent($contentFilterDto, $columns);
         $list = $query->get();
 
