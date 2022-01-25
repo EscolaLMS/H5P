@@ -311,6 +311,36 @@
                 }
             }
         },
+        "/api/hh5p/unused": {
+            "delete": {
+                "tags": [
+                    "H5P"
+                ],
+                "summary": "Deletes all unused h5p",
+                "description": "Deletes all unused h5p",
+                "operationId": "9eedd3bc781b39f33bca2ea80968c7e2",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "422": {
+                        "description": "validation error",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorised",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
         "/api/hh5p/editor": {
             "get": {
                 "tags": [
