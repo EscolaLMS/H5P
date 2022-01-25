@@ -23,6 +23,7 @@ Route::group(['middleware' => ['api'], 'prefix' => 'api'], function () {
         Route::get('content/{id}/export', [ContentApiController::class, 'download'])->name('hh5p.content.export');
         Route::get('content/{id}', [ContentApiController::class, 'show'])->name('hh5p.content.show');
         Route::post('files', FilesApiController::class)->name('hh5p.files.upload');
+        Route::delete('unused', [ContentApiController::class, 'deleteUnused'])->name('hh5p.content.deleteUnused');
     });
 
     Route::group(['prefix' => 'hh5p'], function () {

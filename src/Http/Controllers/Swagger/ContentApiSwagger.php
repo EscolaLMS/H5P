@@ -385,4 +385,35 @@ interface ContentApiSwagger
     * )
     */
     public function download(ContentReadRequest $request, int $id);
+
+    /**
+     * @OA\Delete(
+     *      path="/api/hh5p/unused",
+     *      summary="Deletes all unused h5p",
+     *      tags={"H5P"},
+     *      description="Deletes all unused h5p",
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=422,
+     *          description="validation error",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="unauthorised",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          )
+     *      )
+     * )
+     */
+    public function deleteUnused(): JsonResponse;
 }

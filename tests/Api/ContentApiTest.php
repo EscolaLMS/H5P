@@ -6,7 +6,10 @@ use EscolaLms\HeadlessH5P\Models\H5PContent;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Repositories\H5PContentRepository;
 use EscolaLms\HeadlessH5P\Tests\TestCase;
+use EscolaLms\TopicTypes\Database\Factories\TopicContent\H5PFactory;
+use EscolaLms\TopicTypes\Models\TopicContent\H5P;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 
 class ContentApiTest extends TestCase
 {
@@ -373,5 +376,48 @@ class ContentApiTest extends TestCase
         $response = $this->delete("/api/admin/hh5p/library/$id");
 
         $response->assertForbidden();
+    }
+
+    public function testShouldRemoveUnusedH5PWithFiles()
+    {
+        $response = $this->uploadH5PFile();
+        $h5pFirstId = $response['id'];
+
+        $response = $this->uploadH5PFile();
+        $h5pSecondId = $response['id'];
+
+        H5P::factory()->create([
+            'value' => $h5pFirstId
+        ]);
+
+        $response = $this->delete('/api/admin/hh5p/unused');
+
+        $response->assertOk();
+
+        $this->assertDatabaseHas('hh5p_contents', [
+            'id' => $h5pFirstId
+        ]);
+        $this->assertDatabaseMissing('hh5p_contents', [
+            'id' => $h5pSecondId
+        ]);
+
+        $this->assertTrue(File::exists(storage_path('app/h5p/content/' . $h5pFirstId)));
+        $this->assertFalse(File::exists(storage_path('app/h5p/content/' . $h5pSecondId)));
+    }
+
+    private function uploadH5PFile(): array
+    {
+        $this->authenticateAsAdmin();
+        $filename = 'arithmetic-quiz.h5p';
+        $filepath = realpath(__DIR__.'/../mocks/'.$filename);
+        $storage_path = storage_path($filename);
+        copy($filepath, $storage_path);
+
+        $h5pFile = new UploadedFile($storage_path, 'arithmetic-quiz.h5p', 'application/pdf', null, true);
+        $response = $this->actingAs($this->user, 'api')->post('/api/admin/hh5p/content/upload', [
+            'h5p_file' => $h5pFile,
+        ]);
+
+        return $response->json('data');
     }
 }

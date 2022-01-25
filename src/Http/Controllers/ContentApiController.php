@@ -117,4 +117,15 @@ class ContentApiController extends EscolaLmsBaseController implements ContentApi
                 'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
             ]);
     }
+
+    public function deleteUnused(): JsonResponse
+    {
+        try {
+            $ids = $this->contentRepository->deleteUnused();
+        } catch (Exception $error) {
+            return $this->sendError($error->getMessage(), 422);
+        }
+
+        return $this->sendResponse(['ids' => $ids]);
+    }
 }

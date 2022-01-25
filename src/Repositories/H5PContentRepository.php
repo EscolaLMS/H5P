@@ -229,6 +229,17 @@ class H5PContentRepository implements H5PContentRepositoryContract
         return H5PLibrary::findOrFail($id);
     }
 
+    public function deleteUnused(): Collection
+    {
+        $unused = $this->getUnused();
+
+        foreach ($unused as $h5p) {
+            $this->delete($h5p->getKey());
+        }
+
+        return $unused->pluck('id');
+    }
+
     private function applyCriteria(Builder $query, array $criteria): Builder
     {
         foreach ($criteria as $criterion) {
@@ -251,5 +262,12 @@ class H5PContentRepository implements H5PContentRepositoryContract
         $query = self::applyQueryGroupBy($query);
 
         return $this->applyCriteria($query, $contentFilterDto->toArray());
+    }
+
+    private function getUnused(): Collection
+    {
+        return H5PContent::query()
+            ->whereRaw('(SELECT COUNT(*) FROM topic_h5ps WHERE hh5p_contents.id = topic_h5ps.value) <= 0')
+            ->get();
     }
 }
