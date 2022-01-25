@@ -15,9 +15,16 @@ interface H5PContentRepositoryContract
 
     public function edit(int $id, string $title, string $library, string $params, string $nonce): int;
 
-    public function list(ContentFilterCriteriaDto $contentFilterDto, $per_page = 15, array $columns = ['*']): LengthAwarePaginator;
+    public function list(
+        ContentFilterCriteriaDto $contentFilterDto,
+        $per_page = 15,
+        array $columns = ['hh5p_contents.*']
+    ): LengthAwarePaginator;
 
-    public function unpaginatedList(ContentFilterCriteriaDto $contentFilterDto, array $columns = ['*']): Collection;
+    public function unpaginatedList(
+        ContentFilterCriteriaDto $contentFilterDto,
+        array $columns = ['hh5p_contents.*']
+    ): Collection;
 
     public function delete(int $id): int;
 
