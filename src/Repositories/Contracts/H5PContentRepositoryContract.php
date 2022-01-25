@@ -29,4 +29,6 @@ interface H5PContentRepositoryContract
     public function delete(int $id): int;
 
     public function getLibraryById(int $id): H5PLibrary;
+
+    public function deleteUnused(): Collection;
 }

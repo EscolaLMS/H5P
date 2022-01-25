@@ -861,10 +861,7 @@ class H5PRepository implements H5PFrameworkInterface
         $content = $content->toArray();
         $content['contentId'] = $content['id']; // : Identifier for the content
         $content['params'] = json_encode($content['params']); // : json content as string
-        $content['embedType'] =
-            !$content['embed_type']
-            ? $content['embed_type']
-            : \H5PCore::determineEmbedType($content['embed_type'], $content['library']['embed_types']); // : csv of embed types
+        $content['embedType'] = \H5PCore::determineEmbedType($content['embed_type'] ?? 'div', $content['library']['embed_types']); // : csv of embed types
         //$content ['title'] // : The contents title
         //$content ['language'] // : Language code for the content
         $content['libraryId'] = $content['library_id']; // : Id for the main library
@@ -876,6 +873,7 @@ class H5PRepository implements H5PFrameworkInterface
         //$content ['metadata'] = $content ['metadata'] ?? "";
         $content['metadata'] = json_encode($content['metadata']); // : json content as string
         $content['slug'] = $content['slug'] ?? 'slug';
+
         return $content;
     }
 

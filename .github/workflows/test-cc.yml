@@ -30,7 +30,7 @@ jobs:
     steps:
       - name: Instantiate package
         run: apt-get install git -y
-        
+
       - name: Instantiate package
         uses: actions/checkout@v2
 
@@ -39,6 +39,9 @@ jobs:
 
       - name: Update composer
         run: composer update
+
+      - name: require topic-types
+        run: COMPOSER_ROOT_VERSION=0.9.9 composer require escolalms/topic-types
 
       - name: Clear config
         run: vendor/bin/testbench config:clear
@@ -51,16 +54,16 @@ jobs:
 
       - name: codecov upload
         uses: codecov/codecov-action@v1
-        
+
       - name: Setup Code Climate test-reporter
         run: |
             curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
             chmod +x ./cc-test-reporter
-      
-      - name: Convert 
+
+      - name: Convert
         run: ./cc-test-reporter format-coverage coverage.xml -t clover -o codeclimate.0.json
-        
+
       - name: Upload
         run: ./cc-test-reporter upload-coverage -i codeclimate.0.json
-        env: 
+        env:
           CC_TEST_REPORTER_ID: 8539f41f60574ac436ad0be5c4a05633ca02b4614ecbcf0acd9dd76ef4130d80

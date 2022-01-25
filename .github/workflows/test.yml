@@ -30,6 +30,9 @@ jobs:
       - name: Update composer
         run: composer update
 
+      - name: require topic-types
+        run: COMPOSER_ROOT_VERSION=0.9.9 composer require escolalms/topic-types
+
       - name: Clear config
         run: vendor/bin/testbench config:clear
 
@@ -66,6 +69,9 @@ jobs:
       - name: Update composer
         run: composer update
 
+      - name: require topic-types
+        run: COMPOSER_ROOT_VERSION=0.9.9 composer require escolalms/topic-types
+
       - name: Clear config
         run: vendor/bin/testbench config:clear
 
@@ -97,6 +103,9 @@ jobs:
 
       - name: Update composer
         run: composer update
+
+      - name: require topic-types
+        run: COMPOSER_ROOT_VERSION=0.9.9 composer require escolalms/topic-types
 
       - name: Setup environment
         run: cp env/postgres/* .
