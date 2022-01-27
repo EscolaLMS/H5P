@@ -3,6 +3,7 @@
 namespace EscolaLms\HeadlessH5P\Services;
 
 use EscolaLms\HeadlessH5P\Exceptions\H5PException;
+use EscolaLms\HeadlessH5P\Helpers\MargeFiles;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 use H5PContentValidator;
@@ -267,6 +268,19 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $language_script = '/language/' . $config['get_language'] . '.js';
         $settings['editor']['assets']['js'][] = $config['get_h5peditor_url'] . ($language_script);
 
+        $settings['editor']['assets']['js'] = $this->margeFileList(
+            $settings['editor']['assets']['js'],
+            'js',
+            [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
+            [__DIR__.'/../../vendor/h5p/h5p-editor', __DIR__.'/../../vendor/h5p/h5p-core']
+        );
+        $settings['editor']['assets']['css'] = $this->margeFileList(
+            $settings['editor']['assets']['css'],
+            'css',
+            [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
+            [__DIR__.'/../../vendor/h5p/h5p-editor', __DIR__.'/../../vendor/h5p/h5p-core']
+        );
+
         if ($content) {
             $preloaded_dependencies = $this->getCore()->loadContentDependencies($content, 'preloaded');
             $files = $this->getCore()->getDependenciesFiles($preloaded_dependencies);
@@ -497,5 +511,16 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $isValidToken = $this->getEditor()->ajaxInterface->validateEditorToken($token);
 
         return (bool) $isValidToken;
+    }
+
+    private function margeFileList(array $fileList, string $type, array $replaceFrom, array $replaceTo): array
+    {
+        $newFileList = [];
+        foreach ($fileList as $file) {
+            $newFileList[] = str_replace($replaceFrom, $replaceTo, $file);
+        }
+        $margeFiles = new MargeFiles($newFileList, $type, $replaceTo[0]);
+
+        return [$replaceFrom[0] . ($type . '/' . basename($margeFiles->getHashedFile()))];
     }
 }
