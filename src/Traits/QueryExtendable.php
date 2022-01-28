@@ -45,12 +45,8 @@ trait QueryExtendable
 
     public static function applyQueryGroupBy(Builder $query): Builder
     {
-        $groupBy = '';
         foreach (self::$extendQueryGroupBy as $extension) {
-            $groupBy .= ($groupBy ? ', ' : '' ) . $extension();
-        }
-        if ($groupBy) {
-            $query->groupBy($groupBy);
+            $query->groupBy($extension());
         }
 
         return $query;
