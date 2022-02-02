@@ -272,13 +272,13 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             $settings['editor']['assets']['js'],
             'js',
             [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
-            [__DIR__.'/../../vendor/h5p/h5p-editor', __DIR__.'/../../vendor/h5p/h5p-core']
+            [base_path() . '/vendor/h5p/h5p-editor', base_path() . '/vendor/h5p/h5p-core']
         );
         $settings['editor']['assets']['css'] = $this->margeFileList(
             $settings['editor']['assets']['css'],
             'css',
             [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
-            [__DIR__.'/../../vendor/h5p/h5p-editor', __DIR__.'/../../vendor/h5p/h5p-core']
+            [base_path() . '/vendor/h5p/h5p-editor', base_path() . '/vendor/h5p/h5p-core']
         );
 
         if ($content) {
