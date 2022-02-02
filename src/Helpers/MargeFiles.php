@@ -67,7 +67,8 @@ class MargeFiles
 
     private function generateStoragePath(): string
     {
-        $storagePath = $this->patch . '/' . $this->fileType;
+        $storagePath = $this->getPath($this->patch) . '/' . $this->fileType;
+
         if (!file_exists($storagePath)) {
             mkdir($storagePath, 0777, true);
         }
@@ -101,10 +102,19 @@ class MargeFiles
      */
     private function getContent(string $path): string
     {
-        if (file_exists($path)) {
-            return file_get_contents($path);
+        $filePath = $this->getPath($path);
+
+        if (file_exists($filePath)) {
+            return file_get_contents($filePath);
         }
 
         throw new Exception("File: '".$path."' do not exist");
+    }
+
+    private function getPath($path): string
+    {
+        return file_exists(__DIR__ . '/../..' . $path)
+            ? __DIR__ . '/../..' . $path
+            : __DIR__ . '/../../../..' . $path;
     }
 }

@@ -35,7 +35,6 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
         // Setup default database to use sqlite :memory:
         $app['config']->set('auth.providers.users.model', User::class);
         $app['config']->set('passport.client_uuids', true);
-        $app->setBasePath(__DIR__ . '/../../..');
     }
 
     protected function authenticateAsAdmin(): void
