@@ -8,7 +8,7 @@
     "spatie/laravel-permission": "^3.18",
     "h5p/h5p-core": "dev-master",
     "h5p/h5p-editor": "dev-master",
-    "darkaonline/l5-swagger": "^8.0",
+    "darkaonline/l5-swagger": "^8.1",
     "escolalms/core": "^1"
   },
   "require-dev": {
