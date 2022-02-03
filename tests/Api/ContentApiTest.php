@@ -1,10 +1,11 @@
 <?php
 
-namespace Tests\Feature;
+namespace EscolaLms\HeadlessH5P\Tests\Feature;
 
 use EscolaLms\HeadlessH5P\Models\H5PContent;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Tests\TestCase;
+use EscolaLms\HeadlessH5P\Tests\Traits\H5PTestingTrait;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\File;
 
 class ContentApiTest extends TestCase
 {
-    use DatabaseTransactions, WithFaker;
+    use DatabaseTransactions, WithFaker, H5PTestingTrait;
 
     public function testContentCreate(): void
     {
@@ -377,7 +378,6 @@ class ContentApiTest extends TestCase
     public function testContentExport(): void
     {
         $this->authenticateAsAdmin();
-        $this->authenticateAsAdmin();
         $data = $this->uploadH5PFile();
         $id = $data['id'];
 
@@ -451,6 +451,8 @@ class ContentApiTest extends TestCase
 
     public function testShouldRemoveUnusedH5PWithFiles()
     {
+        $this->authenticateAsAdmin();
+
         $response = $this->uploadH5PFile();
         $h5pFirstId = $response['id'];
 
@@ -474,21 +476,5 @@ class ContentApiTest extends TestCase
 
         $this->assertTrue(File::exists(storage_path('app/h5p/content/' . $h5pFirstId)));
         $this->assertFalse(File::exists(storage_path('app/h5p/content/' . $h5pSecondId)));
-    }
-
-    private function uploadH5PFile(): array
-    {
-        $this->authenticateAsAdmin();
-        $filename = 'arithmetic-quiz.h5p';
-        $filepath = realpath(__DIR__.'/../mocks/'.$filename);
-        $storage_path = storage_path($filename);
-        copy($filepath, $storage_path);
-
-        $h5pFile = new UploadedFile($storage_path, 'arithmetic-quiz.h5p', 'application/pdf', null, true);
-        $response = $this->actingAs($this->user, 'api')->post('/api/admin/hh5p/content/upload', [
-            'h5p_file' => $h5pFile,
-        ]);
-
-        return $response->json('data');
     }
 }
