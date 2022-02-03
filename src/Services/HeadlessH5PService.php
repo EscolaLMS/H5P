@@ -270,10 +270,10 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
         $h5pEditorDir = file_exists(__DIR__ . '/../../vendor/h5p/h5p-editor')
             ? __DIR__ . '/../../vendor/h5p/h5p-editor'
-            : __DIR__ . '/../../../../vendor/h5p/h5p-editor';
+            : __DIR__ . '/../../../../../vendor/h5p/h5p-editor';
         $h5pCoreDir = file_exists(__DIR__ . '/../../vendor/h5p/h5p-core')
             ? __DIR__ . '/../../vendor/h5p/h5p-core'
-            : __DIR__ . '/../../../../vendor/h5p/h5p-core';
+            : __DIR__ . '/../../../../../vendor/h5p/h5p-core';
 
         $settings['editor']['assets']['js'] = $this->margeFileList(
             $settings['editor']['assets']['js'],

@@ -6,13 +6,14 @@ use EscolaLms\HeadlessH5P\Models\H5PContent;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
 class ContentApiTest extends TestCase
 {
-    use DatabaseTransactions;
+    use DatabaseTransactions, WithFaker;
 
     public function testContentCreate(): void
     {
@@ -25,9 +26,9 @@ class ContentApiTest extends TestCase
 
         $h5pFile = new UploadedFile($storage_path, 'arithmetic-quiz.h5p', 'application/pdf', null, true);
 
-        $response = $this->actingAs($this->user, 'api')->post('/api/admin/hh5p/library', [
+        $this->actingAs($this->user, 'api')->post('/api/admin/hh5p/library', [
             'h5p_file' => $h5pFile,
-        ]);
+        ])->assertOk();
 
         $library = H5PLibrary::where('runnable', 1)->first();
 
@@ -160,9 +161,19 @@ class ContentApiTest extends TestCase
 
     public function testContentList(): void
     {
+        $library = H5PLibrary::factory()->create(['runnable' => 1]);
+        H5PContent::factory()
+            ->count(10)
+            ->create([
+                'library_id' => $library->getKey()
+            ]);
+
         $this->authenticateAsAdmin();
-        $response = $this->actingAs($this->user, 'api')->get('/api/admin/hh5p/content');
+        $response = $this->actingAs($this->user, 'api')
+            ->get('/api/admin/hh5p/content');
+
         $response->assertStatus(200);
+        $response->assertJsonCount(10, 'data');
         $response->assertJsonStructure(['data', 'meta' => [
             'current_page',
             'first_page_url',
@@ -181,9 +192,19 @@ class ContentApiTest extends TestCase
 
     public function testContentListPage(): void
     {
+        $library = H5PLibrary::factory()->create(['runnable' => 1]);
+        H5PContent::factory()
+            ->count(30)
+            ->create([
+                'library_id' => $library->getKey()
+            ]);
+
         $this->authenticateAsAdmin();
-        $response = $this->actingAs($this->user, 'api')->get('/api/admin/hh5p/content?page=2');
+        $response = $this->actingAs($this->user, 'api')
+            ->get('/api/admin/hh5p/content?page=2&per_page=15');
+
         $response->assertStatus(200);
+        $response->assertJsonCount(15, 'data');
         $response->assertJsonStructure(['data', 'meta' => [
             'current_page',
             'first_page_url',
@@ -202,51 +223,85 @@ class ContentApiTest extends TestCase
 
     public function testContentListSearchTitle(): void
     {
-        $count = H5PContent::where('title', 'LIKE', '%Title%')->count();
+        $title = $this->faker->word;
+        $library = H5PLibrary::factory()
+            ->create(['runnable' => 1]);
+        H5PContent::factory()
+            ->count(3)
+            ->create([
+                'title' => $title,
+                'library_id' => $library->getKey()
+            ]);
+        H5PContent::factory()
+            ->create([
+                'library_id' => $library->getKey()
+            ]);
+
         $this->authenticateAsAdmin();
-        $response = $this->actingAs($this->user, 'api')->get('/api/admin/hh5p/content?title=Title');
+        $response = $this->actingAs($this->user, 'api')->get('/api/admin/hh5p/content?title=' . $title);
 
         $response->assertStatus(200);
-        $response->assertJsonCount($count < 15 ? $count : 15, 'data');
+        $response->assertJsonCount(3, 'data');
     }
 
     public function testContentListSearchLibraryId(): void
     {
-        $library = H5PLibrary::factory()->create(['runnable' => 1]);
-        $content = H5PContent::factory()->create([
-            'library_id' => $library->getKey()
+        $library1 = H5PLibrary::factory()->create(['runnable' => 1]);
+        $library2 = H5PLibrary::factory()->create(['runnable' => 1]);
+        $content = H5PContent::factory()
+            ->count(2)
+            ->create([
+            'library_id' => $library1->getKey()
         ]);
-        $count = H5PContent::where('library_id', $library->getKey())->count();
+        H5PContent::factory()
+            ->create([
+                'library_id' => $library2->getKey()
+            ]);
+
         $this->authenticateAsAdmin();
-        $response = $this->actingAs($this->user, 'api')->get('/api/admin/hh5p/content?library_id='.$content->library_id);
+        $response = $this->actingAs($this->user, 'api')
+            ->get('/api/admin/hh5p/content?library_id=' . $library1->getKey());
 
         $response->assertStatus(200);
-        $response->assertJsonCount($count < 15 ? $count : 15, 'data');
+        $response->assertJsonCount(2, 'data');
     }
 
     public function testContentListPageSearchTitle(): void
     {
-        // TODO factory
+        $title =  $this->faker->word;
+        $library = H5PLibrary::factory()
+            ->create(['runnable' => 1]);
+        H5PContent::factory()
+            ->count(30)
+            ->create([
+                'title' => $title,
+                'library_id' => $library->getKey()
+            ]);
 
-        $count = H5PContent::where('title', 'LIKE', '%Title%')->count();
         $this->authenticateAsAdmin();
-        $response = $this->actingAs($this->user, 'api')->get('/api/admin/hh5p/content?page=2&title=Title');
+        $response = $this->actingAs($this->user, 'api')->get('/api/admin/hh5p/content?page=2&per_page=20&title=' . $title);
 
         $response->assertStatus(200);
-        $response->assertJsonCount($count > 15 ? ($count < 30 ? ($count-15) : 15) : 0, 'data');
+        $response->assertJsonCount(10, 'data');
     }
 
     public function testContentListPageSearchLibraryId(): void
     {
-        // TODO factory
+        $libraries = H5PLibrary::factory()
+            ->count(2)
+            ->create(['runnable' => 1]);
+        $contents = H5PContent::factory()
+            ->count(30)
+            ->create([
+                'library_id' => $libraries->first()->getKey()
+            ]);
 
-        $content = H5PContent::first();
-        $count = H5PContent::where('library_id', $content->library_id)->count();
         $this->authenticateAsAdmin();
-        $response = $this->actingAs($this->user, 'api')->get('/api/admin/hh5p/content?page=2&library_id='.$content->library_id);
+        $response = $this->actingAs($this->user, 'api')
+            ->get('/api/admin/hh5p/content?page=2&per_page=20&library_id=' . $contents->first()->library_id);
 
         $response->assertStatus(200);
-        $response->assertJsonCount($count > 15 ? ($count < 30 ? ($count-15) : 15) : 0, 'data');
+        $response->assertJsonCount(10, 'data');
     }
 
     public function testContentDelete(): void
@@ -275,11 +330,9 @@ class ContentApiTest extends TestCase
     public function testContentShow(): void
     {
         $this->authenticateAsAdmin();
-        $library = H5PLibrary::factory()->create(['runnable' => 1]);
-        $content = H5PContent::factory()->create([
-            'library_id' => $library->getKey()
-        ]);
-        $id = $content->id;
+        $data = $this->uploadH5PFile();
+        $id = $data['id'];
+
         $response = $this->actingAs($this->user, 'api')->get("/api/admin/hh5p/content/$id");
         $response->assertStatus(200);
 
@@ -324,16 +377,14 @@ class ContentApiTest extends TestCase
     public function testContentExport(): void
     {
         $this->authenticateAsAdmin();
-        $library = H5PLibrary::factory()->create(['runnable' => 1]);
-        $content = H5PContent::factory()->create([
-            'library_id' => $library->getKey()
-        ]);
+        $this->authenticateAsAdmin();
+        $data = $this->uploadH5PFile();
+        $id = $data['id'];
 
-        $id = $content->id;
-        $response = $this->actingAs($this->user, 'api')->get("/api/admin/hh5p/content/$id/export");
-        $response->assertStatus(200);
-
-        $response->assertDownload();
+        $this->actingAs($this->user, 'api')
+            ->get("/api/admin/hh5p/content/$id/export")
+            ->assertStatus(200)
+            ->assertDownload();
     }
 
     public function testGuestCannotCreateContent(): void
@@ -377,7 +428,10 @@ class ContentApiTest extends TestCase
 
     public function testGuestCannotShowContent(): void
     {
-        $content = H5PContent::latest()->first();
+        $library = H5PLibrary::factory()->create(['runnable' => 1]);
+        $content = H5PContent::factory()->create([
+            'library_id' => $library->getKey()
+        ]);
         $id = $content->id;
 
         $response = $this->get("/api/admin/hh5p/content/$id");
@@ -387,7 +441,7 @@ class ContentApiTest extends TestCase
 
     public function testGuestCannotDeleteContent(): void
     {
-        $library = H5PLibrary::where('runnable', 1)->first();
+        $library = H5PLibrary::factory()->create(['runnable' => 1]);
         $id = $library->id;
 
         $response = $this->delete("/api/admin/hh5p/library/$id");
