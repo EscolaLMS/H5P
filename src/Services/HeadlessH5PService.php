@@ -275,6 +275,19 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             ? __DIR__ . '/../../vendor/h5p/h5p-core'
             : __DIR__ . '/../../../../../vendor/h5p/h5p-core';
 
+        $settings['core']['scripts'] = $this->margeFileList(
+            $settings['core']['scripts'],
+            'js',
+            [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
+            [$h5pEditorDir, $h5pCoreDir]
+        );
+        $settings['core']['styles'] = $this->margeFileList(
+            $settings['core']['styles'],
+            'css',
+            [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
+            [$h5pEditorDir, $h5pCoreDir]
+        );
+
         $settings['editor']['assets']['js'] = $this->margeFileList(
             $settings['editor']['assets']['js'],
             'js',
