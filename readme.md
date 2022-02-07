@@ -29,6 +29,8 @@ To play the content you can use [EscolaLMS H5P Player](https://github.com/Escola
 
 1. `composer require escolalms/headless-h5p`
 2. `php artisan migrate`
+3. `php artisan h5p:link` see below 
+4. `php db:seed --class="EscolaLms\HeadlessH5P\Database\Seeders\PermissionTableSeeder"  see below 
 
 ### Storage links
 
@@ -54,6 +56,14 @@ location ~* \.(eot|ttf|woff|woff2|jpg|jpeg|gif|png|wav|mp3|mp4|mov|ogg|webv)$ {
 }
 ```
 
+### Authorisation 
+
+Most of the endpoints require authorisation, this is possible with laravel passport 
+
+There is a [seeder](database/seeders/PermissionTableSeeder.php /) to must be run in order to authrize 
+
+User model is taken from [Auth](https://github.com/EscolaLMS/Auth) package. 
+
 ### Seeder
 
 To seed content and library 
@@ -69,10 +79,4 @@ You can seed library and content with build-in seeders as command that are acces
 
 ## Road map
 
-- caching
-- content export
-- some transaltions are missing
-- casading delete
-- sql foreign keys indexing
-- clearup task - deleting temp files, marked for delete
-- in some contents, js libs content is invalid
+- rewrite h5p core in a way like [luminare in typescript](https://github.com/lumieducation/lumi)
