@@ -60,7 +60,7 @@ location ~* \.(eot|ttf|woff|woff2|jpg|jpeg|gif|png|wav|mp3|mp4|mov|ogg|webv)$ {
 
 Most of the endpoints require authorisation, this is possible with laravel passport 
 
-There is a [seeder](database/seeders/PermissionTableSeeder.php /) to must be run in order to authrize 
+There is a [seeder](database/seeders/PermissionTableSeeder.php) to must be run in order to authrize 
 
 User model is taken from [Auth](https://github.com/EscolaLMS/Auth) package. 
 
