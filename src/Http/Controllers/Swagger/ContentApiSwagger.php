@@ -6,7 +6,6 @@ use EscolaLms\HeadlessH5P\Http\Requests\ContentDeleteRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\ContentListRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\ContentReadRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 use EscolaLms\HeadlessH5P\Http\Requests\ContentStoreRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\LibraryStoreRequest;
@@ -101,6 +100,9 @@ interface ContentApiSwagger
     *      summary="Store h5p content in database",
     *      tags={"H5P"},
     *      description="Store h5p content in database",
+    *      security={
+    *          {"passport": {}},
+    *      },
     *      @OA\RequestBody(
     *          required=true,
     *          @OA\MediaType(
@@ -139,6 +141,9 @@ interface ContentApiSwagger
     *      summary="Content settings for player",
     *      tags={"H5P"},
     *      description="Content settings for player",
+    *      security={
+    *          {"passport": {}},
+    *      },
     *      @OA\Parameter(
     *          name="id",
     *          description="Id of Content",
@@ -166,6 +171,9 @@ interface ContentApiSwagger
     *      summary="Updates h5p content in database",
     *      tags={"H5P"},
     *      description="Updates h5p content in database",
+    *      security={
+    *          {"passport": {}},
+    *      },
     *      @OA\Parameter(
     *          name="id",
     *          description="Id of Content from DB",
@@ -213,6 +221,9 @@ interface ContentApiSwagger
     *      summary="list of h5ps content in database",
     *      tags={"H5P"},
     *      description="list of h5ps content in database",
+    *      security={
+    *          {"passport": {}},
+    *      },
     *      @OA\Parameter(
     *          name="page",
     *          description="page of pagination",
@@ -281,6 +292,9 @@ interface ContentApiSwagger
     *      summary="Deletes h5p content from database",
     *      tags={"H5P"},
     *      description="Deletes h5p content from database",
+    *      security={
+    *          {"passport": {}},
+    *      },
     *      @OA\Parameter(
     *          name="id",
     *          description="ID of content that will be deleted",
@@ -321,6 +335,9 @@ interface ContentApiSwagger
     *      summary="Store h5p content from file in database",
     *      tags={"H5P"},
     *      description="Store h5p content from file in database",
+    *      security={
+    *          {"passport": {}},
+    *      },
     *      @OA\RequestBody(
     *          required=true,
     *          @OA\MediaType(
@@ -352,6 +369,9 @@ interface ContentApiSwagger
     *      summary="Downloads h5p content to packagee",
     *      tags={"H5P"},
     *      description="Downloads h5p content to package",
+    *      security={
+    *          {"passport": {}},
+    *      },
     *      @OA\Parameter(
     *          name="id",
     *          description="ID of content that will be exported",
@@ -392,6 +412,9 @@ interface ContentApiSwagger
      *      summary="Deletes all unused h5p",
      *      tags={"H5P"},
      *      description="Deletes all unused h5p",
+     *      security={
+     *          {"passport": {}},
+     *      },
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
