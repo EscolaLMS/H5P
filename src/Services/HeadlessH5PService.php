@@ -382,6 +382,26 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         }
         //$settings['core']['scripts'][] = $config['get_h5peditor_url'].'/language/en.js'; // TODO this lang should vary depending on config
 
+        $h5pEditorDir = file_exists(__DIR__ . '/../../vendor/h5p/h5p-editor')
+            ? __DIR__ . '/../../vendor/h5p/h5p-editor'
+            : __DIR__ . '/../../../../../vendor/h5p/h5p-editor';
+        $h5pCoreDir = file_exists(__DIR__ . '/../../vendor/h5p/h5p-core')
+            ? __DIR__ . '/../../vendor/h5p/h5p-core'
+            : __DIR__ . '/../../../../../vendor/h5p/h5p-core';
+
+        $settings['core']['scripts'] = $this->margeFileList(
+            $settings['core']['scripts'],
+            'js',
+            [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
+            [$h5pEditorDir, $h5pCoreDir]
+        );
+        $settings['core']['styles'] = $this->margeFileList(
+            $settings['core']['styles'],
+            'css',
+            [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
+            [$h5pEditorDir, $h5pCoreDir]
+        );
+
         // get settings start
 
         $content = $this->getCore()->loadContent($id);
