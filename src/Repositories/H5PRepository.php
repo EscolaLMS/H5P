@@ -289,6 +289,7 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function isPatchedLibrary($library)
     {
+        return true;
     }
 
     /**
@@ -1046,8 +1047,9 @@ class H5PRepository implements H5PFrameworkInterface
      * @return array
      *               List of hash keys removed
      */
-    public function deleteCachedAssets($library_id)
+    public function deleteCachedAssets($library_id): array
     {
+        return [];
     }
 
     /**
