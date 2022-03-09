@@ -1,6 +1,6 @@
 {
   "name": "escolalms/headless-h5p",
-  "description": "Headless H5P API",
+  "description": "Headless H5P Laravel REST API",
   "type": "package",
   "require": {
     "php": ">=7.4",
