@@ -281,12 +281,12 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
             [$h5pEditorDir, $h5pCoreDir]
         );
-        $settings['core']['styles'] = $this->margeFileList(
+        /*$settings['core']['styles'] = $this->margeFileList(
             $settings['core']['styles'],
             'css',
             [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
             [$h5pEditorDir, $h5pCoreDir]
-        );
+        );*/
 
         $settings['editor']['assets']['js'] = $this->margeFileList(
             $settings['editor']['assets']['js'],
@@ -294,12 +294,12 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
             [$h5pEditorDir, $h5pCoreDir]
         );
-        $settings['editor']['assets']['css'] = $this->margeFileList(
+        /*$settings['editor']['assets']['css'] = $this->margeFileList(
             $settings['editor']['assets']['css'],
             'css',
             [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
             [$h5pEditorDir, $h5pCoreDir]
-        );
+        );*/
 
         if ($content) {
             $preloaded_dependencies = $this->getCore()->loadContentDependencies($content, 'preloaded');
@@ -395,12 +395,12 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
             [$h5pEditorDir, $h5pCoreDir]
         );
-        $settings['core']['styles'] = $this->margeFileList(
+        /*$settings['core']['styles'] = $this->margeFileList(
             $settings['core']['styles'],
             'css',
             [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
             [$h5pEditorDir, $h5pCoreDir]
-        );
+        );*/
 
         // get settings start
 
