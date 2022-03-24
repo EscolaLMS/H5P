@@ -24,7 +24,7 @@
       "EscolaLms\\HeadlessH5P\\Database\\Seeders\\": "database/seeders"
     }
   },
-  "license": "Apache-2.0",
+  "license": "MIT",
   "authors": [{
     "name": "Mateusz Wojczal",
     "email": "mateusz@wojczal.com"
