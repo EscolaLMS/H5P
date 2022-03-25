@@ -118,4 +118,42 @@ jobs:
 
       - name: Run tests
         run: vendor/bin/phpunit
+
+  php81-laravel-latest-phpunit-postgres:
+    runs-on: ubuntu-latest
+    container:
+      image: escolalms/php:8.1-work
+
+    services:
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test
+          TZ: Europe/Warsaw
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Instantiate package
+        uses: actions/checkout@v2
+
+      - name: Update composer
+        run: composer update
+
+      - name: require topic-types
+        run: COMPOSER_ROOT_VERSION=0.9.9 composer require escolalms/topic-types
+
+      - name: Setup environment
+        run: cp env/postgres/* .
+
+      - name: Clear config
+        run: vendor/bin/testbench config:clear
+
+      - name: Publish things
+        run: vendor/bin/testbench migrate:fresh
+
+      - name: Run tests
+        run: vendor/bin/phpunit
 ### TODO add behat tests here
