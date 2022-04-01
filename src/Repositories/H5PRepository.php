@@ -636,7 +636,17 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function saveLibraryUsage($contentId, $librariesInUse)
     {
-        $contentLibraries = array_map(function ($value) use ($contentId) {
+        $test = [];
+        $contentLibraries = array_map(function ($value) use ($contentId, &$test) {
+            $test[] = [
+                'drop_css' => boolval($value['library']['dropLibraryCss']),
+                'weight' => $value['weight'],
+            ];
+            $test[] = [
+                'content_id' => $contentId,
+                'library_id' => $value['library']['id'],
+                'dependency_type' => $value['type'],
+            ];
             return H5PContentLibrary::firstOrCreate([
                 'content_id' => $contentId,
                 'library_id' => $value['library']['id'],
@@ -646,7 +656,7 @@ class H5PRepository implements H5PFrameworkInterface
                 'weight' => $value['weight'],
                 ])->toArray();
         }, $librariesInUse);
-
+dd($test);
         $content = H5PContent::with('library')->findOrFail($contentId);
 
         $libraryLibraries = array_map(function ($value) use ($contentId) {
