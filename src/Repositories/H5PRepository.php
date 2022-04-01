@@ -11,6 +11,7 @@ use EscolaLms\HeadlessH5P\Models\H5PLibraryDependency;
 use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
 use H5PFrameworkInterface;
 use Illuminate\Support\Facades\Log;
+use TypeError;
 
 class H5PRepository implements H5PFrameworkInterface
 {
@@ -636,27 +637,29 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function saveLibraryUsage($contentId, $librariesInUse)
     {
-        $test = [];
         $contentLibraries = array_map(function ($value) use ($contentId, &$test) {
-            $test[] = [
-                'drop_css' => boolval($value['library']['dropLibraryCss']),
-                'weight' => $value['weight'],
-            ];
-            $test[] = [
-                'content_id' => $contentId,
-                'library_id' => $value['library']['id'],
-                'dependency_type' => $value['type'],
-            ];
-            return H5PContentLibrary::firstOrCreate([
-                'content_id' => $contentId,
-                'library_id' => $value['library']['id'],
-                'dependency_type' => $value['type'],
-            ], [
-                'drop_css' => boolval($value['library']['dropLibraryCss']),
-                'weight' => $value['weight'],
+            try {
+                return H5PContentLibrary::firstOrCreate([
+                    'content_id' => $contentId,
+                    'library_id' => $value['library']['id'],
+                    'dependency_type' => $value['type'],
+                ], [
+                    'drop_css' => boolval($value['library']['dropLibraryCss']),
+                    'weight' => $value['weight'],
                 ])->toArray();
+            } catch (TypeError $exception) {
+                dd([
+                    'drop_css' => boolval($value['library']['dropLibraryCss']),
+                    'weight' => $value['weight'],
+                ],
+                    [
+                        'content_id' => $contentId,
+                        'library_id' => $value['library']['id'],
+                        'dependency_type' => $value['type'],
+                    ]
+                );
+            }
         }, $librariesInUse);
-dd($test);
         $content = H5PContent::with('library')->findOrFail($contentId);
 
         $libraryLibraries = array_map(function ($value) use ($contentId) {
