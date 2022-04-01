@@ -645,13 +645,14 @@ class H5PRepository implements H5PFrameworkInterface
                 ])
                 ->first();
             if (!$contentLibrary) {
-                $contentLibrary = H5PContentLibrary::create([
+                $contentLibrary = new H5PContentLibrary([
                     'content_id' => $contentId,
                     'library_id' => $value['library']['id'],
                     'dependency_type' => $value['type'],
                     'drop_css' => boolval($value['library']['dropLibraryCss']),
                     'weight' => $value['weight'],
                 ]);
+                $contentLibrary->save();
             }
             return $contentLibrary->toArray();
         }, $librariesInUse);
