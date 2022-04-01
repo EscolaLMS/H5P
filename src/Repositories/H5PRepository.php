@@ -637,14 +637,23 @@ class H5PRepository implements H5PFrameworkInterface
     public function saveLibraryUsage($contentId, $librariesInUse)
     {
         $contentLibraries = array_map(function ($value) use ($contentId) {
-            return H5PContentLibrary::firstOrCreate([
-                'content_id' => $contentId,
-                'library_id' => $value['library']['id'],
-                'dependency_type' => $value['type'],
-            ], [
-                'drop_css' => boolval($value['library']['dropLibraryCss']),
-                'weight' => $value['weight'],
-                ])->toArray();
+            $contentLibrary = H5PContentLibrary::query()
+                ->where([
+                    'content_id' => $contentId,
+                    'library_id' => $value['library']['id'],
+                    'dependency_type' => $value['type'],
+                ])
+                ->first();
+            if (!$contentLibrary) {
+                $contentLibrary = H5PContentLibrary::create([
+                    'content_id' => $contentId,
+                    'library_id' => $value['library']['id'],
+                    'dependency_type' => $value['type'],
+                    'drop_css' => boolval($value['library']['dropLibraryCss']),
+                    'weight' => $value['weight'],
+                ]);
+            }
+            return $contentLibrary->toArray();
         }, $librariesInUse);
 
         $content = H5PContent::with('library')->findOrFail($contentId);
