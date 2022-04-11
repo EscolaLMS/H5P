@@ -68,6 +68,7 @@ class MargeFiles
     private function generateStoragePath(): string
     {
         $storagePath = $this->patch . '/' . $this->fileType;
+
         if (!file_exists($storagePath)) {
             mkdir($storagePath, 0777, true);
         }

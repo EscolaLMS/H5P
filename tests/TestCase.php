@@ -5,7 +5,6 @@ namespace EscolaLms\HeadlessH5P\Tests;
 use EscolaLms\Core\EscolaLmsServiceProvider;
 use EscolaLms\Core\Models\User;
 use EscolaLms\HeadlessH5P\Database\Seeders\PermissionTableSeeder;
-use EscolaLms\HeadlessH5P\Enums\H5PPermissionsEnum;
 use Laravel\Passport\PassportServiceProvider;
 use EscolaLms\HeadlessH5P\HeadlessH5PServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;

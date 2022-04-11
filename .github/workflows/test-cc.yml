@@ -49,8 +49,11 @@ jobs:
       - name: Publish things
         run: vendor/bin/testbench migrate:fresh
 
+      - name: require phpunit-github-actions-printer
+        run: COMPOSER_ROOT_VERSION=0.9.9 composer require --dev mheap/phpunit-github-actions-printer
+
       - name: Run tests
-        run: XDEBUG_MODE=coverage vendor/bin/phpunit  --coverage-clover coverage.xml
+        run: XDEBUG_MODE=coverage vendor/bin/phpunit  --coverage-clover coverage.xml --printer mheap\\GithubActionsReporter\\Printer
 
       - name: codecov upload
         uses: codecov/codecov-action@v1
