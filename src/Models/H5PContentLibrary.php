@@ -29,6 +29,8 @@ class H5PContentLibrary extends Model
         'dependency_type',
     ];
 
+    protected $casts = [];
+
     public function getDependencyTypeAttribute():string
     {
         return $this->attributes['dependency_type'];

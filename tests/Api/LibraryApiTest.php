@@ -1,13 +1,16 @@
 <?php
 
-namespace Tests\Feature;
+namespace EscolaLms\HeadlessH5P\Tests\Feature;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use EscolaLms\HeadlessH5P\Tests\TestCase;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 
 class LibraryApiTest extends TestCase
 {
+    use DatabaseTransactions;
+
     public function test_library_uploading(): void
     {
         $this->authenticateAsAdmin();
@@ -33,22 +36,25 @@ class LibraryApiTest extends TestCase
     public function test_library_index(): void
     {
         $this->authenticateAsAdmin();
+        H5PLibrary::factory()->create();
+
         $response = $this->actingAs($this->user, 'api')->get('/api/admin/hh5p/library');
 
         $response->assertStatus(200);
         $response->assertJsonStructure([
-            'data' => [
-                [
-                    'id', 'machineName', 'majorVersion', 'minorVersion'
-                ]
-            ]
+            'data' => [[
+                'id',
+                'machineName',
+                'majorVersion',
+                'minorVersion'
+            ]]
         ]);
     }
 
     public function test_library_delete(): void
     {
         $this->authenticateAsAdmin();
-        $library = H5PLibrary::where('runnable', 1)->first();
+        $library = H5PLibrary::factory()->create();
         $id = $library->id;
 
         $response = $this->actingAs($this->user, 'api')->delete("/api/admin/hh5p/library/$id");
@@ -60,7 +66,7 @@ class LibraryApiTest extends TestCase
 
     public function testGuestCannotDeleteLibrary(): void
     {
-        $library = H5PLibrary::first();
+        $library = H5PLibrary::factory()->create();
         $id = $library->id;
 
         $response = $this->delete("/api/admin/hh5p/library/$id");

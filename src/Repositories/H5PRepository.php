@@ -289,6 +289,7 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function isPatchedLibrary($library)
     {
+        return true;
     }
 
     /**
@@ -636,14 +637,24 @@ class H5PRepository implements H5PFrameworkInterface
     public function saveLibraryUsage($contentId, $librariesInUse)
     {
         $contentLibraries = array_map(function ($value) use ($contentId) {
-            return H5PContentLibrary::firstOrCreate([
-                'content_id' => $contentId,
-                'library_id' => $value['library']['id'],
-                'dependency_type' => $value['type'],
-            ], [
-                'drop_css' => boolval($value['library']['dropLibraryCss']),
-                'weight' => $value['weight'],
-                ])->toArray();
+            $contentLibrary = H5PContentLibrary::query()
+                ->where([
+                    'content_id' => $contentId,
+                    'library_id' => $value['library']['id'],
+                    'dependency_type' => $value['type'],
+                ])
+                ->first();
+            if (!$contentLibrary) {
+                $contentLibrary = new H5PContentLibrary([
+                    'content_id' => $contentId,
+                    'library_id' => $value['library']['id'],
+                    'dependency_type' => $value['type'],
+                    'drop_css' => boolval($value['library']['dropLibraryCss']),
+                    'weight' => $value['weight'],
+                ]);
+                $contentLibrary->save();
+            }
+            return $contentLibrary->toArray();
         }, $librariesInUse);
 
         $content = H5PContent::with('library')->findOrFail($contentId);
@@ -1046,8 +1057,9 @@ class H5PRepository implements H5PFrameworkInterface
      * @return array
      *               List of hash keys removed
      */
-    public function deleteCachedAssets($library_id)
+    public function deleteCachedAssets($library_id): array
     {
+        return [];
     }
 
     /**

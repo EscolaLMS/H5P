@@ -18,6 +18,9 @@ interface LibraryApiSwagger
     *      summary="Store h5p library in database",
     *      tags={"H5P"},
     *      description="Store h5p library in database",
+    *      security={
+    *          {"passport": {}},
+    *      },
     *      @OA\RequestBody(
     *          required=true,
     *          @OA\MediaType(
@@ -49,6 +52,9 @@ interface LibraryApiSwagger
     *      summary="Deletes h5p library from database",
     *      tags={"H5P"},
     *      description="Deletes h5p library from database",
+    *      security={
+    *          {"passport": {}},
+    *      },
     *      @OA\Parameter(
     *          name="id",
     *          description="ID of library that will be deleted",

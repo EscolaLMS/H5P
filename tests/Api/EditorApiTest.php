@@ -1,11 +1,15 @@
 <?php
 
-namespace Tests\Feature;
+namespace EscolaLms\HeadlessH5P\Tests\Feature;
 
 use EscolaLms\HeadlessH5P\Tests\TestCase;
+use EscolaLms\HeadlessH5P\Tests\Traits\H5PTestingTrait;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class EditorApiTest extends TestCase
 {
+    use DatabaseTransactions, H5PTestingTrait;
+
     public function test_editor_config_new(): void
     {
         $this->authenticateAsAdmin();
@@ -20,6 +24,9 @@ class EditorApiTest extends TestCase
     public function test_editor_config_content(): void
     {
         $this->authenticateAsAdmin();
+
+        $this->uploadH5PFile();
+
         $data = [
             "library"=> "H5P.ArithmeticQuiz 1.1",
             "nonce"=>bin2hex(random_bytes(4)),
