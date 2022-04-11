@@ -12,8 +12,6 @@ class H5PLibraryLanguage extends Model
     public $timestamps = false;
 
     protected $table = 'hh5p_libraries_languages';
-    
-    protected $primaryKey = ['library_id', 'language_code'];
 
     protected $fillable = [
         'library_id',
@@ -26,7 +24,7 @@ class H5PLibraryLanguage extends Model
     {
         return json_decode($value);
     }
-    
+
 
     public function library():BelongsTo
     {

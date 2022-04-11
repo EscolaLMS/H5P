@@ -7,7 +7,6 @@ use EscolaLms\HeadlessH5P\Models\H5PContent;
 
 class H5PTempFile extends Model
 {
-    protected $primaryKey = 'id';
     protected $table = 'hh5p_temp_files';
     protected $fillable = [
         'path',

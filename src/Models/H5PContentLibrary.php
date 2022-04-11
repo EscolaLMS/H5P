@@ -12,8 +12,6 @@ class H5PContentLibrary extends Model
 
     protected $table = 'hh5p_contents_libraries';
 
-    protected $primaryKey =  ['content_id', 'library_id', 'dependency_type'];
-
     protected $fillable = [
         'content_id',
         'library_id',
