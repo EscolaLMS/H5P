@@ -20,6 +20,7 @@ class FilesApiController extends EscolaLmsBaseController implements FilesApiSwag
 
     public function __invoke(FilesStoreRequest $request, String $nonce = null): JsonResponse
     {
+        dd($request->hasValidSignature());
         if (!$request->hasValidSignature()) {
             abort(401);
         }

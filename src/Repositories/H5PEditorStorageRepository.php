@@ -98,7 +98,7 @@ class H5PEditorStorageRepository implements H5peditorStorage
 
         $libraries_result = H5PLibrary::where('runnable', 1)
                 ->whereNotNull('semantics')
-                ->orderBy('name', 'ASC')
+                ->orderBy('title', 'ASC')
                 ->get();
 
         Helpers::fixCaseKeysArray(['majorVersion', 'minorVersion', 'patchVersion'], $libraries_result);
