@@ -3,8 +3,6 @@
 namespace EscolaLms\HeadlessH5P\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use EscolaLms\HeadlessH5P\Models\H5PLibrary;
-use EscolaLms\HeadlessH5P\Models\H5PContent;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class H5PContentLibrary extends Model
@@ -13,8 +11,6 @@ class H5PContentLibrary extends Model
     public $timestamps = false;
 
     protected $table = 'hh5p_contents_libraries';
-    
-    protected $primaryKey =  ['content_id', 'library_id', 'dependency_type'];
 
     protected $fillable = [
         'content_id',

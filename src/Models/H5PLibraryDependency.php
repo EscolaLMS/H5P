@@ -12,8 +12,6 @@ class H5PLibraryDependency extends Model
     public $timestamps = false;
 
     protected $table = 'hh5p_libraries_dependencies';
-    
-    protected $primaryKey = ['library_id', 'required_library_id'];
 
     protected $fillable = [
         'library_id',

@@ -2,7 +2,7 @@
 
 namespace EscolaLms\HeadlessH5P\Models;
 
-use App\User;
+use EscolaLms\Core\Models\User;
 use EscolaLms\HeadlessH5P\Database\Factories\H5PContentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
