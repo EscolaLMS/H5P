@@ -20,22 +20,11 @@ class FilesApiController extends EscolaLmsBaseController implements FilesApiSwag
 
     public function __invoke(FilesStoreRequest $request, String $nonce = null): JsonResponse
     {
-        $contentId = $request->get('contentId');
-        $field = $request->get('field');
-        $token = $request->get('_token');
-        foreach (array_keys($request->all()) as $key) {
-            if (!in_array($key, ['expires', 'signature'])) {
-                $request->request->remove($key);
-            }
-        }
-        if (!$request->hasValidSignature(false)) {
-            abort(401);
-        }
         try {
             $result = $this->hh5pService->uploadFile(
-                $contentId,
-                $field,
-                $token,
+                $request->get('contentId'),
+                $request->get('field'),
+                $request->get('_token'),
                 $nonce
             );
 
