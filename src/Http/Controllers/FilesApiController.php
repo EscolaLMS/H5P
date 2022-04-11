@@ -28,7 +28,7 @@ class FilesApiController extends EscolaLmsBaseController implements FilesApiSwag
                 $request->request->remove($key);
             }
         }
-        if (!$request->hasValidSignature()) {
+        if (!$request->hasValidSignature(false)) {
             abort(401);
         }
         try {
