@@ -29,14 +29,14 @@ To play the content you can use [EscolaLMS H5P Player](https://github.com/Escola
 
 1. `composer require escolalms/headless-h5p`
 2. `php artisan migrate`
-3. `php artisan h5p:link` see below 
+3. `php artisan h5p:storage-link` see below 
 4. `php db:seed --class="EscolaLms\HeadlessH5P\Database\Seeders\PermissionTableSeeder"  see below 
 
 ### Storage links
 
 You need to publish many of files to be availabe as public link.
 
-`php artisan h5p:link` which creates a symbolic link from `storage/app/h5` and `vendor/h5p/h5p-core` and `vendor/h5p/h5p-editor` to be accesible to public, as follows
+`php artisan h5p:storage-link` which creates a symbolic link from `storage/app/h5` and `vendor/h5p/h5p-core` and `vendor/h5p/h5p-editor` to be accesible to public, as follows
 
 ```
 public_path('h5p') => storage_path('app/h5p'),
