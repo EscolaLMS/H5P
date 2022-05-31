@@ -31,13 +31,11 @@ class H5PContentRepository implements H5PContentRepositoryContract
     public function create(string $title, string $library, string $params, string $nonce): int
     {
         $libNames = $this->hh5pService->getCore()->libraryFromString($library);
-
         $libDb = H5PLibrary::where([
             ['name', $libNames['machineName']],
             ['major_version', $libNames['majorVersion']],
             ['minor_version', $libNames['minorVersion']],
         ])->first();
-
         if ($libDb === null) {
             throw new H5PException(H5PException::LIBRARY_NOT_FOUND);
         }
