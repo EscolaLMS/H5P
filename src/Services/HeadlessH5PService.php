@@ -170,7 +170,6 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
         // TODO this shoule be from config
         $libraries_url = url('h5p/libraries');
-
         if ($machineName) {
             $defaultLang = $this->getEditor()->getLibraryLanguage($machineName, $major_version, $minor_version, $lang);
 
