@@ -174,9 +174,9 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             $defaultLang = $this->getEditor()->getLibraryLanguage($machineName, $major_version, $minor_version, $lang);
 
             return $this->getEditor()->getLibraryData($machineName, $major_version, $minor_version, $lang, '', $libraries_url, $defaultLang);
-        } else {
-            return $this->getEditor()->getLibraries();
         }
+
+        return $this->getEditor()->getLibraries();
     }
 
     public function getEditorSettings($content = null): array
@@ -197,6 +197,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
                 'H5P' => __('h5p::h5p')['h5p'],
             ],
             'hubIsEnabled' => false,
+            'crossorigin' => 'anonymous',
         ];
 
         $settings['loadedJs'] = [];
