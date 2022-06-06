@@ -34,13 +34,11 @@ jobs:
       - name: Generate YAML openapi
         run: vendor/bin/openapi --format json -b env/openapi/config.php -o openapi.json src
 
-      - name: Swagger ui action
-        id: swagger-ui-action
-        uses: pjoc-team/swagger-ui-action@v0.0.2
+      - name: Generate Swagger UI
+        uses: Legion2/swagger-ui-action@v1
         with:
-          dir: "./"
-          pattern: "openapi.json"
-          debug: "true"
+          output: swagger-ui
+          spec-file: openapi.json
 
       - name: Install git
         run: apt-get install git -y
