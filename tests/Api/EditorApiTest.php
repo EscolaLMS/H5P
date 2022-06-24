@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Tests\Feature;
+namespace EscolaLms\HeadlessH5P\Tests\Api;
 
 use EscolaLms\HeadlessH5P\Tests\TestCase;
 use EscolaLms\HeadlessH5P\Tests\Traits\H5PTestingTrait;
