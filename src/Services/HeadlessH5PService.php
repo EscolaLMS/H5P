@@ -187,7 +187,6 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $config = $this->getConfig();
 
         $settings = [
-            'csrfToken' => "94HwIsp31PBwH2Jl4tdt78AkxrJEhYS64LHj63cr",
             'baseUrl' => $config['domain'],
             'url' => $config['url'],
             'postUserStatistics' => false,
@@ -200,6 +199,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'l10n' => [
                 'H5P' => __('h5p::h5p')['h5p'],
             ],
+            // TODO actually this should be taken from config
             'hubIsEnabled' => true,
             'crossorigin' => 'anonymous',
         ];
@@ -280,14 +280,18 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             : __DIR__ . '/../../../../../vendor/h5p/h5p-core';
 
 
-        /*
+
         $settings['core']['scripts'] = $this->margeFileList(
             $settings['core']['scripts'],
             'js',
             [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
             [$h5pEditorDir, $h5pCoreDir]
         );
-        */
+
+        // TODO. Those css should be merged as well but I don't know how to do that
+        // because there are @import url(...) in the css files that must be amended to the correct path
+        // eg changing from relative to absolute path
+
         /*$settings['core']['styles'] = $this->margeFileList(
             $settings['core']['styles'],
             'css',
@@ -295,14 +299,14 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             [$h5pEditorDir, $h5pCoreDir]
         );*/
 
-        /*
+
         $settings['editor']['assets']['js'] = $this->margeFileList(
             $settings['editor']['assets']['js'],
             'js',
             [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
             [$h5pEditorDir, $h5pCoreDir]
         );
-        */
+
         /*$settings['editor']['assets']['css'] = $this->margeFileList(
             $settings['editor']['assets']['css'],
             'css',
@@ -372,6 +376,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'l10n' => [
                 'H5P' => __('h5p::h5p'),
             ],
+            // TODO actually this should be taken from config
             'hubIsEnabled' => true,
             'crossorigin' => 'anonymous',
         ];
@@ -533,7 +538,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
     public function uploadFile($contentId, $field, $token, $nonce = null)
     {
-        // TODO: implmenet nonce
+        // TODO: implement nonce
         if (!$this->isValidEditorToken($token)) {
             throw new H5PException(H5PException::LIBRARY_NOT_FOUND);
         }
@@ -579,16 +584,10 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
      *
      * @param bool $cacheOutdated The cache is outdated and not able to update
      */
+
+    // TODO add annotations and update contract
     public function getContentTypeCache($cacheOutdated = FALSE): array
     {
-
-        // $this->core->h5pF->setOption('hub_is_enabled', true);
-
-        //$dupa = $this->getCore()->fetchLibrariesMetadata();
-
-
-
-        //$success = $this->core->updateContentTypeCache();
 
         // https://github.com/Lumieducation/H5P-Nodejs-library/wiki/Communication-with-the-H5P-Hub
 
@@ -606,28 +605,14 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         );
     }
 
-    // TODO add annotations
+    // TODO add annotations and update contract
 
     public function getUpdatedContentHubMetadataCache($lang = 'en')
     {
         return $this->core->getUpdatedContentHubMetadataCache($lang);
     }
 
-    // TODO add annotations
-
-
-
-    /*
-    public function libraryInstall($machineName)
-    {
-
-        // $this->getEditor()->ajaxInterface->validateEditorToken($token);
-
-        $library = $this->getEditor()->ajaxInterface->libraryInstall($machineName);
-        return $library;
-    }
-    */
-
+    // TODO add annotations 
 
     private function callHubEndpoint($endpoint)
     {
@@ -641,7 +626,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         return TRUE;
     }
 
-    /////////
+    // TODO add annotations and update contract
     public function libraryInstall($machineName)
     {
 
@@ -684,5 +669,4 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         // Successfully installed. Refresh content types
         return $this->getContentTypeCache();
     }
-    /////////
 }

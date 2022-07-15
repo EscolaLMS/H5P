@@ -14,6 +14,7 @@ use EscolaLms\HeadlessH5P\Models\H5pLibrariesHubCache;
 use H5PFrameworkInterface;
 use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\DB;
 use DateTime;
 
@@ -35,9 +36,9 @@ class H5PRepository implements H5PFrameworkInterface
     public function getPlatformInfo()
     {
         return array(
-            'name' => 'Wordpress',
-            'version' => '4.0',
-            'h5pVersion' => '1.5.0',
+            'name' => 'Wellms.io',
+            'version' => '0.1.0',
+            'h5pVersion' => '0.1.0',
         );
     }
 
@@ -57,11 +58,10 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function fetchExternalData($url, $data = null, $blocking = true, $stream = null, $fullData = false, $headers = [], $files = [], $method = 'POST')
     {
+        // TODO add tests for this function with all possible parameters
         @set_time_limit(0);
         $options = [
             'timeout'  => !empty($blocking) ? 30 : 0.01,
-            //'stream'   => !empty($stream),
-            //'filename' => !empty($stream) ? $stream : false,
         ];
 
         if (!empty($stream)) {
@@ -1196,12 +1196,10 @@ class H5PRepository implements H5PFrameworkInterface
         // Replace existing content type cache
         DB::table('hh5p_libraries_hub_cache')->truncate();
 
+        // TODO wrap this in a transaction
+
         foreach ($contentTypeCache->contentTypes as $ct) {
             // Insert into db
-
-
-
-
             H5pLibrariesHubCache::create([
                 'machine_name' => $ct->id,
                 'major_version' => $ct->version->major,

@@ -31,74 +31,15 @@ class H5PEditorAjaxRepository implements H5PEditorAjaxInterface
 
         Helpers::fixCaseKeysArray(['majorVersion', 'minorVersion', 'patchVersion'], $libraries_result);
 
-        return $libraries_result;
-
+        // TODO those libraries should be filtered by maximum sem ver 
+        /*
         $versions = ['1.0.8', '1.0.9', '1.0.10'];
         usort($versions, 'version_compare');
-        echo end($versions);
-
-        /**
-         *  global $wpdb;
-
-    // Get latest version of local libraries
-    $major_versions_sql =
-      "SELECT hl.name,
-                MAX(hl.major_version) AS major_version
-           FROM {$wpdb->prefix}h5p_libraries hl
-          WHERE hl.runnable = 1
-       GROUP BY hl.name";
-
-    $minor_versions_sql =
-      "SELECT hl2.name,
-                 hl2.major_version,
-                 MAX(hl2.minor_version) AS minor_version
-            FROM ({$major_versions_sql}) hl1
-            JOIN {$wpdb->prefix}h5p_libraries hl2
-              ON hl1.name = hl2.name
-             AND hl1.major_version = hl2.major_version
-        GROUP BY hl2.name, hl2.major_version";
-
-    return $wpdb->get_results(
-        "SELECT hl4.id,
-                hl4.name AS machine_name,
-                hl4.title,
-                hl4.major_version,
-                hl4.minor_version,
-                hl4.patch_version,
-                hl4.restricted,
-                hl4.has_icon
-           FROM ({$minor_versions_sql}) hl3
-           JOIN {$wpdb->prefix}h5p_libraries hl4
-             ON hl3.name = hl4.name
-            AND hl3.major_version = hl4.major_version
-            AND hl3.minor_version = hl4.minor_version");
-         */
-        // TODO 
-        // Implement this 
-        /*
-        $recently_used = [];
-        $result = DB::table('h5p_events')
-            ->select([
-                'library_name',
-                'max(created_at) AS max_created_at',
-            ])
-            ->where('type', 'content')
-            ->where('sub_type', 'create')
-            ->where('user_id', Auth::id())
-            ->groupBy('library_name')
-            ->orderBy('max_created_at', 'DESC')
-            ->get();
-
-        foreach ($result as $row) {
-            $recently_used[] = $row->library_name;
-        }
-
-        dd($recently_used);
-        exit;
-
-        return $recently_used;
-
         */
+
+
+
+        return $libraries_result;
     }
 
     /**
