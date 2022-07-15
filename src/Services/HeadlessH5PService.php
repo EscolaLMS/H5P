@@ -669,4 +669,36 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         // Successfully installed. Refresh content types
         return $this->getContentTypeCache();
     }
+
+    // TODO add annotations and update contract
+
+    public function uploadLibrary($token, $file, $contentId)
+    {
+
+        $valid = $this->validatePackage($file, false, false);
+
+        return [
+            'h5p' => $this->core->mainJsonData,
+            'content' => $this->core->contentJsonData,
+            'contentTypes' => $this->getContentTypeCache()
+        ];
+    }
+    /**
+     * End-point for filter parameter values according to semantics.
+     *
+     * @param {string} $libraryParameters
+     */
+    public function filterLibraries($libraryParameters)
+    {
+
+        $libraryParameters = json_decode($libraryParameters);
+        if (!$libraryParameters) {
+            throw new H5PException(H5PException::NO_LIBRARY_PARAMETERS);
+        }
+
+        // Filter parameters and send back to client
+        $this->getContentValidator()->validateLibrary($libraryParameters, (object) array('options' => array($libraryParameters->library)));
+
+        return $libraryParameters;
+    }
 }
