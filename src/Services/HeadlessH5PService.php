@@ -16,6 +16,9 @@ use H5PFileStorage;
 use H5PFrameworkInterface;
 use H5PStorage;
 use H5PValidator;
+use H5PPermission;
+use H5PHubEndpoints;
+
 //use EscolaLms\HeadlessH5P\Repositories\H5PFileStorageRepository;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
@@ -184,6 +187,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $config = $this->getConfig();
 
         $settings = [
+            'csrfToken' => "94HwIsp31PBwH2Jl4tdt78AkxrJEhYS64LHj63cr",
             'baseUrl' => $config['domain'],
             'url' => $config['url'],
             'postUserStatistics' => false,
@@ -196,7 +200,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'l10n' => [
                 'H5P' => __('h5p::h5p')['h5p'],
             ],
-            'hubIsEnabled' => false,
+            'hubIsEnabled' => true,
             'crossorigin' => 'anonymous',
         ];
 
@@ -275,12 +279,15 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             ? __DIR__ . '/../../vendor/h5p/h5p-core'
             : __DIR__ . '/../../../../../vendor/h5p/h5p-core';
 
+
+        /*
         $settings['core']['scripts'] = $this->margeFileList(
             $settings['core']['scripts'],
             'js',
             [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
             [$h5pEditorDir, $h5pCoreDir]
         );
+        */
         /*$settings['core']['styles'] = $this->margeFileList(
             $settings['core']['styles'],
             'css',
@@ -288,12 +295,14 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             [$h5pEditorDir, $h5pCoreDir]
         );*/
 
+        /*
         $settings['editor']['assets']['js'] = $this->margeFileList(
             $settings['editor']['assets']['js'],
             'js',
             [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
             [$h5pEditorDir, $h5pCoreDir]
         );
+        */
         /*$settings['editor']['assets']['css'] = $this->margeFileList(
             $settings['editor']['assets']['css'],
             'css',
@@ -363,7 +372,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'l10n' => [
                 'H5P' => __('h5p::h5p'),
             ],
-            'hubIsEnabled' => false,
+            'hubIsEnabled' => true,
             'crossorigin' => 'anonymous',
         ];
 
@@ -563,4 +572,117 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
         return [$replaceFrom[0] . ($type . '/' . basename($margeFiles->getHashedFile()))];
     }
+
+    /**
+     * Gets content type cache for globally available libraries and the order
+     * in which they have been used by the author
+     *
+     * @param bool $cacheOutdated The cache is outdated and not able to update
+     */
+    public function getContentTypeCache($cacheOutdated = FALSE): array
+    {
+
+        // $this->core->h5pF->setOption('hub_is_enabled', true);
+
+        //$dupa = $this->getCore()->fetchLibrariesMetadata();
+
+
+
+        //$success = $this->core->updateContentTypeCache();
+
+        // https://github.com/Lumieducation/H5P-Nodejs-library/wiki/Communication-with-the-H5P-Hub
+
+        $canUpdateOrInstall = ($this->core->h5pF->hasPermission(H5PPermission::INSTALL_RECOMMENDED) ||
+            $this->core->h5pF->hasPermission(H5PPermission::UPDATE_LIBRARIES));
+        return array(
+            'outdated' => $cacheOutdated && $canUpdateOrInstall,
+            'libraries' => $this->editor->getLatestGlobalLibrariesData(),
+            'recentlyUsed' => $this->editor->ajaxInterface->getAuthorsRecentlyUsedLibraries(),
+            'apiVersion' => array(
+                'major' => H5PCore::$coreApi['majorVersion'],
+                'minor' => H5PCore::$coreApi['minorVersion']
+            ),
+            'details' => $this->core->h5pF->getMessages('info')
+        );
+    }
+
+    // TODO add annotations
+
+    public function getUpdatedContentHubMetadataCache($lang = 'en')
+    {
+        return $this->core->getUpdatedContentHubMetadataCache($lang);
+    }
+
+    // TODO add annotations
+
+
+
+    /*
+    public function libraryInstall($machineName)
+    {
+
+        // $this->getEditor()->ajaxInterface->validateEditorToken($token);
+
+        $library = $this->getEditor()->ajaxInterface->libraryInstall($machineName);
+        return $library;
+    }
+    */
+
+
+    private function callHubEndpoint($endpoint)
+    {
+        $path = $this->core->h5pF->getUploadedH5pPath();
+        $response = $this->core->h5pF->fetchExternalData(H5PHubEndpoints::createURL($endpoint), NULL, TRUE, empty($path) ? TRUE : $path);
+        if (!$response) {
+            throw new H5PException(H5PException::DOWNLOAD_FAILED . ' ' . $this->core->h5pF->getMessages('error'));
+            return FALSE;
+        }
+
+        return TRUE;
+    }
+
+    /////////
+    public function libraryInstall($machineName)
+    {
+
+        // Determine which content type to install from post data
+        if (!$machineName) {
+            throw new H5PException(H5PException::NO_CONTENT_TYPE);
+        }
+
+        // Look up content type to ensure it's valid(and to check permissions)
+        $contentType = $this->editor->ajaxInterface->getContentTypeCache($machineName);
+        if (!$contentType) {
+            throw new H5PException(H5PException::INVALID_CONTENT_TYPE);
+        }
+
+        // Check install permissions
+        if (!$this->editor->canInstallContentType($contentType)) {
+            throw new H5PException(H5PException::INSTALL_DENIED);
+        } else {
+            // Override core permission check
+            $this->core->mayUpdateLibraries(TRUE);
+        }
+
+        // Retrieve content type from hub endpoint
+        $response = $this->callHubEndpoint(H5PHubEndpoints::CONTENT_TYPES . $machineName);
+
+        if (!$response) return;
+
+        // Session parameters has to be set for validation and saving of packages
+
+        if (!$this->getValidator()->isValidPackage(true)) {
+            return;
+        }
+
+
+        $this->getStorage()->savePackage(NULL, NULL, TRUE);
+
+        // Clean up
+        $this->getEditorStorage()->removeTemporarilySavedFiles($this->core->h5pF->getUploadedH5pFolderPath());
+
+        // Successfully installed. Refresh content types
+        return $this->getContentTypeCache();
+    }
+    /////////
 }
