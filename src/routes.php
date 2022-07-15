@@ -39,4 +39,9 @@ Route::group(['prefix' => 'api/hh5p'], function () {
     Route::get('libraries', [LibraryApiController::class, 'libraries'])->name('hh5p.library.libraries');
     Route::post('libraries', [LibraryApiController::class, 'libraries'])->name('hh5p.library.libraries');
     Route::post('files/{nonce}', FilesApiController::class)->name('hh5p.files.upload.nonce');
+
+    Route::get('content-type-cache', [LibraryApiController::class, 'contentTypeCache'])->name('hh5p.library.content-type-cache');
+    Route::get('content-hub-metadata-cache', [LibraryApiController::class, 'contentHubMetadata'])->name('hh5p.library.content-type-cache');
+
+    Route::post('library-install', [LibraryApiController::class, 'libraryInstall'])->name('hh5p.ajax.library-install');
 });

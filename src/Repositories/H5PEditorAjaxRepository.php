@@ -3,6 +3,9 @@
 namespace EscolaLms\HeadlessH5P\Repositories;
 
 use H5PEditorAjaxInterface;
+use EscolaLms\HeadlessH5P\Models\H5pLibrariesHubCache;
+use EscolaLms\HeadlessH5P\Helpers\Helpers;
+use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 
 /**
  * Handles Ajax functionality that must be implemented separately for each of the
@@ -11,13 +14,32 @@ use H5PEditorAjaxInterface;
 class H5PEditorAjaxRepository implements H5PEditorAjaxInterface
 {
 
-  /**
-   * Gets latest library versions that exists locally
-   *
-   * @return array Latest version of all local libraries
-   */
+    /**
+     * Gets latest library versions that exists locally
+     *
+     * @return array Latest version of all local libraries
+     */
     public function getLatestLibraryVersions()
+
     {
+
+
+        $libraries_result = H5PLibrary::where('runnable', 1)
+            ->whereNotNull('semantics')
+            ->orderBy('title', 'ASC')
+            ->get();
+
+        Helpers::fixCaseKeysArray(['majorVersion', 'minorVersion', 'patchVersion'], $libraries_result);
+
+        // TODO those libraries should be filtered by maximum sem ver 
+        /*
+        $versions = ['1.0.8', '1.0.9', '1.0.10'];
+        usort($versions, 'version_compare');
+        */
+
+
+
+        return $libraries_result;
     }
 
     /**
@@ -30,6 +52,12 @@ class H5PEditorAjaxRepository implements H5PEditorAjaxInterface
      */
     public function getContentTypeCache($machineName = null)
     {
+        $libraries = H5pLibrariesHubCache::select();
+        if ($machineName) {
+            return $libraries->where('machine_name', $machineName)->pluck('id', 'is_recommended');
+        } else {
+            return $libraries->get();
+        }
     }
 
     /**
@@ -40,6 +68,8 @@ class H5PEditorAjaxRepository implements H5PEditorAjaxInterface
      */
     public function getAuthorsRecentlyUsedLibraries()
     {
+        // TODO implment this
+        return [];
     }
 
     /**

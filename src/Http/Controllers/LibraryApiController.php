@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use EscolaLms\HeadlessH5P\Http\Controllers\Swagger\LibraryApiSwagger;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 use EscolaLms\HeadlessH5P\Http\Requests\LibraryStoreRequest;
+use Illuminate\Http\Request;
 
 class LibraryApiController extends EscolaLmsBaseController implements LibraryApiSwagger
 {
@@ -59,5 +60,36 @@ class LibraryApiController extends EscolaLmsBaseController implements LibraryApi
         }
 
         return $this->sendError("Library $id note deleted", 422);
+    }
+
+    public function contentTypeCache(Request $request)
+    {
+        $contentTypeCache = $this->hh5pService->getContentTypeCache();
+        return response()->json($contentTypeCache, 200);
+    }
+
+    public function contentHubMetadata(Request $request)
+    {
+
+        $lang = $request->get('lang');
+        $metadata = $this->hh5pService->getUpdatedContentHubMetadataCache($lang);
+        return response()->json([
+            'success' => true,
+            'data' => $metadata
+        ], 200);
+    }
+
+    public function libraryInstall(Request $request)
+    {
+
+        // TODO here is token sent somehow. validate this
+
+        $name = $request->get('id');
+
+        $library = $this->hh5pService->libraryInstall($name);
+        return response()->json([
+            'success' => true,
+            'data' => $library
+        ], 200);
     }
 }

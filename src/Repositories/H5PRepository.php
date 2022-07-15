@@ -9,8 +9,14 @@ use EscolaLms\HeadlessH5P\Models\H5PContentLibrary;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Models\H5PLibraryDependency;
 use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
+use EscolaLms\HeadlessH5P\Models\H5pLibrariesHubCache;
+
 use H5PFrameworkInterface;
 use Illuminate\Support\Facades\Log;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\DB;
+use DateTime;
 
 class H5PRepository implements H5PFrameworkInterface
 {
@@ -29,6 +35,11 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function getPlatformInfo()
     {
+        return array(
+            'name' => 'Wellms.io',
+            'version' => '0.1.0',
+            'h5pVersion' => '0.1.0',
+        );
     }
 
     /**
@@ -47,6 +58,46 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function fetchExternalData($url, $data = null, $blocking = true, $stream = null, $fullData = false, $headers = [], $files = [], $method = 'POST')
     {
+        // TODO add tests for this function with all possible parameters
+        @set_time_limit(0);
+        $options = [
+            'timeout'  => !empty($blocking) ? 30 : 0.01,
+        ];
+
+        if (!empty($stream)) {
+            $options['sink'] = $stream;
+        }
+
+        $client = new Client();
+
+        try {
+            if ($data !== null) {
+                // Post
+                $options['form_params'] = $data;
+                $response = $client->request('POST', $url, $options);
+            } else {
+                $response = $client->request('GET', $url, $options);
+            }
+
+
+            if ($response->getStatusCode() === 200) {
+                $contents = null;
+                $body =  empty($response->getBody()) ? null : $response->getBody()->getContents();
+
+
+                if ($contents) {
+                    return $fullData ? ['status' => $response->getStatusCode(), 'data' => json_decode($contents)] : $contents;
+                }
+                if ($body) {
+                    return $fullData ? ['status' => $response->getStatusCode(), 'data' => json_decode($body)] : $body;
+                }
+                return true;
+            } else {
+                return;
+            }
+        } catch (RequestException $e) {
+            return false;
+        }
     }
 
     /**
@@ -119,7 +170,7 @@ class H5PRepository implements H5PFrameworkInterface
                 $replacements[$key] = $replacement;
             } elseif ($key[0] === '%') {
                 //                $replacements[$key] = '<em>' . esc_html($replacement) . '</em>';
-                $replacements[$key] = '<em>'.$replacement.'</em>';
+                $replacements[$key] = '<em>' . $replacement . '</em>';
             }
         }
         $message = preg_replace('/(!|@|%)[a-z0-9]+/i', '%s', $message);
@@ -150,7 +201,7 @@ class H5PRepository implements H5PFrameworkInterface
     {
         static $dir; // such a stupid way to have singleton ....
         if (is_null($dir)) {
-            $dir = storage_path('app/h5p/temp/temp/').uniqid('h5p-');
+            $dir = storage_path('app/h5p/temp/temp/') . uniqid('h5p-');
             @mkdir(dirname($dir), 0777, true);
         }
 
@@ -167,7 +218,7 @@ class H5PRepository implements H5PFrameworkInterface
     {
         static $path; // such a stupid way to have singleton ....
         if (is_null($path)) {
-            $path = storage_path('app/h5p/temp/temp/').uniqid('h5p-').'.h5p';
+            $path = storage_path('app/h5p/temp/temp/') . uniqid('h5p-') . '.h5p';
             @mkdir(dirname($path), 0777, true);
         }
 
@@ -205,6 +256,26 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function loadLibraries()
     {
+        $results = H5pLibrary::select([
+            'id',
+            'name',
+            'title',
+            'major_version',
+            'minor_version',
+            'patch_version',
+            'runnable',
+            'restricted',
+        ])
+            ->orderBy('title', 'ASC')
+            ->orderBy('major_version', 'ASC')
+            ->orderBy('minor_version', 'ASC')
+            ->get();
+        $libraries = [];
+        foreach ($results as $library) {
+            $libraries[$library->name][] = $library;
+        }
+
+        return $libraries;
     }
 
     /**
@@ -267,7 +338,7 @@ class H5PRepository implements H5PFrameworkInterface
     {
         $whitelist = $defaultContentWhitelist;
         if ($isLibrary) {
-            $whitelist .= ' '.$defaultLibraryWhitelist;
+            $whitelist .= ' ' . $defaultLibraryWhitelist;
         }
 
         return $whitelist;
@@ -667,7 +738,7 @@ class H5PRepository implements H5PFrameworkInterface
             ], [
                 'drop_css' => false,
                 'weight' => 0,
-                ])->toArray();
+            ])->toArray();
         }, $content->library->dependencies->toArray());
     }
 
@@ -734,9 +805,10 @@ class H5PRepository implements H5PFrameworkInterface
         $library = H5PLibrary::where([
             'name' => $machineName,
             'major_version' => $majorVersion,
-            'minor_version' => $minorVersion, ])
-        ->with('dependencies.requiredLibrary')
-        ->first();
+            'minor_version' => $minorVersion,
+        ])
+            ->with('dependencies.requiredLibrary')
+            ->first();
 
         if (is_null($library)) {
             return;
@@ -745,7 +817,7 @@ class H5PRepository implements H5PFrameworkInterface
         $result = $library->toArray();
 
         foreach ($library->dependencies as $dependency) {
-            $result[$dependency->dependencyType.'Dependencies'][] = [
+            $result[$dependency->dependencyType . 'Dependencies'][] = [
                 'id' => $dependency->requiredLibrary->id,
                 'libraryId' => $dependency->requiredLibrary->id,
                 'machineName' => $dependency->requiredLibrary->machineName,
@@ -773,9 +845,9 @@ class H5PRepository implements H5PFrameworkInterface
     public function loadLibrarySemantics($machineName, $majorVersion, $minorVersion)
     {
         $library = H5PLibrary::where('name', $machineName)
-                ->where('major_version', $majorVersion)
-                ->where('minor_version', $minorVersion)
-                ->first();
+            ->where('major_version', $majorVersion)
+            ->where('minor_version', $minorVersion)
+            ->first();
 
         return $library === false ? null : json_encode($library->semantics);
     }
@@ -832,7 +904,7 @@ class H5PRepository implements H5PFrameworkInterface
         $libraryObj = H5pLibrary::with(['dependencies', 'children', 'languages'])->findOrFail($library->id);
 
         // Remove main library from files
-        $libraryPath = storage_path('app/h5p/libraries/'.$library->name.'-'.$library->major_version.'.'.$library->minor_version);
+        $libraryPath = storage_path('app/h5p/libraries/' . $library->name . '-' . $library->major_version . '.' . $library->minor_version);
 
         $libraryObj->dependencies()->delete();
         $libraryObj->languages()->delete();
@@ -941,9 +1013,16 @@ class H5PRepository implements H5PFrameworkInterface
      * @return mixed
      *               Whatever has been stored as the setting
      */
-    public function getOption($name, $default = null)
+    public function getOption($name, $default = false)
     {
+        if ($name === 'site_uuid') {
+            $name = 'h5p_site_uuid'; // Make up for old core bug
+        }
+
+        return config('hh5p.h5p_' . $name, $default);
     }
+
+
 
     /**
      * Stores the given setting.
@@ -956,6 +1035,10 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function setOption($name, $value)
     {
+        if ($name === 'site_uuid') {
+            $name = 'h5p_site_uuid'; // Make up for old core bug
+        }
+        config(['hh5p.h5p_' . $name => $value]);
     }
 
     /**
@@ -1095,6 +1178,9 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function hasPermission($permission, $id = null)
     {
+        // NOTE, in this implementation, we assume that the user has permission to do everything
+        // because permissions are set on the request level.
+        return true;
     }
 
     /**
@@ -1105,6 +1191,39 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function replaceContentTypeCache($contentTypeCache)
     {
+        // TODO refactor this ugly code 
+
+        // Replace existing content type cache
+        DB::table('hh5p_libraries_hub_cache')->truncate();
+
+        // TODO wrap this in a transaction
+
+        foreach ($contentTypeCache->contentTypes as $ct) {
+            // Insert into db
+            H5pLibrariesHubCache::create([
+                'machine_name' => $ct->id,
+                'major_version' => $ct->version->major,
+                'minor_version' => $ct->version->minor,
+                'patch_version' => $ct->version->patch,
+                'h5p_major_version' => $ct->coreApiVersionNeeded->major,
+                'h5p_minor_version' => $ct->coreApiVersionNeeded->minor,
+                'title' => $ct->title,
+                'summary' => $ct->summary,
+                'description' => $ct->description,
+                'icon' => $ct->icon,
+                'created_at' => (new DateTime($ct->createdAt))->getTimestamp(),
+                'updated_at' => (new DateTime($ct->updatedAt))->getTimestamp(),
+                'is_recommended' => $ct->isRecommended === true ? 1 : 0,
+                'popularity' => $ct->popularity,
+                'screenshots' => json_encode($ct->screenshots),
+                'license' => json_encode(isset($ct->license) ? $ct->license : []),
+                'example' => $ct->example,
+                'tutorial' => isset($ct->tutorial) ? $ct->tutorial : '',
+                'keywords' => json_encode(isset($ct->keywords) ? $ct->keywords : []),
+                'categories' => json_encode(isset($ct->categories) ? $ct->categories : []),
+                'owner' => $ct->owner,
+            ]);
+        }
     }
 
     /**

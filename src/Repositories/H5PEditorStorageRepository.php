@@ -1,4 +1,5 @@
 <?php
+
 namespace EscolaLms\HeadlessH5P\Repositories;
 
 use H5peditorStorage;
@@ -15,31 +16,31 @@ use EscolaLms\HeadlessH5P\Helpers\Helpers;
 class H5PEditorStorageRepository implements H5peditorStorage
 {
 
-  /**
-   * Load language file(JSON) from database.
-   * This is used to translate the editor fields(title, description etc.)
-   *
-   * @param string $name The machine readable name of the library(content type)
-   * @param int $major Major part of version number
-   * @param int $minor Minor part of version number
-   * @param string $lang Language code
-   * @return string Translation in JSON format
-   */
+    /**
+     * Load language file(JSON) from database.
+     * This is used to translate the editor fields(title, description etc.)
+     *
+     * @param string $name The machine readable name of the library(content type)
+     * @param int $major Major part of version number
+     * @param int $minor Minor part of version number
+     * @param string $lang Language code
+     * @return string Translation in JSON format
+     */
     public function getLanguage($machineName, $majorVersion, $minorVersion, $language)
     {
         if (!isset($language)) {
             return;
         }
         $library = H5PLibrary::select(['id'])->where([
-            ['major_version' ,  $majorVersion],
-            ['minor_version' , $minorVersion],
-            ['name' , $machineName],
+            ['major_version',  $majorVersion],
+            ['minor_version', $minorVersion],
+            ['name', $machineName],
         ])->first();
 
         if ($library) {
             $libraryLanguage = H5PLibraryLanguage::where([
-                ['library_id' , $library->id],
-                ['language_code' ,  $language]
+                ['library_id', $library->id],
+                ['language_code',  $language]
             ])->first();
 
             if ($libraryLanguage) {
@@ -97,9 +98,9 @@ class H5PEditorStorageRepository implements H5peditorStorage
         }
 
         $libraries_result = H5PLibrary::where('runnable', 1)
-                ->whereNotNull('semantics')
-                ->orderBy('title', 'ASC')
-                ->get();
+            ->whereNotNull('semantics')
+            ->orderBy('title', 'ASC')
+            ->get();
 
         Helpers::fixCaseKeysArray(['majorVersion', 'minorVersion', 'patchVersion'], $libraries_result);
 
@@ -141,8 +142,8 @@ class H5PEditorStorageRepository implements H5peditorStorage
     {
         $content = H5PContent::where('nonce', $nonce)->first();
 
-        $path = is_null($content) ? '/editor' : '/content/'.$content->id;
-        $path .= '/'.$file->getType().'s/'.$file->getName();
+        $path = is_null($content) ? '/editor' : '/content/' . $content->id;
+        $path .= '/' . $file->getType() . 's/' . $file->getName();
 
         return H5PTempFile::create(['path' => $path, 'nonce' => $nonce]);
     }
@@ -153,5 +154,6 @@ class H5PEditorStorageRepository implements H5peditorStorage
      */
     public static function removeTemporarilySavedFiles($filePath)
     {
+        // TODO implement this 
     }
 }
