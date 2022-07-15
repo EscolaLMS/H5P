@@ -9,16 +9,20 @@ use EscolaLms\HeadlessH5P\Http\Resources\LibraryResource;
 use Illuminate\Http\JsonResponse;
 use EscolaLms\HeadlessH5P\Http\Controllers\Swagger\LibraryApiSwagger;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
+use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
+
 use EscolaLms\HeadlessH5P\Http\Requests\LibraryStoreRequest;
 use Illuminate\Http\Request;
 
 class LibraryApiController extends EscolaLmsBaseController implements LibraryApiSwagger
 {
     private HeadlessH5PServiceContract $hh5pService;
+    private H5PContentRepositoryContract $contentRepository;
 
-    public function __construct(HeadlessH5PServiceContract $hh5pService)
+    public function __construct(HeadlessH5PServiceContract $hh5pService, H5PContentRepositoryContract $contentRepository)
     {
         $this->hh5pService = $hh5pService;
+        $this->contentRepository = $contentRepository;
     }
 
     public function index(LibraryListRequest $request): JsonResponse
@@ -62,12 +66,14 @@ class LibraryApiController extends EscolaLmsBaseController implements LibraryApi
         return $this->sendError("Library $id note deleted", 422);
     }
 
+    // TODO update interface and swagger
     public function contentTypeCache(Request $request)
     {
         $contentTypeCache = $this->hh5pService->getContentTypeCache();
         return response()->json($contentTypeCache, 200);
     }
 
+    // TODO update interface and swagger
     public function contentHubMetadata(Request $request)
     {
 
@@ -79,6 +85,7 @@ class LibraryApiController extends EscolaLmsBaseController implements LibraryApi
         ], 200);
     }
 
+    // TODO update interface and swagger
     public function libraryInstall(Request $request)
     {
 
@@ -90,6 +97,34 @@ class LibraryApiController extends EscolaLmsBaseController implements LibraryApi
         return response()->json([
             'success' => true,
             'data' => $library
+        ], 200);
+    }
+
+    // TODO update interface and swagger
+
+    public function libraryUpload(Request $request)
+    {
+
+        $token = $request->get('id');
+        $contentId = $request->get('contentId');
+
+        $file = $request->file('h5p');
+
+        $library = $this->hh5pService->uploadLibrary($token, $file, $contentId);
+
+        return response()->json([
+            'success' => true,
+            'data' => $library
+        ], 200);
+    }
+
+    public function filter(Request $request)
+    {
+        $libraryParameters = $request->get('libraryParameters');
+        $libraries = $this->hh5pService->filterLibraries($libraryParameters);
+        return response()->json([
+            'success' => true,
+            'data' => $libraries
         ], 200);
     }
 }

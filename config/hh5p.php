@@ -40,4 +40,7 @@ return [
     'h5p_send_usage_statistics' => false,
 
     'h5p_hub_is_enabled'                => true,
+
+    'h5p_export'                 => false,
+    'h5p_embed'                  => false,
 ];
