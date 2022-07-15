@@ -14,9 +14,4 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
         $this->path = $path;
         $this->alteditorpath = $alteditorpath;
     }
-
-    public function saveFile($file, $contentId)
-    {
-        dd($contentId);
-    }
 }
