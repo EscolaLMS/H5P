@@ -18,6 +18,7 @@ class EditorApiTest extends TestCase
         $response->assertStatus(200);
         $data = json_decode($response->getContent());
 
+        
         $this->assertTrue(isset($data->data->editor));
     }
 
