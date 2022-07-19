@@ -68,6 +68,7 @@ class H5PRepository implements H5PFrameworkInterface
         if (!empty($stream)) {
             $options['sink'] = $stream;
         }
+        // TODO make guzzle replacable 
         // see how you can mock guzzle https://github.com/EscolaLMS/Mattermost/blob/main/tests/TestCase.php#L62
         $client = new Client();
 

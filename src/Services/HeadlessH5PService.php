@@ -360,7 +360,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         return $settings;
     }
 
-    public function getContentSettings($id, $lang): array
+    public function getContentSettings($id, $lang = 'en'): array
     {
         $config = $this->getConfig();
 
