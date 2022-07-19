@@ -37,7 +37,7 @@ interface EditorApiSwagger
      *      @OA\Property(
      *          property="languages",
      *          description="array of possible languages",
-      *         type="array",
+     *         type="array",
      *          @OA\Items(type="string")
      *      ),
      *      @OA\Property(
@@ -201,7 +201,7 @@ interface EditorApiSwagger
      *      @OA\Property(
      *          property="languages",
      *          description="array of possible languages",
-      *         type="array",
+     *         type="array",
      *          @OA\Items(type="string")
      *      ),
      *      @OA\Property(
@@ -254,46 +254,54 @@ interface EditorApiSwagger
      */
 
     /**
-    * @OA\Get(
-    *      path="/api/hh5p/editor",
-    *      summary="Editor settings ",
-    *      tags={"H5P"},
-    *      description="Editor settings",
-    *      @OA\Response(
-    *          response=200,
-    *          description="successful operation",
-    *          @OA\JsonContent(
-    *             type="object",
-    *             ref="#/components/schemas/H5PEditorSettings"
-    *         )
-    *      )
-    * )
-    */
+     * @OA\Get(
+     *      path="/api/hh5p/editor",
+     *      summary="Editor settings ",
+     *      tags={"H5P"},
+     *      description="Editor settings",
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @OA\JsonContent(
+     *             type="object",
+     *             ref="#/components/schemas/H5PEditorSettings"
+     *         )
+     *      )
+     * )
+     */
 
     /**
-    * @OA\Get(
-    *      path="/api/hh5p/editor/{id}",
-    *      summary="Editor settings ",
-    *      tags={"H5P"},
-    *      description="Editor settings",
-    *      @OA\Parameter(
-    *          name="id",
-    *          description="Id of Content from DB. For initial editor (new content) id should be null",
-    *          in="path",
-    *          required=true,
-    *          @OA\Schema(
-    *             type="integer",
-    *         )
-    *      ),
-    *      @OA\Response(
-    *          response=200,
-    *          description="successful operation",
-    *          @OA\JsonContent(
-    *             type="object",
-    *             ref="#/components/schemas/H5PEditorSettings"
-    *         )
-    *      )
-    * )
-    */
+     * @OA\Get(
+     *      path="/api/hh5p/editor/{id}",
+     *      summary="Editor settings ",
+     *      tags={"H5P"},
+     *      description="Editor settings",
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="Id of Content from DB. For initial editor (new content) id should be null",
+     *          in="path",
+     *          required=true,
+     *          @OA\Schema(
+     *             type="integer",
+     *         )
+     *      ),
+     *      @OA\Parameter(
+     *          name="lang",
+     *          description="language id, eg 'en'",
+     *          in="query",
+     *          @OA\Schema(
+     *             type="string",
+     *         )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @OA\JsonContent(
+     *             type="object",
+     *             ref="#/components/schemas/H5PEditorSettings"
+     *         )
+     *      )
+     * )
+     */
     public function __invoke(Request $request, int $id): JsonResponse;
 }

@@ -182,7 +182,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         return $this->getEditor()->getLibraries();
     }
 
-    public function getEditorSettings($content = null): array
+    public function getEditorSettings($content = null, $lang = 'en'): array
     {
         $config = $this->getConfig();
 
@@ -269,7 +269,8 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             }
         }
 
-        $language_script = '/language/' . $config['get_language'] . '.js';
+        $language_script = '/language/' . $lang . '.js';
+
         $settings['editor']['assets']['js'][] = $config['get_h5peditor_url'] . ($language_script);
 
         $h5pEditorDir = file_exists(__DIR__ . '/../../vendor/h5p/h5p-editor')
@@ -359,7 +360,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         return $settings;
     }
 
-    public function getContentSettings($id): array
+    public function getContentSettings($id, $lang): array
     {
         $config = $this->getConfig();
 
@@ -450,7 +451,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
         $settings['nonce'] = $settings['contents']["cid-$id"]['nonce'];
 
-        $language_script = '/language/' . $config['get_language'] . '.js';
+        $language_script = '/language/' . $lang . '.js';
 
         $preloaded_dependencies = $this->getCore()->loadContentDependencies($id, 'preloaded');
         $files = $this->getCore()->getDependenciesFiles($preloaded_dependencies);
@@ -585,7 +586,9 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
      * @param bool $cacheOutdated The cache is outdated and not able to update
      */
 
+
     // TODO add annotations and update contract
+    // TODO add test 
     public function getContentTypeCache($cacheOutdated = FALSE): array
     {
 
@@ -606,14 +609,14 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     }
 
     // TODO add annotations and update contract
-
+    // TODO add test 
     public function getUpdatedContentHubMetadataCache($lang = 'en')
     {
         return $this->core->getUpdatedContentHubMetadataCache($lang);
     }
 
     // TODO add annotations 
-
+    // TODO add test 
     private function callHubEndpoint($endpoint)
     {
         $path = $this->core->h5pF->getUploadedH5pPath();
@@ -627,6 +630,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     }
 
     // TODO add annotations and update contract
+    // TODO add test 
     public function libraryInstall($machineName)
     {
 
@@ -671,11 +675,19 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     }
 
     // TODO add annotations and update contract
-
+    // TODO add test 
     public function uploadLibrary($token, $file, $contentId)
     {
 
         $valid = $this->validatePackage($file, false, false);
+
+        $this->getStorage()->savePackage(NULL, NULL, TRUE);
+
+        // Make content available to editor
+        $files = $this->core->fs->moveContentDirectory($this->core->h5pF->getUploadedH5pFolderPath(), $contentId);
+
+        // Clean up
+        $this->getEditorStorage()->removeTemporarilySavedFiles($this->core->h5pF->getUploadedH5pFolderPath());
 
         return [
             'h5p' => $this->core->mainJsonData,
@@ -688,6 +700,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
      *
      * @param {string} $libraryParameters
      */
+    // TODO add test 
     public function filterLibraries($libraryParameters)
     {
 
