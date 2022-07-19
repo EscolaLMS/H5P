@@ -56,6 +56,7 @@ class H5PRepository implements H5PFrameworkInterface
      *
      * @return string|array The content (response body), or an array with data. NULL if something went wrong
      */
+
     public function fetchExternalData($url, $data = null, $blocking = true, $stream = null, $fullData = false, $headers = [], $files = [], $method = 'POST')
     {
         // TODO add tests for this function with all possible parameters
@@ -67,7 +68,8 @@ class H5PRepository implements H5PFrameworkInterface
         if (!empty($stream)) {
             $options['sink'] = $stream;
         }
-
+        // TODO make guzzle replacable 
+        // see how you can mock guzzle https://github.com/EscolaLMS/Mattermost/blob/main/tests/TestCase.php#L62
         $client = new Client();
 
         try {
