@@ -419,6 +419,14 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "name": "lang",
+                        "in": "query",
+                        "description": "language id, eg 'en'",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
