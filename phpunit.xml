@@ -8,9 +8,14 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false">
-    <testsuite name="Escola LMS Auth">
-        <directory suffix="Test.php">./tests</directory>
-    </testsuite>
+  <testsuite name="Escola LMS Auth">
+    <directory suffix="Test.php">./tests</directory>
+  </testsuite>
+  <coverage cacheDirectory=".phpunit.cache/code-coverage" processUncoveredFiles="true">
+    <include>
+      <directory suffix=".php">./src</directory>
+    </include>
+  </coverage>
   <php>
     <env name="APP_KEY" value="AckfSECXIvnK5r28GVIWUAxmbBSjTsmF"/>
     <env name="APP_DEBUG" value="true"/>
@@ -21,4 +26,5 @@
     <env name="DB_USERNAME" value="default"/>
     <env name="DB_PASSWORD" value="secret"/>
   </php>
+
 </phpunit>
