@@ -587,16 +587,39 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
      */
 
 
+    private function isContentTypeCacheUpdated()
+    {
+
+        // Update content type cache if enabled and too old
+        $ct_cache_last_update = $this->core->h5pF->getOption('content_type_cache_updated_at', 0);
+        $outdated_cache       = $ct_cache_last_update + (60 * 60 * 24 * 7); // 1 week
+
+
+        if (time() > $outdated_cache) {
+            $success = $this->core->updateContentTypeCache();
+            $this->core->h5pF->setOption('content_type_cache_updated_at', time());
+            if (!$success) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
     // TODO add annotations and update contract
     // TODO add test 
-    public function getContentTypeCache($cacheOutdated = FALSE): array
+    public function getContentTypeCache(): array
     {
 
         // https://github.com/Lumieducation/H5P-Nodejs-library/wiki/Communication-with-the-H5P-Hub
 
+
+        $cacheOutdated = $this->isContentTypeCacheUpdated();
+
         $canUpdateOrInstall = ($this->core->h5pF->hasPermission(H5PPermission::INSTALL_RECOMMENDED) ||
             $this->core->h5pF->hasPermission(H5PPermission::UPDATE_LIBRARIES));
         return array(
+            'outdated' => $cacheOutdated && $canUpdateOrInstall,
             'outdated' => $cacheOutdated && $canUpdateOrInstall,
             'libraries' => $this->editor->getLatestGlobalLibrariesData(),
             'recentlyUsed' => $this->editor->ajaxInterface->getAuthorsRecentlyUsedLibraries(),

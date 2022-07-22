@@ -17,6 +17,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\DB;
 use DateTime;
+use Illuminate\Support\Facades\Cache;
 
 class H5PRepository implements H5PFrameworkInterface
 {
@@ -1021,7 +1022,13 @@ class H5PRepository implements H5PFrameworkInterface
             $name = 'h5p_site_uuid'; // Make up for old core bug
         }
 
-        return config('hh5p.h5p_' . $name, $default);
+        switch ($name) {
+            case "content_type_cache_updated_at":
+                return Cache::get("content_type_cache_updated_at", $default);
+                break;
+            default:
+                return config('hh5p.h5p_' . $name, $default);
+        }
     }
 
 
@@ -1040,7 +1047,13 @@ class H5PRepository implements H5PFrameworkInterface
         if ($name === 'site_uuid') {
             $name = 'h5p_site_uuid'; // Make up for old core bug
         }
-        config(['hh5p.h5p_' . $name => $value]);
+        switch ($name) {
+            case "content_type_cache_updated_at":
+                Cache::set("content_type_cache_updated_at", $value);
+                break;
+            default:
+                config(['hh5p.h5p_' . $name => $value]);
+        }
     }
 
     /**
