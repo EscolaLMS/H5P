@@ -13,8 +13,8 @@ Route::group(['middleware' => ['api'], 'prefix' => 'api'], function () {
         Route::delete('library/{id}', [LibraryApiController::class, 'destroy'])->name('hh5p.library.delete');
         Route::get('editor', EditorApiController::class)->name('hh5p.editor.settings');
         Route::get('editor/{id}', EditorApiController::class)->name('hh5p.editor.contentSettings');
-        Route::get('libraries', [LibraryApiController::class, 'libraries'])->name('hh5p.library.libraries');
-        Route::post('libraries', [LibraryApiController::class, 'libraries'])->name('hh5p.library.libraries');
+        Route::get('libraries', [LibraryApiController::class, 'libraries'])->name('hh5p.library.admin.get.libraries');
+        Route::post('libraries', [LibraryApiController::class, 'libraries'])->name('hh5p.library.admin.post.libraries');
         Route::post('content/upload', [ContentApiController::class, 'upload'])->name('hh5p.content.upload');
         Route::post('content', [ContentApiController::class, 'store'])->name('hh5p.content.store');
         Route::post('content/{id}', [ContentApiController::class, 'update'])->name('hh5p.content.update');
