@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\MySqlConnection;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class ChangeHh5pContentsLibrariesStructureTable extends Migration
 {
@@ -14,6 +15,9 @@ class ChangeHh5pContentsLibrariesStructureTable extends Migration
      */
     public function up()
     {
+        if (strpos(DB::connection()->getName(), 'sqlite')) { 
+            return;
+        }
         Schema::table('hh5p_contents_libraries', function (Blueprint $table) {
             $table->dropPrimary('hh5p_contents_libraries_pkey');
             $table->unique(['content_id', 'library_id', 'dependency_type'], 'hh5p_contents_libraries_unique_key');
@@ -44,6 +48,9 @@ class ChangeHh5pContentsLibrariesStructureTable extends Migration
      */
     public function down()
     {
+        if (strpos(DB::connection()->getName(), 'sqlite')) { 
+            return;
+        }
         Schema::table('hh5p_contents_libraries', function (Blueprint $table) {
             $table->dropColumn('id');
         });
