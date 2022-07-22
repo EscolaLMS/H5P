@@ -5,8 +5,8 @@
   "require": {
     "php": ">=7.4",
     "laravel/framework": "^8|^9",
-    "h5p/h5p-core": "^1",
-    "h5p/h5p-editor": "^1",
+    "h5p/h5p-core": "^1|dev-master",
+    "h5p/h5p-editor": "^1|dev-maste",
     "escolalms/core": "^1",
     "escolalms/auth": "^0"
   },
