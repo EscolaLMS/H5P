@@ -15,7 +15,7 @@ class ChangeHh5pContentsLibrariesStructureTable extends Migration
      */
     public function up()
     {
-        if (strpos(DB::connection()->getName(), 'sqlite')) { 
+        if (strpos(DB::connection()->getName(), 'sqlite') !== FALSE) { 
             return;
         }
         Schema::table('hh5p_contents_libraries', function (Blueprint $table) {
@@ -48,7 +48,7 @@ class ChangeHh5pContentsLibrariesStructureTable extends Migration
      */
     public function down()
     {
-        if (strpos(DB::connection()->getName(), 'sqlite')) { 
+        if (strpos(DB::connection()->getName(), 'sqlite') !== FALSE) { 
             return;
         }
         Schema::table('hh5p_contents_libraries', function (Blueprint $table) {
