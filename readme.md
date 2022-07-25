@@ -8,6 +8,10 @@
 [![downloads](https://img.shields.io/packagist/l/escolalms/headless-h5p)](https://packagist.org/packages/escolalms/headless-h5p)
 [![Maintainability](https://api.codeclimate.com/v1/badges/6316e8dc93a06d28c6a0/maintainability)](https://codeclimate.com/github/EscolaLMS/H5P/maintainability)
 
+## Working demo 
+
+Proof of concept demo is available at [https://github.com/EscolaLMS/h5p-laravel-demo](https://github.com/EscolaLMS/h5p-laravel-demo) and deployed to heroku [https://h5p-laravel-demo.herokuapp.com/](https://h5p-laravel-demo.herokuapp.com/). 
+
 ## Features
 
 The lib allows headlessly
