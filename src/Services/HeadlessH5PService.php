@@ -19,6 +19,7 @@ use H5PValidator;
 use H5PPermission;
 use H5PHubEndpoints;
 
+
 //use EscolaLms\HeadlessH5P\Repositories\H5PFileStorageRepository;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
@@ -362,25 +363,37 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
     public function getContentSettings($id, $lang = 'en'): array
     {
+
+        // READ this https://h5p.org/creating-your-own-h5p-plugin
+        $user = Auth::user();
+
         $config = $this->getConfig();
 
         $settings = [
             'baseUrl' => $config['domain'],
             'url' => $config['url'],
-            'postUserStatistics' => false,
+            'postUserStatistics' => false, // TODO take this from settings
             'ajax' => [
-                'setFinished' => $config['ajaxSetFinished'],
-                'contentUserData' => $config['ajaxContentUserData'],
+                'setFinished' => $config['ajaxSetFinished'], // TODO check if this is working and implement this endpoint
+                'contentUserData' => $config['ajaxContentUserData'], // TODO check if this is working  this endpoint
             ],
             'saveFreq' => false,
             'siteUrl' => $config['domain'],
             'l10n' => [
-                'H5P' => __('h5p::h5p'),
+                'H5P' => __('h5p::h5p'), // TODO this must must provided language
             ],
             // TODO actually this should be taken from config
             'hubIsEnabled' => true,
             'crossorigin' => 'anonymous',
+
         ];
+
+        if ($user) {
+            $settings['user'] = [
+                "name" => $user->name,
+                "mail" => $user->email,
+            ];
+        }
 
         $settings['loadedJs'] = [];
         $settings['loadedCss'] = [];
@@ -433,6 +446,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'content' => $content,
             'jsonContent' => $safe_parameters,
             'fullScreen' => $content['library']['fullscreen'],
+            // TODO check all of those endpointis are working fine 
             'exportUrl' => route('hh5p.content.export', [$content['id']]),
             //'embedCode'       => '<iframe src="'.route('h5p.embed', ['id' => $content['id']]).'" width=":w" height=":h" frameborder="0" allowfullscreen="allowfullscreen"></iframe>',
             //'resizeCode'      => '<script src="'.self::get_h5pcore_url('/js/h5p-resizer.js').'" charset="UTF-8"></script>',
@@ -441,7 +455,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'displayOptions' => $this->getCore()->getDisplayOptionsForView(0, $content['id']),
             'contentUserData' => [
                 0 => [
-                    'state' => '{}',
+                    'state' => '{}', // TODO this should be retrived 
                 ],
             ],
             'nonce' => $content['nonce'],
@@ -528,8 +542,12 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'displayOptions' => $this->getCore()->getDisplayOptionsForView(0, $content['id']),
             'contentUserData' => [
                 0 => [
-                    'state' => '{}',
+                    'state' => '{}', // TODO get user actual state 
                 ],
+            ],
+            'user' => [
+                "name" => "Escola123x! Wojczal",
+                "mail" => "mateusz@escolasoft.com"
             ],
             'nonce' => $content['nonce'],
         ];

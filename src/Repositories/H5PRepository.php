@@ -10,7 +10,7 @@ use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Models\H5PLibraryDependency;
 use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
 use EscolaLms\HeadlessH5P\Models\H5pLibrariesHubCache;
-
+use H5PPermission;
 use H5PFrameworkInterface;
 use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Client;
@@ -1193,8 +1193,31 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function hasPermission($permission, $id = null)
     {
+        switch ($permission) {
+            case H5PPermission::DOWNLOAD_H5P:
+                // var_dump('DOWNLOAD_H5P');
+                return true;
+            case H5PPermission::EMBED_H5P:
+                // var_dump('EMBED_H5P');
+                return true;
+            case H5PPermission::CREATE_RESTRICTED:
+                // var_dump('CREATE_RESTRICTED');
+                return true;
+            case H5PPermission::UPDATE_LIBRARIES:
+                // var_dump('UPDATE_LIBRARIES');
+                return true;
+            case H5PPermission::INSTALL_RECOMMENDED:
+                // var_dump('INSTALL_RECOMMENDED');
+                return true;
+            case H5PPermission::COPY_H5P:
+                // var_dump('COPY_H5P');
+                return false;
+        }
+
+        // TODO some permissions must be checked here
         // NOTE, in this implementation, we assume that the user has permission to do everything
         // because permissions are set on the request level.
+
         return true;
     }
 
