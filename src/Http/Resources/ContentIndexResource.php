@@ -19,17 +19,13 @@ class ContentIndexResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'user_id' => $this->user_id,
+            'author' => $this->author,
             'title' => $this->title,
             'library_id' => $this->library_id,
             'library' => isset($lib) ? (new LibraryIndexResource($lib))->toArray() : null,
-            'parameters' => $this->parameters,
-            'params' => $this->params,
-            'metadata' => $this->metadata,
             'slug' => $this->slug,
             'filtered' => $this->filtered,
             'disable' => $this->disable,
-            'embed_type' => $this->embed_type,
-            'nonce' => $this->nonce,
         ];
 
         return self::apply($fields, $this);

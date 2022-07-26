@@ -11,6 +11,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Testing\TestResponse;
 
 class ContentApiTest extends TestCase
 {
@@ -20,7 +21,7 @@ class ContentApiTest extends TestCase
     {
         $this->authenticateAsAdmin();
         $filename = 'arithmetic-quiz.h5p';
-        $filepath = realpath(__DIR__.'/../mocks/'.$filename);
+        $filepath = realpath(__DIR__ . '/../mocks/' . $filename);
         $storage_path = storage_path($filename);
 
         copy($filepath, $storage_path);
@@ -173,22 +174,7 @@ class ContentApiTest extends TestCase
         $response = $this->actingAs($this->user, 'api')
             ->get('/api/admin/hh5p/content');
 
-        $response->assertStatus(200);
-        $response->assertJsonCount(10, 'data');
-        $response->assertJsonStructure(['data', 'meta' => [
-            'current_page',
-            'first_page_url',
-            'from',
-            'last_page',
-            'last_page_url',
-            'links',
-            'next_page_url',
-            'path',
-            'per_page',
-            'prev_page_url',
-            'to',
-            'total',
-        ]]);
+        $this->assertContentListResponse($response);
     }
 
     public function testContentListPage(): void
@@ -204,22 +190,7 @@ class ContentApiTest extends TestCase
         $response = $this->actingAs($this->user, 'api')
             ->get('/api/admin/hh5p/content?page=2&per_page=15');
 
-        $response->assertStatus(200);
-        $response->assertJsonCount(15, 'data');
-        $response->assertJsonStructure(['data', 'meta' => [
-            'current_page',
-            'first_page_url',
-            'from',
-            'last_page',
-            'last_page_url',
-            'links',
-            'next_page_url',
-            'path',
-            'per_page',
-            'prev_page_url',
-            'to',
-            'total',
-        ]]);
+        $this->assertContentListResponse($response, 15);
     }
 
     public function testContentListSearchTitle(): void
@@ -241,8 +212,7 @@ class ContentApiTest extends TestCase
         $this->authenticateAsAdmin();
         $response = $this->actingAs($this->user, 'api')->get('/api/admin/hh5p/content?title=' . $title);
 
-        $response->assertStatus(200);
-        $response->assertJsonCount(3, 'data');
+        $this->assertContentListResponse($response, 3);
     }
 
     public function testContentListSearchLibraryId(): void
@@ -252,8 +222,8 @@ class ContentApiTest extends TestCase
         $content = H5PContent::factory()
             ->count(2)
             ->create([
-            'library_id' => $library1->getKey()
-        ]);
+                'library_id' => $library1->getKey()
+            ]);
         H5PContent::factory()
             ->create([
                 'library_id' => $library2->getKey()
@@ -263,13 +233,12 @@ class ContentApiTest extends TestCase
         $response = $this->actingAs($this->user, 'api')
             ->get('/api/admin/hh5p/content?library_id=' . $library1->getKey());
 
-        $response->assertStatus(200);
-        $response->assertJsonCount(2, 'data');
+        $this->assertContentListResponse($response, 2);
     }
 
     public function testContentListPageSearchTitle(): void
     {
-        $title =  $this->faker->word;
+        $title = $this->faker->word;
         $library = H5PLibrary::factory()
             ->create(['runnable' => 1]);
         H5PContent::factory()
@@ -282,8 +251,7 @@ class ContentApiTest extends TestCase
         $this->authenticateAsAdmin();
         $response = $this->actingAs($this->user, 'api')->get('/api/admin/hh5p/content?page=2&per_page=20&title=' . $title);
 
-        $response->assertStatus(200);
-        $response->assertJsonCount(10, 'data');
+        $this->assertContentListResponse($response);
     }
 
     public function testContentListPageSearchLibraryId(): void
@@ -301,8 +269,7 @@ class ContentApiTest extends TestCase
         $response = $this->actingAs($this->user, 'api')
             ->get('/api/admin/hh5p/content?page=2&per_page=20&library_id=' . $contents->first()->library_id);
 
-        $response->assertStatus(200);
-        $response->assertJsonCount(10, 'data');
+        $this->assertContentListResponse($response);
     }
 
     public function testContentDelete(): void
@@ -356,7 +323,7 @@ class ContentApiTest extends TestCase
     {
         $this->authenticateAsAdmin();
         $filename = 'arithmetic-quiz.h5p';
-        $filepath = realpath(__DIR__.'/../mocks/'.$filename);
+        $filepath = realpath(__DIR__ . '/../mocks/' . $filename);
         $storage_path = storage_path($filename);
 
         copy($filepath, $storage_path);
@@ -476,5 +443,48 @@ class ContentApiTest extends TestCase
 
         $this->assertTrue(File::exists(storage_path('app/h5p/content/' . $h5pFirstId)));
         $this->assertFalse(File::exists(storage_path('app/h5p/content/' . $h5pSecondId)));
+    }
+
+    private function assertContentListResponse(TestResponse $response, int $dataCount = 10): void
+    {
+        $response
+            ->assertOk()
+            ->assertJsonCount($dataCount, 'data')
+            ->assertJsonStructure(['meta' => [
+                'current_page',
+                'first_page_url',
+                'from',
+                'last_page',
+                'last_page_url',
+                'links',
+                'next_page_url',
+                'path',
+                'per_page',
+                'prev_page_url',
+                'to',
+                'total',
+            ]])
+            ->assertJsonStructure(['data' => [[
+                'id',
+                'created_at',
+                'updated_at',
+                'user_id',
+                'author',
+                'title',
+                'library_id',
+                'library' => [
+                    'id',
+                    'name',
+                    'title',
+                    'created_at',
+                    'updated_at',
+                    'machineName',
+                    'uberName',
+                    'libraryId',
+                ],
+                'slug',
+                'filtered',
+                'disable',
+            ]]]);
     }
 }
