@@ -2,26 +2,26 @@
 
 namespace EscolaLms\HeadlessH5P\Tests\Api;
 
+use EscolaLms\HeadlessH5P\Tests\Traits\H5PTestingTrait;
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Http\UploadedFile;
 use EscolaLms\HeadlessH5P\Tests\TestCase;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 
 class LibraryApiTest extends TestCase
 {
-    use DatabaseTransactions;
+    use DatabaseTransactions, H5PTestingTrait;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->mock->reset();
+    }
 
     public function test_library_uploading(): void
     {
         $this->authenticateAsAdmin();
-        $filename = 'arithmetic-quiz.h5p';
-        $filepath = realpath(__DIR__ . '/../mocks/' . $filename);
-        $storage_path = storage_path($filename);
-
-        copy($filepath, $storage_path);
-
-        $h5pFile = new UploadedFile($storage_path, 'arithmetic-quiz.h5p', 'application/pdf', null, true);
-
+        $h5pFile = $this->getH5PFile();
         $response = $this->actingAs($this->user, 'api')->post('/api/admin/hh5p/library', [
             'h5p_file' => $h5pFile,
         ]);
@@ -83,18 +83,79 @@ class LibraryApiTest extends TestCase
 
     public function testGuestCannotUploadLibrary(): void
     {
-        $filename = 'arithmetic-quiz.h5p';
-        $filepath = realpath(__DIR__ . '/../mocks/' . $filename);
-        $storage_path = storage_path($filename);
-
-        copy($filepath, $storage_path);
-
-        $h5pFile = new UploadedFile($storage_path, 'arithmetic-quiz.h5p', 'application/pdf', null, true);
+        $h5pFile = $this->getH5PFile();
 
         $response = $this->post('/api/admin/hh5p/library', [
             'h5p_file' => $h5pFile,
         ]);
 
         $response->assertForbidden();
+    }
+
+    public function testAjaxUploadLibraryGuestUser(): void
+    {
+        $this->postJson('api/hh5p/library-upload')->assertUnauthorized();
+    }
+
+    public function testAjaxUploadLibraryUser(): void
+    {
+        $this->authenticateAsUser();
+        $this->actingAs($this->user, 'api')->postJson('api/hh5p/library-upload')->assertForbidden();
+    }
+
+    public function testAjaxUploadLibraryAdmin(): void
+    {
+        $this->mock->append(new Response(200, [], json_encode(["uuid" => "123"])));
+        $this->mock->append(new Response(200, [], json_encode(["uuid" => "123"])));
+
+        $this->authenticateAsAdmin();
+        $h5pFile = $this->getH5PFile();
+
+        $response = $this->actingAs($this->user, 'api')
+            ->postJson('api/hh5p/library-upload?id=1&contentId=1', [
+                'h5p' => $h5pFile,
+            ]);
+
+        $response->assertOk()
+            ->assertJson([
+                'data' => [
+                    'h5p' => [
+                        'title' => 'Arithmetic Quiz'
+                    ]
+                ]
+            ]);
+    }
+
+    public function testAjaxInstallLibraryGuestUser(): void
+    {
+        $this->postJson('api/hh5p/library-install?id=H5P.Accordion')
+            ->assertUnauthorized();
+    }
+
+    public function testAjaxInstallLibraryUser(): void
+    {
+        $this->authenticateAsUser();
+        $this->actingAs($this->user, 'api')->postJson('api/hh5p/library-install?id=H5P.ArithmeticQuiz-1.1')
+            ->assertForbidden();
+    }
+
+    public function testAjaxInstallLibraryAdmin(): void
+    {
+        $this->mock->append(new Response(200, ['Content-Type' => 'application/json'], $this->getH5PFile()));
+
+        $this->authenticateAsAdmin();
+
+        $this->actingAs($this->user, 'api')->postJson('api/hh5p/library-install?id=H5P.ArithmeticQuiz-1.1')
+            ->assertOk();
+    }
+
+    public function testAjaxInstallLibraryAdminLibraryNotFound(): void
+    {
+        $this->mock->append(new Response(404, []));
+
+        $this->authenticateAsAdmin();
+
+        $this->actingAs($this->user, 'api')->postJson('api/hh5p/library-install?id=H5P.ArithmeticQuiz-1.1')
+            ->assertStatus(500);
     }
 }

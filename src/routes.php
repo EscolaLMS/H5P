@@ -40,13 +40,14 @@ Route::group(['prefix' => 'api/hh5p'], function () {
     Route::post('libraries', [LibraryApiController::class, 'libraries'])->name('hh5p.library.post.libraries');
     Route::post('files/{nonce}', FilesApiController::class)->name('hh5p.files.upload.nonce');
 
-    // TODO implement admin validation
-    // Functions below are not safe 
+    // hub
     Route::get('content-type-cache', [LibraryApiController::class, 'contentTypeCache'])->name('hh5p.library.content-type-cache');
     Route::get('content-hub-metadata-cache', [LibraryApiController::class, 'contentHubMetadata'])->name('hh5p.library.content-hub-metadata-cache');
 
-    Route::post('library-install', [LibraryApiController::class, 'libraryInstall'])->name('hh5p.ajax.library-install');
-    Route::post('library-upload', [LibraryApiController::class, 'libraryUpload'])->name('hh5p.ajax.library-upload');
-
+    // ajax
     Route::post('filter', [LibraryApiController::class, 'filter'])->name('hh5p.ajax.filter');
+    Route::group(['middleware' => ['auth:api']], function () {
+        Route::post('library-install', [LibraryApiController::class, 'libraryInstall'])->name('hh5p.ajax.library-install');
+        Route::post('library-upload', [LibraryApiController::class, 'libraryUpload'])->name('hh5p.ajax.library-upload');
+    });
 });

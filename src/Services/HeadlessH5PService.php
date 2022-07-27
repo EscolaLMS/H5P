@@ -446,7 +446,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'content' => $content,
             'jsonContent' => $safe_parameters,
             'fullScreen' => $content['library']['fullscreen'],
-            // TODO check all of those endpointis are working fine 
+            // TODO check all of those endpointis are working fine
             'exportUrl' => route('hh5p.content.export', [$content['id']]),
             //'embedCode'       => '<iframe src="'.route('h5p.embed', ['id' => $content['id']]).'" width=":w" height=":h" frameborder="0" allowfullscreen="allowfullscreen"></iframe>',
             //'resizeCode'      => '<script src="'.self::get_h5pcore_url('/js/h5p-resizer.js').'" charset="UTF-8"></script>',
@@ -455,7 +455,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'displayOptions' => $this->getCore()->getDisplayOptionsForView(0, $content['id']),
             'contentUserData' => [
                 0 => [
-                    'state' => '{}', // TODO this should be retrived 
+                    'state' => '{}', // TODO this should be retrived
                 ],
             ],
             'nonce' => $content['nonce'],
@@ -542,7 +542,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'displayOptions' => $this->getCore()->getDisplayOptionsForView(0, $content['id']),
             'contentUserData' => [
                 0 => [
-                    'state' => '{}', // TODO get user actual state 
+                    'state' => '{}', // TODO get user actual state
                 ],
             ],
             'user' => [
@@ -612,9 +612,9 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $ct_cache_last_update = $this->core->h5pF->getOption('content_type_cache_updated_at', 0);
         $outdated_cache       = $ct_cache_last_update + (60 * 60 * 24 * 7); // 1 week
 
-
         if (time() > $outdated_cache) {
             $success = $this->core->updateContentTypeCache();
+
             $this->core->h5pF->setOption('content_type_cache_updated_at', time());
             if (!$success) {
                 return false;
@@ -625,19 +625,17 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
 
     // TODO add annotations and update contract
-    // TODO add test 
+    // TODO add test
     public function getContentTypeCache(): array
     {
 
         // https://github.com/Lumieducation/H5P-Nodejs-library/wiki/Communication-with-the-H5P-Hub
-
 
         $cacheOutdated = $this->isContentTypeCacheUpdated();
 
         $canUpdateOrInstall = ($this->core->h5pF->hasPermission(H5PPermission::INSTALL_RECOMMENDED) ||
             $this->core->h5pF->hasPermission(H5PPermission::UPDATE_LIBRARIES));
         return array(
-            'outdated' => $cacheOutdated && $canUpdateOrInstall,
             'outdated' => $cacheOutdated && $canUpdateOrInstall,
             'libraries' => $this->editor->getLatestGlobalLibrariesData(),
             'recentlyUsed' => $this->editor->ajaxInterface->getAuthorsRecentlyUsedLibraries(),
@@ -650,14 +648,14 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     }
 
     // TODO add annotations and update contract
-    // TODO add test 
+    // TODO add test
     public function getUpdatedContentHubMetadataCache($lang = 'en')
     {
         return $this->core->getUpdatedContentHubMetadataCache($lang);
     }
 
-    // TODO add annotations 
-    // TODO add test 
+    // TODO add annotations
+    // TODO add test
     private function callHubEndpoint($endpoint)
     {
         $path = $this->core->h5pF->getUploadedH5pPath();
@@ -671,7 +669,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     }
 
     // TODO add annotations and update contract
-    // TODO add test 
+    // TODO add test
     public function libraryInstall($machineName)
     {
 
@@ -700,7 +698,6 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         if (!$response) return;
 
         // Session parameters has to be set for validation and saving of packages
-
         if (!$this->getValidator()->isValidPackage(true)) {
             return;
         }
@@ -716,11 +713,12 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     }
 
     // TODO add annotations and update contract
-    // TODO add test 
+    // TODO add test
     public function uploadLibrary($token, $file, $contentId)
     {
 
         $valid = $this->validatePackage($file, false, false);
+
 
         $this->getStorage()->savePackage(NULL, NULL, TRUE);
 
@@ -741,7 +739,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
      *
      * @param {string} $libraryParameters
      */
-    // TODO add test 
+    // TODO add test
     public function filterLibraries($libraryParameters)
     {
 

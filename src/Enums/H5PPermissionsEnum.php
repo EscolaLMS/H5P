@@ -17,4 +17,6 @@ class H5PPermissionsEnum extends BasicEnum
     const H5P_LIBRARY_CREATE = 'h5p_library_create';
     const H5P_LIBRARY_DELETE = 'h5p_library_delete';
     const H5P_LIBRARY_UPDATE = 'h5p_library_update';
+    const H5P_LIBRARY_INSTALL = 'h5p_library_install';
+    const H5P_LIBRARY_UPLOAD = 'h5p_library_upload';
 }

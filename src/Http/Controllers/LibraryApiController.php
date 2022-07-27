@@ -4,7 +4,9 @@ namespace EscolaLms\HeadlessH5P\Http\Controllers;
 
 use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
 use EscolaLms\HeadlessH5P\Http\Requests\LibraryDeleteRequest;
+use EscolaLms\HeadlessH5P\Http\Requests\LibraryInstallRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\LibraryListRequest;
+use EscolaLms\HeadlessH5P\Http\Requests\LibraryUploadRequest;
 use EscolaLms\HeadlessH5P\Http\Resources\LibraryResource;
 use Illuminate\Http\JsonResponse;
 use EscolaLms\HeadlessH5P\Http\Controllers\Swagger\LibraryApiSwagger;
@@ -49,7 +51,7 @@ class LibraryApiController extends EscolaLmsBaseController implements LibraryApi
             $request->get('minorVersion')
         );
 
-        return response()->json($libraries, 200);
+        return response()->json($libraries);
     }
 
     public function destroy(LibraryDeleteRequest $request, int $id): JsonResponse
@@ -78,22 +80,16 @@ class LibraryApiController extends EscolaLmsBaseController implements LibraryApi
         return response()->json(['success' => true, 'data' => $metadata]);
     }
 
-    public function libraryInstall(Request $request): JsonResponse
+    public function libraryInstall(LibraryInstallRequest $request): JsonResponse
     {
         // TODO here is token sent somehow. validate this
-        $name = $request->get('id');
-
-        $library = $this->hh5pService->libraryInstall($name);
+        $library = $this->hh5pService->libraryInstall($request->getMachineName());
         return response()->json(['success' => true, 'data' => $library]);
     }
 
-    public function libraryUpload(Request $request): JsonResponse
+    public function libraryUpload(LibraryUploadRequest $request): JsonResponse
     {
-        $token = $request->get('id');
-        $contentId = $request->get('contentId');
-        $file = $request->file('h5p');
-
-        $library = $this->hh5pService->uploadLibrary($token, $file, $contentId);
+        $library = $this->hh5pService->uploadLibrary($request->getId(), $request->getH5PFile(), $request->getContentId());
 
         return response()->json(['success' => true, 'data' => $library]);
     }

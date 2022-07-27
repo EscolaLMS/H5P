@@ -3,7 +3,9 @@
 namespace EscolaLms\HeadlessH5P\Http\Controllers\Swagger;
 
 use EscolaLms\HeadlessH5P\Http\Requests\LibraryDeleteRequest;
+use EscolaLms\HeadlessH5P\Http\Requests\LibraryInstallRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\LibraryListRequest;
+use EscolaLms\HeadlessH5P\Http\Requests\LibraryUploadRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -204,7 +206,7 @@ interface LibraryApiSwagger
      *      )
      * )
      */
-    public function libraryInstall(Request $request): JsonResponse;
+    public function libraryInstall(LibraryInstallRequest $request): JsonResponse;
 
     /**
      * @OA\Post(
@@ -249,7 +251,7 @@ interface LibraryApiSwagger
      *      )
      * )
      */
-    public function libraryUpload(Request $request): JsonResponse;
+    public function libraryUpload(LibraryUploadRequest $request): JsonResponse;
 
     /**
      * @OA\Post(
