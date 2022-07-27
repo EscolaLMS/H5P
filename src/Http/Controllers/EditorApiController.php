@@ -26,7 +26,7 @@ class EditorApiController extends EscolaLmsBaseController implements EditorApiSw
         try {
             $settings = $this->hh5pService->getEditorSettings($id, $lang);
 
-            return $this->sendResponse([...$settings, 'token' => $token], 'Editor settings retrieved successfully');
+            return $this->sendResponse(array_merge($settings, ['token' => $token]), 'Editor settings retrieved successfully');
         } catch (Exception $error) {
             return $this->sendError($error->getMessage(), 422);
         }
