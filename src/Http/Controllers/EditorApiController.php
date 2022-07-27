@@ -21,11 +21,12 @@ class EditorApiController extends EscolaLmsBaseController implements EditorApiSw
     public function __invoke(Request $request, $id = null): JsonResponse
     {
         $lang = $request->get('lang', 'en');
+        $token = request()->bearerToken();
 
         try {
             $settings = $this->hh5pService->getEditorSettings($id, $lang);
 
-            return $this->sendResponse($settings);
+            return $this->sendResponse([...$settings, 'token' => $token], 'Editor settings retrieved successfully');
         } catch (Exception $error) {
             return $this->sendError($error->getMessage(), 422);
         }
