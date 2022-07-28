@@ -2,27 +2,21 @@
 
 namespace EscolaLms\HeadlessH5P\Tests\Api;
 
+use EscolaLms\HeadlessH5P\Tests\Traits\H5PTestingTrait;
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Http\UploadedFile;
 use EscolaLms\HeadlessH5P\Tests\TestCase;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 
 class LibraryApiTest extends TestCase
 {
-    use DatabaseTransactions;
+    use DatabaseTransactions, H5PTestingTrait;
 
     public function test_library_uploading(): void
     {
         $this->authenticateAsAdmin();
-        $filename = 'arithmetic-quiz.h5p';
-        $filepath = realpath(__DIR__ . '/../mocks/' . $filename);
-        $storage_path = storage_path($filename);
-
-        copy($filepath, $storage_path);
-
-        $h5pFile = new UploadedFile($storage_path, 'arithmetic-quiz.h5p', 'application/pdf', null, true);
-
-        $response = $this->actingAs($this->user, 'api')->post('/api/admin/hh5p/library', [
+        $h5pFile = $this->getH5PFile();
+        $response = $this->actingAs($this->user, 'api')->postJson('/api/admin/hh5p/library', [
             'h5p_file' => $h5pFile,
         ]);
 
@@ -38,7 +32,7 @@ class LibraryApiTest extends TestCase
         $this->authenticateAsAdmin();
         H5PLibrary::factory()->create();
 
-        $response = $this->actingAs($this->user, 'api')->get('/api/admin/hh5p/library');
+        $response = $this->actingAs($this->user, 'api')->getJson('/api/admin/hh5p/library');
 
         $response->assertStatus(200);
         $response->assertJsonStructure([
@@ -57,10 +51,10 @@ class LibraryApiTest extends TestCase
         $library = H5PLibrary::factory()->create();
         $id = $library->id;
 
-        $response = $this->actingAs($this->user, 'api')->delete("/api/admin/hh5p/library/$id");
+        $response = $this->actingAs($this->user, 'api')->deleteJson("/api/admin/hh5p/library/$id");
         $response->assertStatus(200);
 
-        $response = $this->actingAs($this->user, 'api')->delete("/api/admin/hh5p/library/$id");
+        $response = $this->actingAs($this->user, 'api')->deleteJson("/api/admin/hh5p/library/$id");
         $response->assertStatus(404);
     }
 
@@ -69,29 +63,21 @@ class LibraryApiTest extends TestCase
         $library = H5PLibrary::factory()->create();
         $id = $library->id;
 
-        $response = $this->delete("/api/admin/hh5p/library/$id");
+        $response = $this->deleteJson("/api/admin/hh5p/library/$id");
 
         $response->assertForbidden();
     }
 
-    public function testGuestCanIndexLibrary(): void
+    public function testGuestCannotIndexLibrary(): void
     {
-        $response = $this->get('/api/admin/hh5p/library');
-
-        $response->assertOk();
+        $this->getJson('/api/admin/hh5p/library')->assertForbidden();
     }
 
     public function testGuestCannotUploadLibrary(): void
     {
-        $filename = 'arithmetic-quiz.h5p';
-        $filepath = realpath(__DIR__ . '/../mocks/' . $filename);
-        $storage_path = storage_path($filename);
+        $h5pFile = $this->getH5PFile();
 
-        copy($filepath, $storage_path);
-
-        $h5pFile = new UploadedFile($storage_path, 'arithmetic-quiz.h5p', 'application/pdf', null, true);
-
-        $response = $this->post('/api/admin/hh5p/library', [
+        $response = $this->postJson('/api/admin/hh5p/library', [
             'h5p_file' => $h5pFile,
         ]);
 

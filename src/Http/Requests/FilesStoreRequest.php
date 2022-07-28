@@ -2,7 +2,9 @@
 
 namespace EscolaLms\HeadlessH5P\Http\Requests;
 
+use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class FilesStoreRequest extends FormRequest
 {
@@ -13,7 +15,7 @@ class FilesStoreRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Gate::allows('upload', H5PLibrary::class);
     }
 
     /**

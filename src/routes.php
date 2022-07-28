@@ -4,6 +4,8 @@ use EscolaLms\HeadlessH5P\Http\Controllers\ContentApiController;
 use EscolaLms\HeadlessH5P\Http\Controllers\EditorApiController;
 use EscolaLms\HeadlessH5P\Http\Controllers\FilesApiController;
 use EscolaLms\HeadlessH5P\Http\Controllers\LibraryApiController;
+use EscolaLms\HeadlessH5P\Http\Middleware\QueryToken;
+
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => ['api'], 'prefix' => 'api'], function () {
@@ -35,13 +37,11 @@ Route::group(['middleware' => ['api'], 'prefix' => 'api'], function () {
     });
 });
 
-Route::group(['prefix' => 'api/hh5p'], function () {
+Route::group(['middleware' => [QueryToken::class], 'prefix' => 'api/hh5p'], function () {
     Route::get('libraries', [LibraryApiController::class, 'libraries'])->name('hh5p.library.get.libraries');
     Route::post('libraries', [LibraryApiController::class, 'libraries'])->name('hh5p.library.post.libraries');
     Route::post('files/{nonce}', FilesApiController::class)->name('hh5p.files.upload.nonce');
 
-    // TODO implement admin validation
-    // Functions below are not safe 
     Route::get('content-type-cache', [LibraryApiController::class, 'contentTypeCache'])->name('hh5p.library.content-type-cache');
     Route::get('content-hub-metadata-cache', [LibraryApiController::class, 'contentHubMetadata'])->name('hh5p.library.content-hub-metadata-cache');
 

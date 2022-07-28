@@ -36,4 +36,5 @@ return [
     'h5p_hub_is_enabled'                => true,
     'h5p_version'                       => '1.23.0',
 
+    'guzzle' => []
 ];

@@ -34,4 +34,14 @@ class H5PLibraryPolicy
     {
         return $user && $user->can(H5PPermissionsEnum::H5P_LIBRARY_UPDATE);
     }
+
+    public function install(?User $user): bool
+    {
+        return $user && $user->can(H5PPermissionsEnum::H5P_LIBRARY_INSTALL);
+    }
+
+    public function upload(?User $user): bool
+    {
+        return $user && $user->can(H5PPermissionsEnum::H5P_LIBRARY_UPLOAD);
+    }
 }

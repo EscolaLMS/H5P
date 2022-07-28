@@ -12,7 +12,6 @@ use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
 use EscolaLms\HeadlessH5P\Models\H5pLibrariesHubCache;
 use H5PPermission;
 use H5PFrameworkInterface;
-use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\DB;
@@ -57,7 +56,6 @@ class H5PRepository implements H5PFrameworkInterface
      *
      * @return string|array The content (response body), or an array with data. NULL if something went wrong
      */
-
     public function fetchExternalData($url, $data = null, $blocking = true, $stream = null, $fullData = false, $headers = [], $files = [], $method = 'POST')
     {
         // TODO add tests for this function with all possible parameters
@@ -69,19 +67,18 @@ class H5PRepository implements H5PFrameworkInterface
         if (!empty($stream)) {
             $options['sink'] = $stream;
         }
-        // TODO make guzzle replacable 
-        // see how you can mock guzzle https://github.com/EscolaLMS/Mattermost/blob/main/tests/TestCase.php#L62
-        $client = new Client();
 
+        $client = new Client(config('hh5p.guzzle'));
         try {
+
             if ($data !== null) {
                 // Post
                 $options['form_params'] = $data;
                 $response = $client->request('POST', $url, $options);
+
             } else {
                 $response = $client->request('GET', $url, $options);
             }
-
 
             if ($response->getStatusCode() === 200) {
                 $contents = null;
@@ -144,7 +141,7 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function getMessages($type = 'error')
     {
-        return isset($this->messages[$type]) ? $this->messages[$type] : null;
+        return !empty($this->messages[$type]) ? $this->messages[$type] : null;
     }
 
     /**
@@ -1120,6 +1117,7 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function getLibraryStats($type)
     {
+        return []; // TODO is used in h5p.classes.php => public function fetchLibrariesMetadata($fetchingDisabled = FALSE)
     }
 
     /**
@@ -1166,6 +1164,7 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function getLibraryContentCount()
     {
+        return []; // TODO is used in h5p.classes.php => public function fetchLibrariesMetadata($fetchingDisabled = FALSE)
     }
 
     /**
@@ -1229,8 +1228,8 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function replaceContentTypeCache($contentTypeCache)
     {
-        // TODO refactor this ugly code 
 
+        // TODO refactor this ugly code
         // Replace existing content type cache
         DB::table('hh5p_libraries_hub_cache')->truncate();
 
