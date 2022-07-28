@@ -679,6 +679,137 @@
                     }
                 }
             }
+        },
+        "/api/hh5p/content-type-cache": {
+            "get": {
+                "tags": [
+                    "H5P"
+                ],
+                "summary": "H5P Editor Endpoint. Gets content type cache for globally available libraries",
+                "description": "Gets content type cache for globally available libraries",
+                "operationId": "36f4ec92fbfc55f9e118dccc8adf61c0",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/api/hh5p/content-hub-metadata-cache": {
+            "get": {
+                "tags": [
+                    "H5P"
+                ],
+                "summary": "Gets contents hub metadata cache",
+                "description": "Gets contents hub metadata cache",
+                "operationId": "69daa3bc02b9ccf0dd1f10575da91cb2",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/api/hh5p/library-install": {
+            "post": {
+                "tags": [
+                    "H5P"
+                ],
+                "summary": "Install H5P library by Machine name",
+                "description": "Install H5P library by Machine name",
+                "operationId": "9ba66dcc6bc967a0ce0cb3819b6ff793",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "Machine name of Library",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "H5P.ArithmeticQuiz"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/api/hh5p/library-upload": {
+            "post": {
+                "tags": [
+                    "H5P"
+                ],
+                "summary": "Upload H5P library",
+                "description": "Upload H5P library",
+                "operationId": "1e7085d1cf90afe7df5c7743a68d3a26",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "Machine name of Library",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "H5P.ArithmeticQuiz"
+                    },
+                    {
+                        "name": "content_id",
+                        "in": "query",
+                        "description": "Content id",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "h5p": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/api/hh5p/filter": {
+            "post": {
+                "tags": [
+                    "H5P"
+                ],
+                "summary": "Filter H5P libraries",
+                "description": "Filter H5P libraries",
+                "operationId": "1322e10f5df0c5b6781bd8a3f1f0750e",
+                "parameters": [
+                    {
+                        "name": "libraryParameters",
+                        "in": "query",
+                        "description": "Library parameters",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                }
+            }
         }
     },
     "components": {
