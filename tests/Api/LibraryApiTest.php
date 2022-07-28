@@ -68,11 +68,9 @@ class LibraryApiTest extends TestCase
         $response->assertForbidden();
     }
 
-    public function testGuestCanIndexLibrary(): void
+    public function testGuestCannotIndexLibrary(): void
     {
-        $response = $this->getJson('/api/admin/hh5p/library');
-
-        $response->assertOk();
+        $this->getJson('/api/admin/hh5p/library')->assertForbidden();
     }
 
     public function testGuestCannotUploadLibrary(): void
