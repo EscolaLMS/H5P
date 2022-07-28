@@ -100,7 +100,8 @@ class LibraryApiTest extends TestCase
     public function testAjaxUploadLibraryUser(): void
     {
         $this->authenticateAsUser();
-        $this->actingAs($this->user, 'api')->postJson('api/hh5p/library-upload')->assertForbidden();
+        $token = $this->user->createToken("test")->accessToken;
+        $this->postJson('api/hh5p/library-upload?_token=' . $token)->assertForbidden();
     }
 
     public function testAjaxUploadLibraryAdmin(): void
@@ -109,10 +110,11 @@ class LibraryApiTest extends TestCase
         $this->mock->append(new Response(200, [], json_encode(["uuid" => "123"])));
 
         $this->authenticateAsAdmin();
+        $token = $this->user->createToken("test")->accessToken;
+
         $h5pFile = $this->getH5PFile();
 
-        $response = $this->actingAs($this->user, 'api')
-            ->postJson('api/hh5p/library-upload?id=1&contentId=1', [
+        $response = $this->postJson('api/hh5p/library-upload?_token=' . $token . '&id=1&contentId=1', [
                 'h5p' => $h5pFile,
             ]);
 
@@ -135,7 +137,9 @@ class LibraryApiTest extends TestCase
     public function testAjaxInstallLibraryUser(): void
     {
         $this->authenticateAsUser();
-        $this->actingAs($this->user, 'api')->postJson('api/hh5p/library-install?id=H5P.ArithmeticQuiz-1.1')
+        $token = $this->user->createToken("test")->accessToken;
+
+        $this->postJson('api/hh5p/library-install?_token=' . $token . '&id=H5P.ArithmeticQuiz-1.1')
             ->assertForbidden();
     }
 
@@ -144,8 +148,9 @@ class LibraryApiTest extends TestCase
         $this->mock->append(new Response(200, ['Content-Type' => 'application/json'], $this->getH5PFile()));
 
         $this->authenticateAsAdmin();
+        $token = $this->user->createToken("test")->accessToken;
 
-        $this->actingAs($this->user, 'api')->postJson('api/hh5p/library-install?id=H5P.ArithmeticQuiz-1.1')
+        $this->postJson('api/hh5p/library-install?_token=' . $token . '&id=H5P.ArithmeticQuiz-1.1' )
             ->assertOk();
     }
 
@@ -154,8 +159,9 @@ class LibraryApiTest extends TestCase
         $this->mock->append(new Response(404, []));
 
         $this->authenticateAsAdmin();
+        $token = $this->user->createToken("test")->accessToken;
 
-        $this->actingAs($this->user, 'api')->postJson('api/hh5p/library-install?id=H5P.ArithmeticQuiz-1.1')
+        $this->postJson('api/hh5p/library-install?_token=' . $token . '&id=H5P.ArithmeticQuiz-1.1')
             ->assertStatus(500);
     }
 }

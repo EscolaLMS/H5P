@@ -672,7 +672,6 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     // TODO add test
     public function libraryInstall($machineName)
     {
-
         // Determine which content type to install from post data
         if (!$machineName) {
             throw new H5PException(H5PException::NO_CONTENT_TYPE);
@@ -702,7 +701,6 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             return;
         }
 
-
         $this->getStorage()->savePackage(NULL, NULL, TRUE);
 
         // Clean up
@@ -716,14 +714,11 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     // TODO add test
     public function uploadLibrary($token, $file, $contentId)
     {
-
-        $valid = $this->validatePackage($file, false, false);
-
-
+        $this->validatePackage($file, false, false);
         $this->getStorage()->savePackage(NULL, NULL, TRUE);
 
         // Make content available to editor
-        $files = $this->core->fs->moveContentDirectory($this->core->h5pF->getUploadedH5pFolderPath(), $contentId);
+        $this->core->fs->moveContentDirectory($this->core->h5pF->getUploadedH5pFolderPath(), $contentId);
 
         // Clean up
         $this->getEditorStorage()->removeTemporarilySavedFiles($this->core->h5pF->getUploadedH5pFolderPath());

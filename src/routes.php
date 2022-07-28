@@ -42,8 +42,6 @@ Route::group(['prefix' => 'api/hh5p'], function () {
     Route::post('libraries', [LibraryApiController::class, 'libraries'])->name('hh5p.library.post.libraries');
     Route::post('files/{nonce}', FilesApiController::class)->name('hh5p.files.upload.nonce');
 
-    // TODO implement admin validation
-    // Functions below are not safe 
     Route::group(['middleware' => [QueryToken::class]], function () {
 
         Route::get('content-type-cache', [LibraryApiController::class, 'contentTypeCache'])->name('hh5p.library.content-type-cache');
