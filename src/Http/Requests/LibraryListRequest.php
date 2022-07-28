@@ -10,7 +10,7 @@ class LibraryListRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return Gate::allows('list', H5PLibrary::class);
     }
 
     public function rules(): array
