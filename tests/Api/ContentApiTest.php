@@ -326,6 +326,13 @@ class ContentApiTest extends TestCase
             ->assertStatus(200);
     }
 
+    public function testContentShowInvalidUuidGuest(): void
+    {
+        $uuid = "UUID";
+        $response = $this->get("/api/hh5p/content/$uuid");
+        $response->assertStatus(422);
+    }
+
     public function testContentShowNonExistingGuest(): void
     {
         $uuid = (string)Str::orderedUuid();
