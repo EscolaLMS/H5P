@@ -7,6 +7,7 @@ use EscolaLms\Core\Enums\BasicEnum;
 class H5PPermissionsEnum extends BasicEnum
 {
     const H5P_LIST = 'h5p_list';
+    const H5P_AUTHOR_LIST = 'h5p_author_list';
     const H5P_READ = 'h5p_read';
     const H5P_CREATE = 'h5p_create';
     const H5P_DELETE = 'h5p_delete';

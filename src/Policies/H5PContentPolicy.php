@@ -15,6 +15,11 @@ class H5PContentPolicy
         return $user && $user->can(H5PPermissionsEnum::H5P_LIST);
     }
 
+    public function authorList(?User $user): bool
+    {
+        return $user && $user->can(H5PPermissionsEnum::H5P_AUTHOR_LIST);
+    }
+
     public function read(?User $user): bool
     {
         return $user && $user->can(H5PPermissionsEnum::H5P_READ);
