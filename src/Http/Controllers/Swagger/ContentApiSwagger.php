@@ -4,6 +4,7 @@ namespace EscolaLms\HeadlessH5P\Http\Controllers\Swagger;
 
 use EscolaLms\HeadlessH5P\Http\Requests\ContentDeleteRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\ContentListRequest;
+use EscolaLms\HeadlessH5P\Http\Requests\AdminContentReadRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\ContentReadRequest;
 use Illuminate\Http\JsonResponse;
 
@@ -137,7 +138,7 @@ interface ContentApiSwagger
 
     /**
     * @OA\Get(
-    *      path="/api/hh5p/content/{id}",
+    *      path="/api/admin/hh5p/content/{id}",
     *      summary="Content settings for player",
     *      tags={"H5P"},
     *      description="Content settings for player",
@@ -163,7 +164,37 @@ interface ContentApiSwagger
     *      )
     * )
     */
-    public function show(ContentReadRequest $request, int $id): JsonResponse;
+    public function show(AdminContentReadRequest $request, int $id): JsonResponse;
+
+    /**
+     * @OA\Get(
+     *      path="/api/hh5p/content/{uuid}",
+     *      summary="Content settings for player",
+     *      tags={"H5P"},
+     *      description="Content settings for player",
+     *      security={
+     *          {"passport": {}},
+     *      },
+     *      @OA\Parameter(
+     *          name="uuid",
+     *          description="Uuid of Content",
+     *          in="path",
+     *          required=true,
+     *          @OA\Schema(
+     *             type="string",
+     *         )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @OA\JsonContent(
+     *             type="object",
+     *             ref="#/components/schemas/H5PEditorSettings"
+     *         )
+     *      )
+     * )
+     */
+    public function frontShow(ContentReadRequest $request, string $uuid): JsonResponse;
 
     /**
     * @OA\Post(
@@ -404,7 +435,7 @@ interface ContentApiSwagger
     *      )
     * )
     */
-    public function download(ContentReadRequest $request, int $id);
+    public function download(AdminContentReadRequest $request, int $id);
 
     /**
      * @OA\Delete(

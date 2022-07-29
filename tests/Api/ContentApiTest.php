@@ -9,9 +9,12 @@ use EscolaLms\HeadlessH5P\Tests\Traits\H5PTestingTrait;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
+use Ramsey\Uuid\Uuid;
 
 class ContentApiTest extends TestCase
 {
@@ -20,17 +23,10 @@ class ContentApiTest extends TestCase
     public function testContentCreate(): void
     {
         $this->authenticateAsAdmin();
-        $filename = 'arithmetic-quiz.h5p';
-        $filepath = realpath(__DIR__ . '/../mocks/' . $filename);
-        $storage_path = storage_path($filename);
+        $h5pFile = $this->getH5PFile();
 
-        copy($filepath, $storage_path);
-
-        $h5pFile = new UploadedFile($storage_path, 'arithmetic-quiz.h5p', 'application/pdf', null, true);
-
-        $this->actingAs($this->user, 'api')->post('/api/admin/hh5p/library', [
-            'h5p_file' => $h5pFile,
-        ])->assertOk();
+        $this->actingAs($this->user, 'api')->post('/api/admin/hh5p/library', ['h5p_file' => $h5pFile,])
+            ->assertOk();
 
         $library = H5PLibrary::where('runnable', 1)->first();
 
@@ -41,8 +37,9 @@ class ContentApiTest extends TestCase
             'params' => '{"params":{"taskDescription":"Documentation tool","pagesList":[{"params":{"elementList":[{"params":{},"library":"H5P.Text 1.1","metadata":{"contentType":"Text","license":"U","title":"Untitled Text","authors":[],"changes":[],"extraTitle":"Untitled Text"},"subContentId":"da3387da-355a-49fb-92bc-3a9a4e4646a9"}],"helpTextLabel":"More information","helpText":""},"library":"H5P.StandardPage 1.5","metadata":{"contentType":"Standard page","license":"U","title":"Untitled Standard page","authors":[],"changes":[],"extraTitle":"Untitled Standard page"},"subContentId":"ac6ffdac-be02-448c-861c-969e6a09dbd5"}],"i10n":{"previousLabel":"poprzedni","nextLabel":"Next","closeLabel":"Close"}},"metadata":{"license":"U","authors":[],"changes":[],"extraTitle":"fdsfds","title":"fdsfds"}}',
         ]);
 
-        $response->assertStatus(200);
-        $response->assertJsonStructure(['data' => ['id']]);
+        $response
+            ->assertStatus(200)
+            ->assertJsonStructure(['data' => ['id']]);
     }
 
     public function testContentCreateNoNonce(): void
@@ -319,6 +316,23 @@ class ContentApiTest extends TestCase
         $response->assertStatus(404);
     }
 
+    public function testContentShowGuest(): void
+    {
+        $this->authenticateAsAdmin();
+        $data = $this->uploadH5PFile();
+        $uuid = $data['uuid'];
+
+        $this->get("/api/hh5p/content/$uuid")
+            ->assertStatus(200);
+    }
+
+    public function testContentShowNonExistingGuest(): void
+    {
+        $uuid = (string)Str::orderedUuid();
+        $response = $this->get("/api/hh5p/content/$uuid");
+        $response->assertStatus(404);
+    }
+
     public function testContentUploading(): void
     {
         $this->authenticateAsAdmin();
@@ -331,10 +345,13 @@ class ContentApiTest extends TestCase
 
         $response->assertStatus(200);
 
-        $data = json_decode($response->getContent());
+        $data = $response->getData()->data;
 
-        $this->assertTrue(is_integer($data->data->id));
-        $this->assertTrue(is_object($data->data->params));
+        $this->assertTrue(is_integer($data->id));
+        $this->assertTrue(is_object($data->params));
+        $this->assertDatabaseHas('hh5p_contents', [
+            'uuid' => $data->uuid
+        ]);
     }
 
     public function testContentExport(): void

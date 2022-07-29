@@ -7,6 +7,7 @@ use EscolaLms\HeadlessH5P\Dtos\ContentFilterCriteriaDto;
 use EscolaLms\HeadlessH5P\Http\Controllers\Swagger\ContentApiSwagger;
 use EscolaLms\HeadlessH5P\Http\Requests\ContentDeleteRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\ContentListRequest;
+use EscolaLms\HeadlessH5P\Http\Requests\AdminContentReadRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\ContentReadRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\ContentStoreRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\LibraryStoreRequest;
@@ -16,7 +17,6 @@ use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ContentApiController extends EscolaLmsBaseController implements ContentApiSwagger
@@ -33,7 +33,7 @@ class ContentApiController extends EscolaLmsBaseController implements ContentApi
     public function index(ContentListRequest $request): JsonResponse
     {
         $contentFilterDto = ContentFilterCriteriaDto::instantiateFromRequest($request);
-        $columns = ['hh5p_contents.title', 'hh5p_contents.id', 'hh5p_contents.library_id'];
+        $columns = ['hh5p_contents.title', 'hh5p_contents.id', 'hh5p_contents.uuid', 'hh5p_contents.library_id'];
         $list = $request->get('per_page') !== null && $request->get('per_page') == 0 ?
             $this->contentRepository->unpaginatedList($contentFilterDto, $columns) :
             $this->contentRepository->list($contentFilterDto, $request->get('per_page'), $columns);
@@ -74,7 +74,7 @@ class ContentApiController extends EscolaLmsBaseController implements ContentApi
         return $this->sendResponse(['id' => $contentId]);
     }
 
-    public function show(ContentReadRequest $request, int $id): JsonResponse
+    public function show(AdminContentReadRequest $request, int $id): JsonResponse
     {
         $lang = $request->get('lang', 'en');
         try {
@@ -86,11 +86,11 @@ class ContentApiController extends EscolaLmsBaseController implements ContentApi
         return $this->sendResponse($settings);
     }
 
-    public function frontShow(Request $request, int $id): JsonResponse
+    public function frontShow(ContentReadRequest $request, string $uuid): JsonResponse
     {
         $lang = $request->get('lang', 'en');
         try {
-            $settings = $this->hh5pService->getContentSettings($id, $lang);
+            $settings = $this->hh5pService->getContentSettings($request->getH5PContent()->id, $lang);
         } catch (Exception $error) {
             return $this->sendError($error->getMessage(), 422);
         }
@@ -109,7 +109,7 @@ class ContentApiController extends EscolaLmsBaseController implements ContentApi
         return $this->sendResponseForResource(ContentResource::make($content));
     }
 
-    public function download(ContentReadRequest $request, $id): BinaryFileResponse
+    public function download(AdminContentReadRequest $request, $id): BinaryFileResponse
     {
         $filepath = $this->contentRepository->download($id);
 
