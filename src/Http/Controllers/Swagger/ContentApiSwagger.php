@@ -2,12 +2,13 @@
 
 namespace EscolaLms\HeadlessH5P\Http\Controllers\Swagger;
 
+use EscolaLms\HeadlessH5P\Http\Requests\ContentCreateRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\ContentDeleteRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\ContentListRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\ContentReadRequest;
 use Illuminate\Http\JsonResponse;
 
-use EscolaLms\HeadlessH5P\Http\Requests\ContentStoreRequest;
+use EscolaLms\HeadlessH5P\Http\Requests\ContentUpdateRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\LibraryStoreRequest;
 
     /**
@@ -133,7 +134,7 @@ interface ContentApiSwagger
     *      )
     * )
     */
-    public function store(ContentStoreRequest $request): JsonResponse;
+    public function store(ContentCreateRequest $request): JsonResponse;
 
     /**
     * @OA\Get(
@@ -213,7 +214,7 @@ interface ContentApiSwagger
     *      )
     * )
     */
-    public function update(ContentStoreRequest $request, int $id): JsonResponse;
+    public function update(ContentUpdateRequest $request, int $id): JsonResponse;
 
     /**
     * @OA\Get(

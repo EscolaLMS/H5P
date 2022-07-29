@@ -169,6 +169,38 @@ class ContentApiTest extends TestCase
         $response->assertStatus(422);
     }
 
+    public function testContentUpdateAuthor(): void
+    {
+        $this->authenticateAsUser();
+        $this->user->givePermissionTo(H5PPermissionsEnum::H5P_AUTHOR_UPDATE);
+
+        $library = H5PLibrary::factory()->create(['runnable' => 1]);
+        $content = H5PContent::factory()->create([
+            'user_id' => $this->user->getKey(),
+            'library_id' => $library->getKey()
+        ]);
+        $response = $this->actingAs($this->user, 'api')->postJson("/api/admin/hh5p/content/$content->id", [
+            'nonce' => bin2hex(random_bytes(4)),
+            'title' => 'The Title',
+            'library' => $library->uberName,
+            'params' => '{"params":{"taskDescription":"Documentation tool","pagesList":[{"params":{"elementList":[{"params":{},"library":"H5P.Text 1.1","metadata":{"contentType":"Text","license":"U","title":"Untitled Text","authors":[],"changes":[],"extraTitle":"Untitled Text"},"subContentId":"da3387da-355a-49fb-92bc-3a9a4e4646a9"}],"helpTextLabel":"More information","helpText":""},"library":"H5P.StandardPage 1.5","metadata":{"contentType":"Standard page","license":"U","title":"Untitled Standard page","authors":[],"changes":[],"extraTitle":"Untitled Standard page"},"subContentId":"ac6ffdac-be02-448c-861c-969e6a09dbd5"}],"i10n":{"previousLabel":"poprzedni","nextLabel":"Next","closeLabel":"Close"}},"metadata":{"license":"U","authors":[],"changes":[],"extraTitle":"fdsfds","title":"fdsfds"}}',
+        ])->assertStatus(200);
+        $response->assertJsonStructure(['data' => ['id']]);
+    }
+
+    public function testContentCannotUpdateAuthor(): void
+    {
+        $this->authenticateAsUser();
+        $this->user->givePermissionTo(H5PPermissionsEnum::H5P_AUTHOR_UPDATE);
+
+        $library = H5PLibrary::factory()->create(['runnable' => 1]);
+        $content = H5PContent::factory()->create([
+            'user_id' => 99999,
+            'library_id' => $library->getKey()
+        ]);
+        $this->actingAs($this->user, 'api')->postJson("/api/admin/hh5p/content/$content->id")->assertForbidden();
+    }
+
     public function testContentList(): void
     {
         $library = H5PLibrary::factory()->create(['runnable' => 1]);

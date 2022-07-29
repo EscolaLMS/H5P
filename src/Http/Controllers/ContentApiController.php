@@ -5,10 +5,11 @@ namespace EscolaLms\HeadlessH5P\Http\Controllers;
 use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
 use EscolaLms\HeadlessH5P\Dtos\ContentFilterCriteriaDto;
 use EscolaLms\HeadlessH5P\Http\Controllers\Swagger\ContentApiSwagger;
+use EscolaLms\HeadlessH5P\Http\Requests\ContentCreateRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\ContentDeleteRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\ContentListRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\ContentReadRequest;
-use EscolaLms\HeadlessH5P\Http\Requests\ContentStoreRequest;
+use EscolaLms\HeadlessH5P\Http\Requests\ContentUpdateRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\LibraryStoreRequest;
 use EscolaLms\HeadlessH5P\Http\Resources\ContentIndexResource;
 use EscolaLms\HeadlessH5P\Http\Resources\ContentResource;
@@ -40,7 +41,7 @@ class ContentApiController extends EscolaLmsBaseController implements ContentApi
         return $this->sendResponseForResource(ContentIndexResource::collection($list));
     }
 
-    public function update(ContentStoreRequest $request, int $id): JsonResponse
+    public function update(ContentUpdateRequest $request, int $id): JsonResponse
     {
         try {
             $contentId = $this->contentRepository->edit($id, $request->get('title'), $request->get('library'), $request->get('params'), $request->get('nonce'));
@@ -51,7 +52,7 @@ class ContentApiController extends EscolaLmsBaseController implements ContentApi
         return $this->sendResponse(['id' => $contentId]);
     }
 
-    public function store(ContentStoreRequest $request): JsonResponse
+    public function store(ContentCreateRequest $request): JsonResponse
     {
         try {
             $contentId = $this->contentRepository->create($request->get('title'), $request->get('library'), $request->get('params'), $request->get('nonce'));
