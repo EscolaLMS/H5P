@@ -95,7 +95,7 @@ class H5PContent extends Model
 
     protected $primaryKey = 'id';
 
-    protected $guarded = ['id'];
+    protected $guarded = ['id', 'uuid'];
 
     protected $appends = [
         'params',
@@ -161,6 +161,13 @@ class H5PContent extends Model
         static::creating(function ($model) {
             if (!$model->uuid) {
                 $model->uuid = (string)Str::orderedUuid();
+            }
+        });
+
+        static::retrieved(function ($model) {
+            if (!$model->uuid) {
+                $model->uuid = (string)Str::orderedUuid();
+                $model->save();
             }
         });
     }

@@ -8,13 +8,10 @@ use EscolaLms\HeadlessH5P\Tests\TestCase;
 use EscolaLms\HeadlessH5P\Tests\Traits\H5PTestingTrait;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
-use Ramsey\Uuid\Uuid;
 
 class ContentApiTest extends TestCase
 {
@@ -462,6 +459,34 @@ class ContentApiTest extends TestCase
 
         $this->assertTrue(File::exists(storage_path('app/h5p/content/' . $h5pFirstId)));
         $this->assertFalse(File::exists(storage_path('app/h5p/content/' . $h5pSecondId)));
+    }
+
+    public function testShouldCreateUuidWhenIsEmptyAndWhenFetchContent(): void
+    {
+        $this->authenticateAsAdmin();
+
+        $h5pContent = H5PContent::factory()->make(['uuid' => null, 'library_id' => 1]);
+        $h5pContent->saveQuietly();
+
+        $this->assertNull($h5pContent->uuid);
+
+        $this->actingAs($this->user, 'api')->getJson("/api/admin/hh5p/content")->assertOk();
+        $result = H5PContent::find($h5pContent->getKey());
+
+        $this->assertNotNull($result->uuid);
+    }
+
+    public function testNotUpdateUUidWhenFetchContent(): void
+    {
+        $this->authenticateAsAdmin();
+        $h5pContent = H5PContent::factory()->create(['library_id' => 1]);
+
+        $this->assertNotNull($h5pContent->uuid);
+
+        $this->actingAs($this->user, 'api')->getJson("/api/admin/hh5p/content")->assertOk();
+        $result = H5PContent::find($h5pContent->getKey());
+
+        $this->assertEquals($h5pContent->uuid, $result->uuid);
     }
 
     private function assertContentListResponse(TestResponse $response, int $dataCount = 10): void
