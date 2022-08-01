@@ -212,6 +212,11 @@ class H5PLibrary extends Model
         return $this->getAttributeValue('name');
     }
 
+    public function getVersionAttribute(): string
+    {
+        return $this->major_version. '.' . $this->minor_version . '.' . $this->patch_version;
+    }
+
     public function getUberNameAttribute():string
     {
         return $this->getAttributeValue('name')." ".$this->getAttributeValue('major_version').".".$this->getAttributeValue('minor_version');
