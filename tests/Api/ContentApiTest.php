@@ -2,6 +2,7 @@
 
 namespace EscolaLms\HeadlessH5P\Tests\Api;
 
+use EscolaLms\HeadlessH5P\Enums\H5PPermissionsEnum;
 use EscolaLms\HeadlessH5P\Models\H5PContent;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Tests\TestCase;
@@ -37,6 +38,12 @@ class ContentApiTest extends TestCase
         $response
             ->assertStatus(200)
             ->assertJsonStructure(['data' => ['id']]);
+
+        $this->assertDatabaseHas('hh5p_contents', [
+            'id' => $response->getData()->data->id,
+            'user_id' => $this->user->id,
+            'author' => $this->user->email
+        ]);
     }
 
     public function testContentCreateNoNonce(): void
@@ -155,6 +162,38 @@ class ContentApiTest extends TestCase
         $response->assertStatus(422);
     }
 
+    public function testContentUpdateAuthor(): void
+    {
+        $this->authenticateAsUser();
+        $this->user->givePermissionTo(H5PPermissionsEnum::H5P_AUTHOR_UPDATE);
+
+        $library = H5PLibrary::factory()->create(['runnable' => 1]);
+        $content = H5PContent::factory()->create([
+            'user_id' => $this->user->getKey(),
+            'library_id' => $library->getKey()
+        ]);
+        $response = $this->actingAs($this->user, 'api')->postJson("/api/admin/hh5p/content/$content->id", [
+            'nonce' => bin2hex(random_bytes(4)),
+            'title' => 'The Title',
+            'library' => $library->uberName,
+            'params' => '{"params":{"taskDescription":"Documentation tool","pagesList":[{"params":{"elementList":[{"params":{},"library":"H5P.Text 1.1","metadata":{"contentType":"Text","license":"U","title":"Untitled Text","authors":[],"changes":[],"extraTitle":"Untitled Text"},"subContentId":"da3387da-355a-49fb-92bc-3a9a4e4646a9"}],"helpTextLabel":"More information","helpText":""},"library":"H5P.StandardPage 1.5","metadata":{"contentType":"Standard page","license":"U","title":"Untitled Standard page","authors":[],"changes":[],"extraTitle":"Untitled Standard page"},"subContentId":"ac6ffdac-be02-448c-861c-969e6a09dbd5"}],"i10n":{"previousLabel":"poprzedni","nextLabel":"Next","closeLabel":"Close"}},"metadata":{"license":"U","authors":[],"changes":[],"extraTitle":"fdsfds","title":"fdsfds"}}',
+        ])->assertStatus(200);
+        $response->assertJsonStructure(['data' => ['id']]);
+    }
+
+    public function testContentCannotUpdateAuthor(): void
+    {
+        $this->authenticateAsUser();
+        $this->user->givePermissionTo(H5PPermissionsEnum::H5P_AUTHOR_UPDATE);
+
+        $library = H5PLibrary::factory()->create(['runnable' => 1]);
+        $content = H5PContent::factory()->create([
+            'user_id' => 99999,
+            'library_id' => $library->getKey()
+        ]);
+        $this->actingAs($this->user, 'api')->postJson("/api/admin/hh5p/content/$content->id")->assertForbidden();
+    }
+
     public function testContentList(): void
     {
         $library = H5PLibrary::factory()->create(['runnable' => 1]);
@@ -169,6 +208,106 @@ class ContentApiTest extends TestCase
             ->get('/api/admin/hh5p/content');
 
         $this->assertContentListResponse($response);
+    }
+
+    public function testContentListFilterByAuthorId(): void
+    {
+        H5PContent::factory()
+            ->count(10)
+            ->create([
+                'library_id' => H5PLibrary::factory()->create(['runnable' => 1])->getKey(),
+                'user_id' => 9999
+            ]);
+        H5PContent::factory()
+            ->count(5)
+            ->create([
+                'library_id' => H5PLibrary::factory()->create(['runnable' => 1])->getKey(),
+                'user_id' => 5555
+            ]);
+
+        $this->authenticateAsAdmin();
+        $response = $this->actingAs($this->user, 'api')
+            ->get('/api/admin/hh5p/content?author_id=' . 5555)
+            ->assertOk()
+            ->assertJson(['data' => [[
+                'user_id' => 5555,
+            ]]]);
+        $this->assertContentListResponse($response, 5);
+    }
+
+    public function testAuthorShouldGetContentList(): void
+    {
+        $this->authenticateAsUser();
+        $this->user->givePermissionTo(H5PPermissionsEnum::H5P_AUTHOR_LIST);
+
+        H5PContent::factory()
+            ->count(10)
+            ->create([
+                'user_id' => 99999,
+                'library_id' => H5PLibrary::factory()->create(['runnable' => 1])->getKey()
+            ]);
+        H5PContent::factory()
+            ->count(5)
+            ->create([
+                'user_id' => $this->user->getKey(),
+                'author' => $this->user->email,
+                'library_id' => H5PLibrary::factory()->create(['runnable' => 1])->getKey()
+            ]);
+
+        $response = $this->actingAs($this->user, 'api')
+            ->get('/api/admin/hh5p/content')
+            ->assertOk()
+            ->assertJson(['data' => [[
+                'user_id' => $this->user->getKey(),
+                'author' => $this->user->email
+            ]]]);
+        $this->assertContentListResponse($response, 5);
+    }
+
+    public function testAuthorShouldGetContentListAndNotAbleToFilterByAuthorId(): void
+    {
+        $this->authenticateAsUser();
+        $this->user->givePermissionTo(H5PPermissionsEnum::H5P_AUTHOR_LIST);
+
+        H5PContent::factory()
+            ->count(10)
+            ->create([
+                'user_id' => 99999,
+                'library_id' => H5PLibrary::factory()->create(['runnable' => 1])->getKey()
+            ]);
+        H5PContent::factory()
+            ->count(5)
+            ->create([
+                'user_id' => $this->user->getKey(),
+                'author' => $this->user->email,
+                'library_id' => H5PLibrary::factory()->create(['runnable' => 1])->getKey()
+            ]);
+
+        $response = $this->actingAs($this->user, 'api')
+            ->get('/api/admin/hh5p/content?author_id=' . 99999)
+            ->assertOk()
+            ->assertJson(['data' => [[
+                'user_id' => $this->user->getKey(),
+                'author' => $this->user->email
+            ]]]);
+        $this->assertContentListResponse($response, 5);
+    }
+
+    public function testAuthorShouldGetEmptyListWhenNoCreateContent(): void
+    {
+        $this->authenticateAsUser();
+        $this->user->givePermissionTo(H5PPermissionsEnum::H5P_AUTHOR_LIST);
+
+        H5PContent::factory()
+            ->count(10)
+            ->create([
+                'user_id' => 99999,
+                'library_id' => H5PLibrary::factory()->create(['runnable' => 1])->getKey()
+            ]);
+
+        $this->actingAs($this->user, 'api')
+            ->get('/api/admin/hh5p/content')
+            ->assertOk()->assertJsonCount(0, 'data');
     }
 
     public function testContentListPage(): void
@@ -213,7 +352,7 @@ class ContentApiTest extends TestCase
     {
         $library1 = H5PLibrary::factory()->create(['runnable' => 1]);
         $library2 = H5PLibrary::factory()->create(['runnable' => 1]);
-        $content = H5PContent::factory()
+        H5PContent::factory()
             ->count(2)
             ->create([
                 'library_id' => $library1->getKey()
