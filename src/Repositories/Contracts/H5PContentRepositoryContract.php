@@ -28,6 +28,12 @@ interface H5PContentRepositoryContract
 
     public function delete(int $id): int;
 
+    public function show(int $id): H5PContent;
+
+    public function upload($file, $content = null, $only_upgrade = null, $disable_h5p_security = false): H5PContent;
+
+    public function download($id): string;
+
     public function getLibraryById(int $id): H5PLibrary;
 
     public function deleteUnused(): Collection;
