@@ -37,6 +37,7 @@ Route::group(['middleware' => ['api'], 'prefix' => 'api'], function () {
     });
 });
 
+
 Route::group(['middleware' => [QueryToken::class], 'prefix' => 'api/hh5p'], function () {
     Route::get('libraries', [LibraryApiController::class, 'libraries'])->name('hh5p.library.get.libraries');
     Route::post('libraries', [LibraryApiController::class, 'libraries'])->name('hh5p.library.post.libraries');
