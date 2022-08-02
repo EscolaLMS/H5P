@@ -125,14 +125,14 @@
                 ]
             }
         },
-        "/api/hh5p/content/{id}": {
+        "/api/admin/hh5p/content/{id}": {
             "get": {
                 "tags": [
                     "H5P"
                 ],
                 "summary": "Content settings for player",
                 "description": "Content settings for player",
-                "operationId": "c4d9cfec6bc0a14c4488b6fb1d9787e7",
+                "operationId": "c5d8042a675217409dba1ee44ef5dd2a",
                 "parameters": [
                     {
                         "name": "id",
@@ -161,7 +161,47 @@
                         "passport": []
                     }
                 ]
-            },
+            }
+        },
+        "/api/hh5p/content/{uuid}": {
+            "get": {
+                "tags": [
+                    "H5P"
+                ],
+                "summary": "Content settings for player",
+                "description": "Content settings for player",
+                "operationId": "a0b923d161f25774b8516dc23d660687",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "Uuid of Content",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/H5PEditorSettings"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/hh5p/content/{id}": {
             "post": {
                 "tags": [
                     "H5P"
