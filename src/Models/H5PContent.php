@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 /**
      * @OA\Schema(
@@ -93,7 +94,8 @@ class H5PContent extends Model
     protected $table = 'hh5p_contents';
 
     protected $primaryKey = 'id';
-    protected $guarded = ['id'];
+
+    protected $guarded = ['id', 'uuid'];
 
     protected $appends = [
         'params',
@@ -102,6 +104,7 @@ class H5PContent extends Model
 
     protected $visible = [
         'id',
+        'uuid',
         'created_at',
         'updated_at',
         'user_id',
@@ -119,16 +122,16 @@ class H5PContent extends Model
         'nonce'
     ];
 
-    public function getParamsAttribute($value)
+    public function getParamsAttribute()
     {
         $parameters = json_decode($this->parameters);
-        return isset($parameters->params) ? $parameters->params : $parameters;
+        return $parameters->params ?? $parameters;
     }
 
-    public function getMetadataAttribute($value)
+    public function getMetadataAttribute()
     {
         $parameters = json_decode($this->parameters);
-        return isset($parameters->metadata) ? $parameters->metadata : [];
+        return $parameters->metadata ?? [];
     }
 
     public function user(): BelongsTo
@@ -149,5 +152,23 @@ class H5PContent extends Model
     protected static function newFactory(): H5PContentFactory
     {
         return H5PContentFactory::new();
+    }
+
+    public static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (!$model->uuid) {
+                $model->uuid = (string)Str::orderedUuid();
+            }
+        });
+
+        static::retrieved(function ($model) {
+            if (!$model->uuid) {
+                $model->uuid = (string)Str::orderedUuid();
+                $model->save();
+            }
+        });
     }
 }
