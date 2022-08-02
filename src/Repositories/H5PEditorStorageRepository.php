@@ -62,8 +62,13 @@ class H5PEditorStorageRepository implements H5peditorStorage
      */
     public function getAvailableLanguages($machineName, $majorVersion, $minorVersion)
     {
-        // TODO this shoule return something
-        return [];
+        return H5PLibrary::with('languages')
+            ->where('name', '=', $machineName)
+            ->where('major_version', '=', $majorVersion)
+            ->where('minor_version', '=', $minorVersion)
+            ->get()
+            ->map(fn($item) => $item->languages->map(fn($lang) => $lang->language_code))
+            ->flatten();
     }
     /**
      * "Callback" for mark the given file as a permanent file.
@@ -74,6 +79,7 @@ class H5PEditorStorageRepository implements H5peditorStorage
     public function keepFile($fileId)
     {
     }
+
     /**
      * Decides which content types the editor should have.
      *
@@ -118,6 +124,7 @@ class H5PEditorStorageRepository implements H5peditorStorage
     public function alterLibraryFiles(&$files, $libraries)
     {
     }
+
     /**
      * Saves a file or moves it temporarily. This is often necessary in order to
      * validate and store uploaded or fetched H5Ps.
@@ -131,6 +138,7 @@ class H5PEditorStorageRepository implements H5peditorStorage
     public static function saveFileTemporarily($data, $move_file)
     {
     }
+
     /**
      * Marks a file for later cleanup, useful when files are not instantly cleaned
      * up. E.g. for files that are uploaded through the editor.
@@ -147,6 +155,7 @@ class H5PEditorStorageRepository implements H5peditorStorage
 
         return H5PTempFile::create(['path' => $path, 'nonce' => $nonce]);
     }
+
     /**
      * Clean up temporary files
      *
@@ -154,6 +163,6 @@ class H5PEditorStorageRepository implements H5peditorStorage
      */
     public static function removeTemporarilySavedFiles($filePath)
     {
-        // TODO implement this 
+        // TODO implement this
     }
 }

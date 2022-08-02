@@ -84,7 +84,6 @@ class H5PRepository implements H5PFrameworkInterface
                 $contents = null;
                 $body =  empty($response->getBody()) ? null : $response->getBody()->getContents();
 
-
                 if ($contents) {
                     return $fullData ? ['status' => $response->getStatusCode(), 'data' => json_decode($contents)] : $contents;
                 }
@@ -161,22 +160,21 @@ class H5PRepository implements H5PFrameworkInterface
      * @return string Translated string
      *                Translated string
      */
-    public function t($message, $replacements = [])
+    public function t($message, $replacements = []): string
     {
         // Insert !var as is, escape @var and emphasis %var.
         foreach ($replacements as $key => $replacement) {
             if ($key[0] === '@') {
-                //                $replacements[$key] = esc_html($replacement);
+                // $replacements[$key] = esc_html($replacement);
                 $replacements[$key] = $replacement;
             } elseif ($key[0] === '%') {
-                //                $replacements[$key] = '<em>' . esc_html($replacement) . '</em>';
+                // $replacements[$key] = '<em>' . esc_html($replacement) . '</em>';
                 $replacements[$key] = '<em>' . $replacement . '</em>';
             }
         }
         $message = preg_replace('/(!|@|%)[a-z0-9]+/i', '%s', $message);
 
-        // Assumes that replacement vars are in the correct order.
-        return vsprintf(trans($message), $replacements);
+        return vsprintf(__($message), $replacements);
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+
 namespace EscolaLms\HeadlessH5P\Services\Contracts;
 
 use Illuminate\Http\UploadedFile;
@@ -12,31 +13,23 @@ use H5PValidator;
 use H5peditor;
 use EditorStorage;
 use EditorAjaxRepository;
-use H5peditorStorage;
-use H5PEditorAjaxInterface;
 use H5PContentValidator;
-
-use EscolaLms\HeadlessH5P\Repositories\H5PRepository;
-use EscolaLms\HeadlessH5P\Repositories\H5PFileStorageRepository;
-use EscolaLms\HeadlessH5P\Repositories\H5PEditorAjaxRepository;
-use EscolaLms\HeadlessH5P\Repositories\H5PEditorStorageRepository;
-use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 
 interface HeadlessH5PServiceContract
 {
-    public function getEditor():H5peditor;
+    public function getEditor(): H5peditor;
 
-    public function getRepository():H5PFrameworkInterface;
-    
-    public function getFileStorage():H5PFileStorage;
- 
-    public function getCore():H5PCore;
+    public function getRepository(): H5PFrameworkInterface;
 
-    public function getValidator():H5PValidator;
+    public function getFileStorage(): H5PFileStorage;
 
-    public function getStorage():H5PStorage;
+    public function getCore(): H5PCore;
 
-    public function getContentValidator():H5PContentValidator;
+    public function getValidator(): H5PValidator;
+
+    public function getStorage(): H5PStorage;
+
+    public function getContentValidator(): H5PContentValidator;
 
     public function validatePackage(UploadedFile $file, bool $skipContent, bool $h5p_upgrade_only): bool;
 
@@ -44,13 +37,15 @@ interface HeadlessH5PServiceContract
 
     public function getMessages(string $type);
 
-    public function listLibraries():Collection;
+    public function listLibraries(): Collection;
 
-    public function getConfig():array;
+    public function getConfig(): array;
 
-    public function getLibraries(string $machineName, string $major_version, string $minor_version);
+    public function getLibraries(string $machineName = null, string $major_version = null, string $minor_version = null);
 
     public function getEditorSettings($content = null): array;
 
-    public function deleteLibrary($id):bool;
+    public function getContentSettings($id): array;
+
+    public function deleteLibrary($id): bool;
 }

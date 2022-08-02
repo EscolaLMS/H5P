@@ -74,8 +74,7 @@ class LibraryApiController extends EscolaLmsBaseController implements LibraryApi
 
     public function contentHubMetadata(Request $request): JsonResponse
     {
-        $lang = $request->get('lang');
-        $metadata = $this->hh5pService->getUpdatedContentHubMetadataCache($lang);
+        $metadata = $this->hh5pService->getUpdatedContentHubMetadataCache();
 
         return response()->json(['success' => true, 'data' => $metadata]);
     }
