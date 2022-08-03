@@ -6,6 +6,7 @@ use H5PEditorAjaxInterface;
 use EscolaLms\HeadlessH5P\Models\H5pLibrariesHubCache;
 use EscolaLms\HeadlessH5P\Helpers\Helpers;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
+use Illuminate\Support\Collection;
 
 /**
  * Handles Ajax functionality that must be implemented separately for each of the
@@ -13,33 +14,34 @@ use EscolaLms\HeadlessH5P\Models\H5PLibrary;
  */
 class H5PEditorAjaxRepository implements H5PEditorAjaxInterface
 {
-
     /**
      * Gets latest library versions that exists locally
      *
      * @return array Latest version of all local libraries
      */
     public function getLatestLibraryVersions()
-
     {
-
-
-        $libraries_result = H5PLibrary::where('runnable', 1)
+        $all = H5PLibrary::where('runnable', 1)
             ->whereNotNull('semantics')
             ->orderBy('title', 'ASC')
             ->get();
 
-        Helpers::fixCaseKeysArray(['majorVersion', 'minorVersion', 'patchVersion'], $libraries_result);
+        Helpers::fixCaseKeysArray(['majorVersion', 'minorVersion', 'patchVersion'], $all);
 
-        // TODO those libraries should be filtered by maximum sem ver 
-        /*
-        $versions = ['1.0.8', '1.0.9', '1.0.10'];
-        usort($versions, 'version_compare');
-        */
+        $unique = $all
+            ->groupBy('name')
+            ->filter(fn ($item) => $item->count() <= 1)
+            ->flatten();
 
+        $result = $all
+            ->groupBy('name')
+            ->filter(fn($item) => $item->count() > 1)
+            ->map(fn($item) => $item
+                ->sortBy('version', SORT_NATURAL)
+                ->last()
+            );
 
-
-        return $libraries_result;
+        return $unique->concat($result);
     }
 
     /**

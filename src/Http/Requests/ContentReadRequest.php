@@ -2,22 +2,32 @@
 
 namespace EscolaLms\HeadlessH5P\Http\Requests;
 
-use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
+use EscolaLms\HeadlessH5P\Models\H5PContent;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;
+use Ramsey\Uuid\Uuid;
 
 class ContentReadRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        $h5PContentRepository = app(H5PContentRepositoryContract::class);
-        $h5pContent = $h5PContentRepository->show($this->route('id'));
+        $this->getH5PContent();
 
-        return Gate::allows('read', $h5pContent);
+        return true;
     }
 
     public function rules(): array
     {
         return [];
+    }
+
+    public function getH5PContent(): H5PContent
+    {
+        $uuid = $this->route('uuid');
+
+        if (!Uuid::isValid($uuid)) {
+            abort(422, "Invalid uuid parameter");
+        }
+
+        return H5PContent::whereUuid($this->route('uuid'))->firstOrFail();
     }
 }

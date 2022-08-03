@@ -16,6 +16,7 @@ class ContentIndexResource extends JsonResource
 
         $fields = [
             'id' => $this->id,
+            'uuid' => $this->uuid,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'user_id' => $this->user_id,

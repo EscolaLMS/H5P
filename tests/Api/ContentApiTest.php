@@ -9,9 +9,9 @@ use EscolaLms\HeadlessH5P\Tests\TestCase;
 use EscolaLms\HeadlessH5P\Tests\Traits\H5PTestingTrait;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 
 class ContentApiTest extends TestCase
@@ -21,17 +21,10 @@ class ContentApiTest extends TestCase
     public function testContentCreate(): void
     {
         $this->authenticateAsAdmin();
-        $filename = 'arithmetic-quiz.h5p';
-        $filepath = realpath(__DIR__ . '/../mocks/' . $filename);
-        $storage_path = storage_path($filename);
+        $h5pFile = $this->getH5PFile();
 
-        copy($filepath, $storage_path);
-
-        $h5pFile = new UploadedFile($storage_path, 'arithmetic-quiz.h5p', 'application/pdf', null, true);
-
-        $this->actingAs($this->user, 'api')->post('/api/admin/hh5p/library', [
-            'h5p_file' => $h5pFile,
-        ])->assertOk();
+        $this->actingAs($this->user, 'api')->post('/api/admin/hh5p/library', ['h5p_file' => $h5pFile,])
+            ->assertOk();
 
         $library = H5PLibrary::where('runnable', 1)->first();
 
@@ -459,6 +452,30 @@ class ContentApiTest extends TestCase
         $response->assertStatus(404);
     }
 
+    public function testContentShowGuest(): void
+    {
+        $this->authenticateAsAdmin();
+        $data = $this->uploadH5PFile();
+        $uuid = $data['uuid'];
+
+        $this->get("/api/hh5p/content/$uuid")
+            ->assertStatus(200);
+    }
+
+    public function testContentShowInvalidUuidGuest(): void
+    {
+        $uuid = "UUID";
+        $response = $this->get("/api/hh5p/content/$uuid");
+        $response->assertStatus(422);
+    }
+
+    public function testContentShowNonExistingGuest(): void
+    {
+        $uuid = (string)Str::orderedUuid();
+        $response = $this->get("/api/hh5p/content/$uuid");
+        $response->assertStatus(404);
+    }
+
     public function testContentUploading(): void
     {
         $this->authenticateAsAdmin();
@@ -471,10 +488,13 @@ class ContentApiTest extends TestCase
 
         $response->assertStatus(200);
 
-        $data = json_decode($response->getContent());
+        $data = $response->getData()->data;
 
-        $this->assertTrue(is_integer($data->data->id));
-        $this->assertTrue(is_object($data->data->params));
+        $this->assertTrue(is_integer($data->id));
+        $this->assertTrue(is_object($data->params));
+        $this->assertDatabaseHas('hh5p_contents', [
+            'uuid' => $data->uuid
+        ]);
     }
 
     public function testContentExport(): void
@@ -578,6 +598,34 @@ class ContentApiTest extends TestCase
 
         $this->assertTrue(File::exists(storage_path('app/h5p/content/' . $h5pFirstId)));
         $this->assertFalse(File::exists(storage_path('app/h5p/content/' . $h5pSecondId)));
+    }
+
+    public function testShouldCreateUuidWhenIsEmptyAndWhenFetchContent(): void
+    {
+        $this->authenticateAsAdmin();
+
+        $h5pContent = H5PContent::factory()->make(['uuid' => null, 'library_id' => 1]);
+        $h5pContent->saveQuietly();
+
+        $this->assertNull($h5pContent->uuid);
+
+        $this->actingAs($this->user, 'api')->getJson("/api/admin/hh5p/content")->assertOk();
+        $result = H5PContent::find($h5pContent->getKey());
+
+        $this->assertNotNull($result->uuid);
+    }
+
+    public function testNotUpdateUUidWhenFetchContent(): void
+    {
+        $this->authenticateAsAdmin();
+        $h5pContent = H5PContent::factory()->create(['library_id' => 1]);
+
+        $this->assertNotNull($h5pContent->uuid);
+
+        $this->actingAs($this->user, 'api')->getJson("/api/admin/hh5p/content")->assertOk();
+        $result = H5PContent::find($h5pContent->getKey());
+
+        $this->assertEquals($h5pContent->uuid, $result->uuid);
     }
 
     private function assertContentListResponse(TestResponse $response, int $dataCount = 10): void
