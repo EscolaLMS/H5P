@@ -29,7 +29,7 @@ Route::group(['middleware' => ['api'], 'prefix' => 'api'], function () {
     });
 
     Route::group(['prefix' => 'hh5p'], function () {
-        Route::get('content/{uuid}', [ContentApiController::class, 'frontShow'])->name('hh5p.content.show');
+        Route::get('content/{uuid}', [ContentApiController::class, 'frontShow'])->name('hh5p.content.show')->withoutMiddleware('auth:api');
 
         Route::get('/', function () {
             return 'Hello World';

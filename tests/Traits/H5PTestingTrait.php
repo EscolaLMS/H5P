@@ -2,6 +2,8 @@
 
 namespace EscolaLms\HeadlessH5P\Tests\Traits;
 
+use EscolaLms\HeadlessH5P\Models\H5PContent;
+use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
 use Illuminate\Http\UploadedFile;
 
 trait H5PTestingTrait
@@ -14,6 +16,12 @@ trait H5PTestingTrait
         copy($filepath, $storage_path);
 
         return new UploadedFile($storage_path, 'arithmetic-quiz.h5p', 'application/pdf', null, true);
+    }
+
+    protected function uploadHP5Content(): H5PContent
+    {
+        $repository = app(H5PContentRepositoryContract::class);
+        return $repository->upload($this->getH5PFile());
     }
 
     protected function uploadH5PFile(): array
