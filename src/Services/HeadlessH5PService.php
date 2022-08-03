@@ -20,7 +20,6 @@ use H5PPermission;
 use H5PHubEndpoints;
 
 
-//use EscolaLms\HeadlessH5P\Repositories\H5PFileStorageRepository;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\URL;
@@ -183,8 +182,10 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         return $this->getEditor()->getLibraries();
     }
 
-    public function getEditorSettings($content = null, $lang = 'en'): array
+    public function getEditorSettings($content = null): array
     {
+        $lang = config('hh5p.language');
+
         $config = $this->getConfig();
 
         $settings = [
@@ -220,7 +221,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         }
         $settings['core']['scripts'][] = $config['get_h5peditor_url'] . '/scripts/h5peditor-editor.js';
         $settings['core']['scripts'][] = $config['get_h5peditor_url'] . '/scripts/h5peditor-init.js';
-        $settings['core']['scripts'][] = $config['get_h5peditor_url'] . '/language/en.js'; // TODO this lang should vary depending on config
+        $settings['core']['scripts'][] = $config['get_h5peditor_url'] . '/language/'. $lang .'.js'; // TODO this lang should vary depending on config
 
         $settings['editor'] = [
             'filesPath' => isset($content) ? url("h5p/content/$content") : url('h5p/editor'),
@@ -361,8 +362,9 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         return $settings;
     }
 
-    public function getContentSettings($id, $lang = 'en'): array
+    public function getContentSettings($id): array
     {
+        $lang = config('hh5p.language');
 
         // READ this https://h5p.org/creating-your-own-h5p-plugin
         $user = Auth::user();
@@ -649,8 +651,9 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
     // TODO add annotations and update contract
     // TODO add test
-    public function getUpdatedContentHubMetadataCache($lang = 'en')
+    public function getUpdatedContentHubMetadataCache()
     {
+        $lang = config('hh5p.language');
         return $this->core->getUpdatedContentHubMetadataCache($lang);
     }
 

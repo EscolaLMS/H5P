@@ -4,11 +4,12 @@ use EscolaLms\HeadlessH5P\Http\Controllers\ContentApiController;
 use EscolaLms\HeadlessH5P\Http\Controllers\EditorApiController;
 use EscolaLms\HeadlessH5P\Http\Controllers\FilesApiController;
 use EscolaLms\HeadlessH5P\Http\Controllers\LibraryApiController;
+use EscolaLms\HeadlessH5P\Http\Middleware\H5PLangMiddleware;
 use EscolaLms\HeadlessH5P\Http\Middleware\QueryToken;
 
 use Illuminate\Support\Facades\Route;
 
-Route::group(['middleware' => ['api'], 'prefix' => 'api'], function () {
+Route::group(['middleware' => ['api', H5PLangMiddleware::class], 'prefix' => 'api'], function () {
     Route::group(['prefix' => 'admin/hh5p'], function () {
         Route::post('library', [LibraryApiController::class, 'store'])->name('hh5p.library.store');
         Route::get('library', [LibraryApiController::class, 'index'])->name('hh5p.library.list');
@@ -37,7 +38,7 @@ Route::group(['middleware' => ['api'], 'prefix' => 'api'], function () {
     });
 });
 
-Route::group(['middleware' => [QueryToken::class], 'prefix' => 'api/hh5p'], function () {
+Route::group(['middleware' => [QueryToken::class, H5PLangMiddleware::class], 'prefix' => 'api/hh5p'], function () {
     Route::get('libraries', [LibraryApiController::class, 'libraries'])->name('hh5p.library.get.libraries');
     Route::post('libraries', [LibraryApiController::class, 'libraries'])->name('hh5p.library.post.libraries');
     Route::post('files/{nonce}', FilesApiController::class)->name('hh5p.files.upload.nonce');
