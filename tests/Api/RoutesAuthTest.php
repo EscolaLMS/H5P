@@ -19,7 +19,7 @@ class RoutesAuthTest extends TestCase
             ->group(__DIR__ . './../../src/routes.php');
     }
 
-    private function routeDataProvider(): array
+    public function routeDataProvider(): array
     {
         $this->createApplication();
         $data = [];
