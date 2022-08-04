@@ -2,6 +2,7 @@
 
 namespace EscolaLms\HeadlessH5P\Repositories;
 
+use EscolaLms\HeadlessH5P\Models\H5PContent;
 use H5PEditorAjaxInterface;
 use EscolaLms\HeadlessH5P\Models\H5pLibrariesHubCache;
 use EscolaLms\HeadlessH5P\Helpers\Helpers;
@@ -19,7 +20,7 @@ class H5PEditorAjaxRepository implements H5PEditorAjaxInterface
      *
      * @return array Latest version of all local libraries
      */
-    public function getLatestLibraryVersions()
+    public function getLatestLibraryVersions(): array
     {
         $all = H5PLibrary::where('runnable', 1)
             ->whereNotNull('semantics')
@@ -41,7 +42,7 @@ class H5PEditorAjaxRepository implements H5PEditorAjaxInterface
                 ->last()
             );
 
-        return $unique->concat($result);
+        return $unique->concat($result)->toArray();
     }
 
     /**
@@ -68,10 +69,16 @@ class H5PEditorAjaxRepository implements H5PEditorAjaxInterface
      * @return array machine names. The first element in the array is the
      * most recently used.
      */
-    public function getAuthorsRecentlyUsedLibraries()
+    public function getAuthorsRecentlyUsedLibraries(): array
     {
-        // TODO implment this
-        return [];
+        return H5PContent::query()
+            ->join('hh5p_contents_libraries', 'hh5p_contents.id', '=', 'hh5p_contents_libraries.content_id')
+            ->join('hh5p_libraries', 'hh5p_contents_libraries.library_id', '=', 'hh5p_libraries.id')
+            ->groupBy('hh5p_libraries.name', 'hh5p_libraries.created_at')
+            ->orderBy('hh5p_libraries.created_at')
+            ->where('user_id', '=', auth()->user()->getKey())
+            ->pluck('hh5p_libraries.name')
+            ->toArray();
     }
 
     /**
@@ -81,7 +88,7 @@ class H5PEditorAjaxRepository implements H5PEditorAjaxInterface
      *
      * @return bool True if successful validation
      */
-    public function validateEditorToken($token)
+    public function validateEditorToken($token): bool
     {
         // TODO this is better resolved
         return true;
@@ -94,7 +101,14 @@ class H5PEditorAjaxRepository implements H5PEditorAjaxInterface
      * @param string $language_code
      * @return array
      */
-    public function getTranslations($libraries, $language_code)
+    public function getTranslations($libraries, $language_code): array
     {
+        return H5PLibrary::query()
+            ->join('hh5p_libraries_languages', 'hh5p_libraries.id', '=', 'hh5p_libraries_languages.library_id')
+            ->whereRaw("concat(hh5p_libraries.name, ' ', hh5p_libraries.major_version, '.', hh5p_libraries.minor_version) in (". implode(',', array_fill(0, count($libraries), '?')) .")", $libraries)
+            ->where('language_code', '=', $language_code)
+            ->get()
+            ->pluck('translation', 'uberName')
+            ->toArray();
     }
 }

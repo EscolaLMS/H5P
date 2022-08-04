@@ -100,4 +100,14 @@ class LibraryApiController extends EscolaLmsBaseController implements LibraryApi
 
         return response()->json(['success' => true, 'data' => $libraries]);
     }
+
+    public function translations(Request $request): JsonResponse
+    {
+        $libraries = $request->get('libraries');
+        $language = $request->get('language');
+
+        $translations = $this->hh5pService->getTranslations($libraries, $language);
+
+        return response()->json(['success' => true, 'data' => $translations]);
+    }
 }

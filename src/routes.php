@@ -50,4 +50,5 @@ Route::group(['middleware' => [QueryToken::class, H5PLangMiddleware::class], 'pr
     Route::post('library-upload', [LibraryApiController::class, 'libraryUpload'])->name('hh5p.ajax.library-upload');
 
     Route::post('filter', [LibraryApiController::class, 'filter'])->name('hh5p.ajax.filter');
+    Route::post('translations', [LibraryApiController::class, 'translations'])->name('hh5p.ajax.translations');
 });

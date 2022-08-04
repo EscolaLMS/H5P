@@ -48,4 +48,6 @@ interface HeadlessH5PServiceContract
     public function getContentSettings($id): array;
 
     public function deleteLibrary($id): bool;
+
+    public function getTranslations(array $libraries, ?string $language = null): array;
 }

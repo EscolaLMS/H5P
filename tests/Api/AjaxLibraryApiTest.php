@@ -154,4 +154,32 @@ class AjaxLibraryApiTest extends TestCase
         $this->postJson('api/hh5p/libraries?_token=' . $token)
             ->assertOk();
     }
+
+    public function testGetLibraryTranslations(): void
+    {
+        $this->authenticateAsAdmin();
+        $token = $this->user->createToken("test")->accessToken;
+        $h5pContent = $this->uploadHP5Content('interactive-video.h5p');
+
+        $response = $this->postJson('api/hh5p/translations?language=pl&_token=' . $token,
+            ['libraries' => [$h5pContent->library->uberName]]
+        );
+
+        $response->assertOk();
+        $response->assertJsonStructure(['data' => [$h5pContent->library->uberName]]);
+        $this->assertStringContainsString('Edytor interaktywnego wideo', $response->getData()->data->{$h5pContent->library->uberName});
+    }
+
+    public function testGetLibraryTranslationsNonExistingLang(): void
+    {
+        $this->authenticateAsAdmin();
+        $token = $this->user->createToken("test")->accessToken;
+        $h5pContent = $this->uploadHP5Content('interactive-video.h5p');
+
+        $this->postJson('api/hh5p/translations?language=ddr&_token=' . $token,
+            ['libraries' => [$h5pContent->library->uberName]]
+        )
+            ->assertOk()
+            ->assertJson([]);
+    }
 }

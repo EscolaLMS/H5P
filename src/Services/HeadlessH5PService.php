@@ -747,4 +747,10 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
         return $libraryParameters;
     }
+
+    public function getTranslations(array $libraries, ?string $language = null): array
+    {
+        $language = $language ?? config('hh5p.language');
+        return $this->editorAjaxRepository->getTranslations($libraries, $language);
+    }
 }
