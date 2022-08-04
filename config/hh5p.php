@@ -20,11 +20,11 @@ return [
 
     'h5p_show_display_option'    => true,
     'h5p_frame'                  => true,
-    'h5p_export'                 => false,
+    'h5p_export'                 => true,
     'h5p_embed'                  => false,
     'h5p_copyright'              => false,
     'h5p_icon'                   => false,
-    'h5p_track_user'             => true,
+    'h5p_track_user'             => false,
     'h5p_ext_communication'      => true,
     'h5p_save_content_state'     => true,
     'h5p_save_content_frequency' => 30,
@@ -36,5 +36,9 @@ return [
     'h5p_hub_is_enabled'                => true,
     'h5p_version'                       => '1.23.0',
 
-    'guzzle' => []
+    'guzzle'                            => [],
+
+    'h5p_storage_path'                  => 'app/h5p',
+    'h5p_content_storage_path'          => 'app/h5p/content/',
+    'h5p_library_url'                   => 'h5p/libraries'
 ];

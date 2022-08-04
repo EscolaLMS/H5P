@@ -171,8 +171,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     {
         $lang = config('hh5p.language');
 
-        // TODO this shoule be from config
-        $libraries_url = url('h5p/libraries');
+        $libraries_url = url(config('hh5p.h5p_library_url'));
         if ($machineName) {
             $defaultLang = $this->getEditor()->getLibraryLanguage($machineName, $major_version, $minor_version, $lang);
 
@@ -191,7 +190,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $settings = [
             'baseUrl' => $config['domain'],
             'url' => $config['url'],
-            'postUserStatistics' => false,
+            'postUserStatistics' => config('hh5p.h5p_track_user'),
             'ajax' => [
                 'setFinished' => $config['ajaxSetFinished'],
                 'contentUserData' => $config['ajaxContentUserData'],
@@ -201,8 +200,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'l10n' => [
                 'H5P' => __('h5p::h5p')['h5p'],
             ],
-            // TODO actually this should be taken from config
-            'hubIsEnabled' => true,
+            'hubIsEnabled' => config('hh5p.h5p_hub_is_enabled'),
             'crossorigin' => 'anonymous',
         ];
 
@@ -221,7 +219,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         }
         $settings['core']['scripts'][] = $config['get_h5peditor_url'] . '/scripts/h5peditor-editor.js';
         $settings['core']['scripts'][] = $config['get_h5peditor_url'] . '/scripts/h5peditor-init.js';
-        $settings['core']['scripts'][] = $config['get_h5peditor_url'] . '/language/'. $lang .'.js'; // TODO this lang should vary depending on config
+        $settings['core']['scripts'][] = $config['get_h5peditor_url'] . '/language/'. $lang .'.js';
 
         $settings['editor'] = [
             'filesPath' => isset($content) ? url("h5p/content/$content") : url('h5p/editor'),
@@ -374,7 +372,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $settings = [
             'baseUrl' => $config['domain'],
             'url' => $config['url'],
-            'postUserStatistics' => false, // TODO take this from settings
+            'postUserStatistics' => config('hh5p.h5p_track_user'),
             'ajax' => [
                 'setFinished' => $config['ajaxSetFinished'], // TODO check if this is working and implement this endpoint
                 'contentUserData' => $config['ajaxContentUserData'], // TODO check if this is working  this endpoint
@@ -382,10 +380,9 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'saveFreq' => false,
             'siteUrl' => $config['domain'],
             'l10n' => [
-                'H5P' => __('h5p::h5p'), // TODO this must must provided language
+                'H5P' => __('h5p::h5p'),
             ],
-            // TODO actually this should be taken from config
-            'hubIsEnabled' => true,
+            'hubIsEnabled' => config('hh5p.h5p_hub_is_enabled'),
             'crossorigin' => 'anonymous',
 
         ];
@@ -410,7 +407,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         foreach (H5PCore::$scripts as $script) {
             $settings['core']['scripts'][] = $config['get_h5pcore_url'] . '/' . $script;
         }
-        //$settings['core']['scripts'][] = $config['get_h5peditor_url'].'/language/en.js'; // TODO this lang should vary depending on config
+        //$settings['core']['scripts'][] = $config['get_h5peditor_url'].'/language/' . $lang . '.js';
 
         $h5pEditorDir = file_exists(__DIR__ . '/../../vendor/h5p/h5p-editor')
             ? __DIR__ . '/../../vendor/h5p/h5p-editor'
@@ -449,7 +446,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'jsonContent' => $safe_parameters,
             'fullScreen' => $content['library']['fullscreen'],
             // TODO check all of those endpointis are working fine
-            'exportUrl' => route('hh5p.content.export', [$content['id']]),
+            'exportUrl' => config('hh5p.h5p_export') ? route('hh5p.content.export', [$content['id']]) : '',
             //'embedCode'       => '<iframe src="'.route('h5p.embed', ['id' => $content['id']]).'" width=":w" height=":h" frameborder="0" allowfullscreen="allowfullscreen"></iframe>',
             //'resizeCode'      => '<script src="'.self::get_h5pcore_url('/js/h5p-resizer.js').'" charset="UTF-8"></script>',
             //'url'             => route('h5p.embed', ['id' => $content['id']]),
@@ -535,8 +532,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
                 'metadata' => $content['metadata'],
             ]),
             'fullScreen' => $content['library']['fullscreen'],
-            'exportUrl' => route('hh5p.content.export', [$content['id']]),
-
+            'exportUrl' => config('hh5p.h5p_export') ? route('hh5p.content.export', [$content['id']]) : '',
             //'embedCode'       => '<iframe src="'.route('h5p.embed', ['id' => $content['id']]).'" width=":w" height=":h" frameborder="0" allowfullscreen="allowfullscreen"></iframe>',
             //'resizeCode'      => '<script src="'.self::get_h5pcore_url('/js/h5p-resizer.js').'" charset="UTF-8"></script>',
             //'url'             => route('h5p.embed', ['id' => $content['id']]),
