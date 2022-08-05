@@ -220,7 +220,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         }
         $settings['core']['scripts'][] = $config['get_h5peditor_url'] . '/scripts/h5peditor-editor.js';
         $settings['core']['scripts'][] = $config['get_h5peditor_url'] . '/scripts/h5peditor-init.js';
-        $settings['core']['scripts'][] = $config['get_h5peditor_url'] . '/language/' . $lang . '.js';
+        $settings['core']['scripts'][] = $config['get_h5peditor_url'] . '/language/'. $lang .'.js';
 
         $settings['editor'] = [
             'filesPath' => isset($content) ? url("h5p/content/$content") : url('h5p/editor'),
