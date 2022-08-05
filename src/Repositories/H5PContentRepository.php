@@ -105,8 +105,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
 
     private function moveTmpFilesToContentFolders($nonce, $contentId): bool
     {
-        // TODO: take this from config
-        $storage_path = storage_path('app/h5p');
+        $storage_path = storage_path(config('hh5p.h5p_storage_path'));
 
         $files = H5PTempFile::where(['nonce' => $nonce])->get();
 
@@ -172,8 +171,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
         $content = H5PContent::findOrFail($id);
         $content->delete();
 
-        // TODO: take this from config
-        $storage_path = storage_path("app/h5p/content/$id");
+        $storage_path = storage_path(config('hh5p.h5p_content_storage_path') . $id);
 
         Helpers::deleteFileTree($storage_path);
 
