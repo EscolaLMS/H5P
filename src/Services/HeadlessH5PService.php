@@ -38,16 +38,17 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     private array $config;
 
     public function __construct(
-        H5PFrameworkInterface $repository,
-        H5PFileStorage $fileStorage,
-        H5PCore $core,
-        H5PValidator $validator,
-        H5PStorage $storage,
-        H5peditorStorage $editorStorage,
+        H5PFrameworkInterface  $repository,
+        H5PFileStorage         $fileStorage,
+        H5PCore                $core,
+        H5PValidator           $validator,
+        H5PStorage             $storage,
+        H5peditorStorage       $editorStorage,
         H5PEditorAjaxInterface $editorAjaxRepository,
-        H5peditor $editor,
-        H5PContentValidator $contentValidator
-    ) {
+        H5peditor              $editor,
+        H5PContentValidator    $contentValidator
+    )
+    {
         $this->repository = $repository;
         $this->fileStorage = $fileStorage;
         $this->core = $core;
@@ -116,7 +117,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
      * Saves a H5P file.
      *
      * @param null $content
-     * @param int  $contentMainId
+     * @param int $contentMainId
      *                            The main id for the content we are saving. This is used if the framework
      *                            we're integrating with uses content id's and version id's
      *
@@ -148,7 +149,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     public function getConfig(): array
     {
         if (!isset($this->config)) {
-            $config = (array) config('hh5p');
+            $config = (array)config('hh5p');
             $config['url'] = asset($config['url']);
             $config['ajaxPath'] = route($config['ajaxPath']) . '/';
             $config['libraryUrl'] = url($config['libraryUrl']) . '/';
@@ -219,7 +220,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         }
         $settings['core']['scripts'][] = $config['get_h5peditor_url'] . '/scripts/h5peditor-editor.js';
         $settings['core']['scripts'][] = $config['get_h5peditor_url'] . '/scripts/h5peditor-init.js';
-        $settings['core']['scripts'][] = $config['get_h5peditor_url'] . '/language/'. $lang .'.js';
+        $settings['core']['scripts'][] = $config['get_h5peditor_url'] . '/language/' . $lang . '.js';
 
         $settings['editor'] = [
             'filesPath' => isset($content) ? url("h5p/content/$content") : url('h5p/editor'),
@@ -250,7 +251,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $settings['filesAjaxPath'] = URL::temporarySignedRoute(
             'hh5p.files.upload.nonce',
             now()->addMinutes(30),
-            ['nonce' =>  $settings['nonce']]
+            ['nonce' => $settings['nonce']]
         );
 
         // load core assets
@@ -279,7 +280,6 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $h5pCoreDir = file_exists(__DIR__ . '/../../vendor/h5p/h5p-core')
             ? __DIR__ . '/../../vendor/h5p/h5p-core'
             : __DIR__ . '/../../../../../vendor/h5p/h5p-core';
-
 
 
         $settings['core']['scripts'] = $this->margeFileList(
@@ -581,7 +581,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     {
         $isValidToken = $this->getEditor()->ajaxInterface->validateEditorToken($token);
 
-        return (bool) $isValidToken;
+        return (bool)$isValidToken;
     }
 
     private function margeFileList(array $fileList, string $type, array $replaceFrom, array $replaceTo): array
@@ -608,7 +608,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
         // Update content type cache if enabled and too old
         $ct_cache_last_update = $this->core->h5pF->getOption('content_type_cache_updated_at', 0);
-        $outdated_cache       = $ct_cache_last_update + (60 * 60 * 24 * 7); // 1 week
+        $outdated_cache = $ct_cache_last_update + (60 * 60 * 24 * 7); // 1 week
 
         if (time() > $outdated_cache) {
             $success = $this->core->updateContentTypeCache();
@@ -743,7 +743,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         }
 
         // Filter parameters and send back to client
-        $this->getContentValidator()->validateLibrary($libraryParameters, (object) array('options' => array($libraryParameters->library)));
+        $this->getContentValidator()->validateLibrary($libraryParameters, (object)array('options' => array($libraryParameters->library)));
 
         return $libraryParameters;
     }
@@ -751,6 +751,19 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     public function getTranslations(array $libraries, ?string $language = null): array
     {
         $language = $language ?? config('hh5p.language');
-        return $this->editorAjaxRepository->getTranslations($libraries, $language);
+
+        $libs = [];
+        foreach ($libraries as $library) {
+            preg_match('/(\d+\.?)+$/', $library, $matches);
+            $version = explode(".", $matches[0]);
+
+            $libs[] = [
+                'majorVersion' => $version[0] ?? null,
+                'minorVersion' => $version[1] ?? null,
+                'name' => preg_match('/([^\s]+)/', $library, $matches) ? $matches[0] : null
+            ];
+        }
+
+        return $this->editorAjaxRepository->getTranslations($libs, $language);
     }
 }

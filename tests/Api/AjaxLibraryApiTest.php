@@ -170,6 +170,29 @@ class AjaxLibraryApiTest extends TestCase
         $this->assertStringContainsString('Edytor interaktywnego wideo', $response->getData()->data->{$h5pContent->library->uberName});
     }
 
+    public function testGetMultipleLibraryTranslations(): void
+    {
+        $this->authenticateAsAdmin();
+        $token = $this->user->createToken("test")->accessToken;
+        $h5pContent1 = $this->uploadHP5Content('interactive-video.h5p');
+        $h5pContent2 = $this->uploadHP5Content('multiple-choice.h5p');
+
+        $response = $this->postJson('api/hh5p/translations?language=pl&_token=' . $token,
+            [
+                'libraries' => [
+                    $h5pContent1->library->uberName,
+                    $h5pContent2->library->uberName
+                ]
+            ]
+        );
+
+        $response->assertOk();
+        $response->assertJsonStructure(['data' => [$h5pContent1->library->uberName]]);
+        $response->assertJsonStructure(['data' => [$h5pContent2->library->uberName]]);
+        $this->assertStringContainsString('Edytor interaktywnego wideo', $response->getData()->data->{$h5pContent1->library->uberName});
+        $this->assertStringContainsString('Opcjonalne zdjęcie lub wideo ponad treścią pytania.', $response->getData()->data->{$h5pContent2->library->uberName});
+    }
+
     public function testGetLibraryTranslationsNonExistingLang(): void
     {
         $this->authenticateAsAdmin();

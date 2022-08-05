@@ -7,7 +7,6 @@ use H5PEditorAjaxInterface;
 use EscolaLms\HeadlessH5P\Models\H5pLibrariesHubCache;
 use EscolaLms\HeadlessH5P\Helpers\Helpers;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
-use Illuminate\Support\Collection;
 
 /**
  * Handles Ajax functionality that must be implemented separately for each of the
@@ -20,7 +19,7 @@ class H5PEditorAjaxRepository implements H5PEditorAjaxInterface
      *
      * @return array Latest version of all local libraries
      */
-    public function getLatestLibraryVersions(): array
+    public function getLatestLibraryVersions()
     {
         $all = H5PLibrary::where('runnable', 1)
             ->whereNotNull('semantics')
@@ -31,7 +30,7 @@ class H5PEditorAjaxRepository implements H5PEditorAjaxInterface
 
         $unique = $all
             ->groupBy('name')
-            ->filter(fn ($item) => $item->count() <= 1)
+            ->filter(fn($item) => $item->count() <= 1)
             ->flatten();
 
         $result = $all
@@ -42,7 +41,8 @@ class H5PEditorAjaxRepository implements H5PEditorAjaxInterface
                 ->last()
             );
 
-        return $unique->concat($result)->toArray();
+
+        return $unique->concat($result);
     }
 
     /**
@@ -103,10 +103,20 @@ class H5PEditorAjaxRepository implements H5PEditorAjaxInterface
      */
     public function getTranslations($libraries, $language_code): array
     {
-        return H5PLibrary::query()
-            ->join('hh5p_libraries_languages', 'hh5p_libraries.id', '=', 'hh5p_libraries_languages.library_id')
-            ->whereRaw("concat(hh5p_libraries.name, ' ', hh5p_libraries.major_version, '.', hh5p_libraries.minor_version) in (". implode(',', array_fill(0, count($libraries), '?')) .")", $libraries)
-            ->where('language_code', '=', $language_code)
+        $query = H5PLibrary::query()
+            ->join('hh5p_libraries_languages', 'hh5p_libraries.id', '=', 'hh5p_libraries_languages.library_id');
+
+        foreach ($libraries as $library) {
+            $query->orWhere(
+                fn($query) => $query
+                    ->where('language_code', '=', $language_code)
+                    ->where('name', '=', $library['name'] ?? null)
+                    ->where('minor_version', '=', $library['minorVersion'] ?? null)
+                    ->where('major_version', '=', $library['majorVersion'] ?? null)
+            );
+        }
+
+        return $query
             ->get()
             ->pluck('translation', 'uberName')
             ->toArray();
