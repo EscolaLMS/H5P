@@ -579,9 +579,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
     private function isValidEditorToken(string $token = null): bool
     {
-        $isValidToken = $this->getEditor()->ajaxInterface->validateEditorToken($token);
-
-        return (bool)$isValidToken;
+        return $this->getEditor()->ajaxInterface->validateEditorToken($token);
     }
 
     private function margeFileList(array $fileList, string $type, array $replaceFrom, array $replaceTo): array

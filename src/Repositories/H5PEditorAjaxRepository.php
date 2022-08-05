@@ -3,10 +3,17 @@
 namespace EscolaLms\HeadlessH5P\Repositories;
 
 use EscolaLms\HeadlessH5P\Models\H5PContent;
+use Exception;
 use H5PEditorAjaxInterface;
 use EscolaLms\HeadlessH5P\Models\H5pLibrariesHubCache;
 use EscolaLms\HeadlessH5P\Helpers\Helpers;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
+use Illuminate\Support\Facades\Log;
+use Lcobucci\JWT\Parser;
+use Lcobucci\JWT\Signer\Key;
+use Lcobucci\JWT\Signer\Rsa\Sha256;
+use Lcobucci\JWT\Validation\Constraint\SignedWith;
+use Lcobucci\JWT\Validation\Validator;
 
 /**
  * Handles Ajax functionality that must be implemented separately for each of the
@@ -90,8 +97,22 @@ class H5PEditorAjaxRepository implements H5PEditorAjaxInterface
      */
     public function validateEditorToken($token): bool
     {
-        // TODO this is better resolved
-        return true;
+        if (!$token) {
+            return false;
+        }
+
+        $parser = app(Parser::class);
+        $validator = app(Validator::class);
+
+        try {
+            $parsedToken = $parser->parse($token);
+            $validator->assert($parsedToken, new SignedWith(new Sha256(), Key\InMemory::file(storage_path('oauth-public.key'))));
+
+            return !$parsedToken->isExpired(now());
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return false;
+        }
     }
 
     /**

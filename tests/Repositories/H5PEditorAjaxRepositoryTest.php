@@ -9,6 +9,7 @@ use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Repositories\H5PEditorAjaxRepository;
 use EscolaLms\HeadlessH5P\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Laravel\Passport\Passport;
 
 class H5PEditorAjaxRepositoryTest extends TestCase
 {
@@ -161,5 +162,26 @@ class H5PEditorAjaxRepositoryTest extends TestCase
         $result = $this->repository->getAuthorsRecentlyUsedLibraries();
 
         $this->assertCount(0, $result);
+    }
+
+    public function testValidateEditorToken(): void
+    {
+        $this->authenticateAsAdmin();
+        $token = $this->user->createToken("test")->accessToken;
+
+        $result = $this->repository->validateEditorToken($token);
+
+        $this->assertTrue($result);
+    }
+
+    public function testValidateEditorTokenExpiredToken(): void
+    {
+        Passport::personalAccessTokensExpireIn(now()->subDay());
+        $this->authenticateAsAdmin();
+        $token = $this->user->createToken("test")->accessToken;
+
+        $result = $this->repository->validateEditorToken($token);
+
+        $this->assertFalse($result);
     }
 }
