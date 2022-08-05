@@ -12,7 +12,7 @@ class H5PLibraryFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->name,
+            'name' => $this->faker->word,
             'title' => 'title',
             'major_version' => 1,
             'minor_version' => 1,
