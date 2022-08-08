@@ -555,7 +555,6 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
     public function uploadFile($contentId, $field, $token, $nonce = null)
     {
-        // TODO: implement nonce
         if (!$this->isValidEditorToken($token)) {
             throw new H5PException(H5PException::LIBRARY_NOT_FOUND);
         }
@@ -568,7 +567,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         // Make sure file is valid and mark it for cleanup at a later time
         if ($file->validate()) {
             $file_id = $this->getFileStorage()->saveFile($file, $contentId);
-            $this->getEditorStorage()->markFileForCleanup($file_id, $nonce); // TODO: IMPLEMENT THIS
+            $this->getEditorStorage()->markFileForCleanup($file_id, $nonce);
         }
 
         $result = json_decode($file->getResult());

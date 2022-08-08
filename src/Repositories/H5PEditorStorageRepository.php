@@ -99,11 +99,14 @@ class H5PEditorStorageRepository implements H5peditorStorage
     public function getLibraries($libraries = null)
     {
         if (isset($libraries)) {
-            return array_map(fn ($library) =>  H5PLibrary::where([
-                ['name', $library->name],
-                ['major_version', $library->majorVersion],
-                ['minor_version', $library->minorVersion]
-            ])->first(), $libraries);
+            return collect($libraries)
+                ->map(fn ($library) => H5PLibrary::where([
+                    ['name', $library->name],
+                    ['major_version', $library->majorVersion],
+                    ['minor_version', $library->minorVersion]
+                ])->first())
+                ->reject(fn($library) => !$library)
+                ->all();
         }
 
         $libraries_result = H5PLibrary::where('runnable', 1)
@@ -166,6 +169,11 @@ class H5PEditorStorageRepository implements H5peditorStorage
      */
     public static function removeTemporarilySavedFiles($filePath)
     {
-        // TODO implement this
+        if (is_dir($filePath)) {
+            Helpers::deleteFileTree($filePath);
+        }
+        else {
+            unlink($filePath);
+        }
     }
 }
