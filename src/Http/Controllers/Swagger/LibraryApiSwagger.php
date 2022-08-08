@@ -274,4 +274,27 @@ interface LibraryApiSwagger
      * )
      */
     public function filter(Request $request): JsonResponse;
+
+
+    /**
+     * @OA\Post(
+     *      path="/api/hh5p/translations",
+     *      summary="Libraries translations",
+     *      tags={"H5P"},
+     *      description="Libraries translations",
+     *      @OA\Parameter(
+     *          name="language",
+     *          description="Language",
+     *          in="query",
+     *          @OA\Schema(
+     *             type="string",
+     *         )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *      )
+     * )
+     */
+    public function translations(Request $request): JsonResponse;
 }

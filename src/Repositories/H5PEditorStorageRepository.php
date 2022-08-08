@@ -60,7 +60,7 @@ class H5PEditorStorageRepository implements H5peditorStorage
      * @param int $minorVersion Minor part of version number
      * @return array List of possible language codes
      */
-    public function getAvailableLanguages($machineName, $majorVersion, $minorVersion)
+    public function getAvailableLanguages($machineName, $majorVersion, $minorVersion): array
     {
         return H5PLibrary::with('languages')
             ->where('name', '=', $machineName)
@@ -68,7 +68,10 @@ class H5PEditorStorageRepository implements H5peditorStorage
             ->where('minor_version', '=', $minorVersion)
             ->get()
             ->map(fn($item) => $item->languages->map(fn($lang) => $lang->language_code))
-            ->flatten();
+            ->filter(fn($item) => $item !== config('hh5p.language'))
+            ->flatten()
+            ->prepend(config('hh5p.language'))
+            ->toArray();
     }
     /**
      * "Callback" for mark the given file as a permanent file.

@@ -2,11 +2,18 @@
 
 namespace EscolaLms\HeadlessH5P\Repositories;
 
+use EscolaLms\HeadlessH5P\Models\H5PContent;
+use Exception;
 use H5PEditorAjaxInterface;
 use EscolaLms\HeadlessH5P\Models\H5pLibrariesHubCache;
 use EscolaLms\HeadlessH5P\Helpers\Helpers;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
+use Lcobucci\JWT\Parser;
+use Lcobucci\JWT\Signer\Key;
+use Lcobucci\JWT\Signer\Rsa\Sha256;
+use Lcobucci\JWT\Validation\Constraint\SignedWith;
+use Lcobucci\JWT\Validation\Validator;
 
 /**
  * Handles Ajax functionality that must be implemented separately for each of the
@@ -30,7 +37,7 @@ class H5PEditorAjaxRepository implements H5PEditorAjaxInterface
 
         $unique = $all
             ->groupBy('name')
-            ->filter(fn ($item) => $item->count() <= 1)
+            ->filter(fn($item) => $item->count() <= 1)
             ->flatten();
 
         $result = $all
@@ -40,6 +47,7 @@ class H5PEditorAjaxRepository implements H5PEditorAjaxInterface
                 ->sortBy('version', SORT_NATURAL)
                 ->last()
             );
+
 
         return $unique->concat($result);
     }
@@ -68,10 +76,16 @@ class H5PEditorAjaxRepository implements H5PEditorAjaxInterface
      * @return array machine names. The first element in the array is the
      * most recently used.
      */
-    public function getAuthorsRecentlyUsedLibraries()
+    public function getAuthorsRecentlyUsedLibraries(): array
     {
-        // TODO implment this
-        return [];
+        return H5PContent::query()
+            ->join('hh5p_contents_libraries', 'hh5p_contents.id', '=', 'hh5p_contents_libraries.content_id')
+            ->join('hh5p_libraries', 'hh5p_contents_libraries.library_id', '=', 'hh5p_libraries.id')
+            ->groupBy('hh5p_libraries.name', 'hh5p_libraries.created_at')
+            ->orderBy('hh5p_libraries.created_at')
+            ->where('user_id', '=', auth()->user()->getKey())
+            ->pluck('hh5p_libraries.name')
+            ->toArray();
     }
 
     /**
@@ -81,10 +95,24 @@ class H5PEditorAjaxRepository implements H5PEditorAjaxInterface
      *
      * @return bool True if successful validation
      */
-    public function validateEditorToken($token)
+    public function validateEditorToken($token): bool
     {
-        // TODO this is better resolved
-        return true;
+        if (!$token) {
+            return false;
+        }
+
+        $parser = app(Parser::class);
+        $validator = app(Validator::class);
+
+        try {
+            $parsedToken = $parser->parse($token);
+            $validator->assert($parsedToken, new SignedWith(new Sha256(), Key\InMemory::file(storage_path('oauth-public.key'))));
+
+            return !$parsedToken->isExpired(now());
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return false;
+        }
     }
 
     /**
@@ -94,7 +122,24 @@ class H5PEditorAjaxRepository implements H5PEditorAjaxInterface
      * @param string $language_code
      * @return array
      */
-    public function getTranslations($libraries, $language_code)
+    public function getTranslations($libraries, $language_code): array
     {
+        $query = H5PLibrary::query()
+            ->join('hh5p_libraries_languages', 'hh5p_libraries.id', '=', 'hh5p_libraries_languages.library_id');
+
+        foreach ($libraries as $library) {
+            $query->orWhere(
+                fn($query) => $query
+                    ->where('language_code', '=', $language_code)
+                    ->where('name', '=', $library['name'] ?? null)
+                    ->where('minor_version', '=', $library['minorVersion'] ?? null)
+                    ->where('major_version', '=', $library['majorVersion'] ?? null)
+            );
+        }
+
+        return $query
+            ->get()
+            ->pluck('translation', 'uberName')
+            ->toArray();
     }
 }

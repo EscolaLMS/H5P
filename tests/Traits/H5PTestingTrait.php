@@ -8,20 +8,20 @@ use Illuminate\Http\UploadedFile;
 
 trait H5PTestingTrait
 {
-    protected function getH5PFile(): UploadedFile
+    protected function getH5PFile(?string $name = 'arithmetic-quiz.h5p'): UploadedFile
     {
-        $filename = 'arithmetic-quiz.h5p';
+        $filename = $name;
         $filepath = realpath(__DIR__.'/../mocks/'.$filename);
         $storage_path = storage_path($filename);
         copy($filepath, $storage_path);
 
-        return new UploadedFile($storage_path, 'arithmetic-quiz.h5p', 'application/pdf', null, true);
+        return new UploadedFile($storage_path, $name, 'application/pdf', null, true);
     }
 
-    protected function uploadHP5Content(): H5PContent
+    protected function uploadHP5Content(?string $name = 'arithmetic-quiz.h5p'): H5PContent
     {
         $repository = app(H5PContentRepositoryContract::class);
-        return $repository->upload($this->getH5PFile());
+        return $repository->upload($this->getH5PFile($name));
     }
 
     protected function uploadH5PFile(): array

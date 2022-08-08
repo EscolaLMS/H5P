@@ -2,15 +2,18 @@
 namespace EscolaLms\HeadlessH5P\Tests\Repositories;
 
 
+use EscolaLms\Core\Tests\CreatesUsers;
+use EscolaLms\HeadlessH5P\Models\H5PContent;
+use EscolaLms\HeadlessH5P\Models\H5PContentLibrary;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Repositories\H5PEditorAjaxRepository;
 use EscolaLms\HeadlessH5P\Tests\TestCase;
-use H5PEditorAjaxInterface;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Laravel\Passport\Passport;
 
 class H5PEditorAjaxRepositoryTest extends TestCase
 {
-    use DatabaseTransactions;
+    use DatabaseTransactions, CreatesUsers;
 
     private H5PEditorAjaxRepository $repository;
 
@@ -125,5 +128,60 @@ class H5PEditorAjaxRepositoryTest extends TestCase
         $this->assertEquals('2.2.2', $result->firstWhere('name', 'Test2')->version);
         $this->assertEquals('3.3.3', $result->firstWhere('name', 'Test3')->version);
         $this->assertEquals('4.4.4', $result->firstWhere('name', 'Test4')->version);
+    }
+
+    public function testGetAuthorsRecentlyUsedLibraries(): void
+    {
+        $user = $this->makeAdmin();
+        $this->be($user);
+
+        $library = H5PLibrary::factory()->create(['name' => 'Test1']);
+        $content = H5PContent::factory()->create(['user_id' => $user->getKey(), 'library_id' => $library->getKey()]);
+        H5PContentLibrary::factory()
+            ->count(5)
+            ->has(H5PLibrary::factory(), 'library')
+            ->create(['content_id' => $content->getKey()]);
+
+        $result = $this->repository->getAuthorsRecentlyUsedLibraries();
+
+        $this->assertCount(5, $result);
+    }
+
+    public function testGetAuthorsRecentlyUsedLibrariesShouldGetEmptyArrayWhenUserNotCreateConent(): void
+    {
+        $user = $this->makeAdmin();
+        $this->be($user);
+
+        $library = H5PLibrary::factory()->create(['name' => 'Test1']);
+        $content = H5PContent::factory()->create(['user_id' => 123, 'library_id' => $library->getKey()]);
+        H5PContentLibrary::factory()
+            ->count(5)
+            ->has(H5PLibrary::factory(), 'library')
+            ->create(['content_id' => $content->getKey()]);
+
+        $result = $this->repository->getAuthorsRecentlyUsedLibraries();
+
+        $this->assertCount(0, $result);
+    }
+
+    public function testValidateEditorToken(): void
+    {
+        $this->authenticateAsAdmin();
+        $token = $this->user->createToken("test")->accessToken;
+
+        $result = $this->repository->validateEditorToken($token);
+
+        $this->assertTrue($result);
+    }
+
+    public function testValidateEditorTokenExpiredToken(): void
+    {
+        Passport::personalAccessTokensExpireIn(now()->subDay());
+        $this->authenticateAsAdmin();
+        $token = $this->user->createToken("test")->accessToken;
+
+        $result = $this->repository->validateEditorToken($token);
+
+        $this->assertFalse($result);
     }
 }
