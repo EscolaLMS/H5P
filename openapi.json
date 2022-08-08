@@ -850,6 +850,31 @@
                     }
                 }
             }
+        },
+        "/api/hh5p/translations": {
+            "post": {
+                "tags": [
+                    "H5P"
+                ],
+                "summary": "Libraries translations",
+                "description": "Libraries translations",
+                "operationId": "676483bcfcb083d4d3b597c92697d6b5",
+                "parameters": [
+                    {
+                        "name": "language",
+                        "in": "query",
+                        "description": "Language",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                }
+            }
         }
     },
     "components": {
