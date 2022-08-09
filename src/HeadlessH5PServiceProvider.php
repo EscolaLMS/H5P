@@ -4,6 +4,8 @@ namespace EscolaLms\HeadlessH5P;
 
 use EscolaLms\HeadlessH5P\Commands\H5PSeedCommand;
 use EscolaLms\HeadlessH5P\Commands\StorageH5PLinkCommand;
+use EscolaLms\HeadlessH5P\Enums\ConfigEnum;
+use EscolaLms\HeadlessH5P\Providers\SettingsServiceProvider;
 use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
 use EscolaLms\HeadlessH5P\Repositories\H5PContentRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PEditorAjaxRepository;
@@ -33,6 +35,7 @@ class HeadlessH5PServiceProvider extends ServiceProvider
         $this->commands([H5PSeedCommand::class, StorageH5PLinkCommand::class]);
         $this->bindH5P();
         $this->app->register(AuthServiceProvider::class);
+        $this->app->register(SettingsServiceProvider::class);
     }
 
     private function bindH5P(): void
@@ -73,5 +76,15 @@ class HeadlessH5PServiceProvider extends ServiceProvider
         $this->loadJsonTranslationsFrom(__DIR__.'/../resources/lang');
         $this->mergeConfigFrom(__DIR__.'/../config/hh5p.php', 'hh5p');
         // Load configs
+        if ($this->app->runningInConsole()) {
+            $this->bootForConsole();
+        }
+    }
+
+    public function bootForConsole()
+    {
+        $this->publishes([
+            __DIR__ . '/config/hh5p.php' => config_path(ConfigEnum::CONFIG_KEY . '.php'),
+        ], ConfigEnum::CONFIG_KEY . '.config');
     }
 }
