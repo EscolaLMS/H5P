@@ -10,8 +10,8 @@ class H5pLibrariesHubCache extends Model
 
     public $timestamps = false;
 
-
     protected $primaryKey = 'id';
+
     protected $fillable = [
         'machine_name',
         'major_version',

@@ -60,5 +60,4 @@ class H5PContentLibrary extends Model
     {
         return H5PContentLibraryFactory::new();
     }
-
 }

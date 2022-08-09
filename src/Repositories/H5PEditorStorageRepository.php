@@ -26,16 +26,17 @@ class H5PEditorStorageRepository implements H5peditorStorage
      * @param string $lang Language code
      * @return string Translation in JSON format
      */
-    public function getLanguage($machineName, $majorVersion, $minorVersion, $language)
+    public function getLanguage($machineName, $majorVersion, $minorVersion, $language): string
     {
         if (!isset($language)) {
-            return;
+            return '';
         }
         $library = H5PLibrary::select(['id'])->where([
             ['major_version',  $majorVersion],
             ['minor_version', $minorVersion],
             ['name', $machineName],
         ])->first();
+
 
         if ($library) {
             $libraryLanguage = H5PLibraryLanguage::where([
@@ -49,7 +50,7 @@ class H5PEditorStorageRepository implements H5peditorStorage
             }
         }
 
-        return null;
+        return '';
     }
 
     /**
@@ -112,7 +113,8 @@ class H5PEditorStorageRepository implements H5peditorStorage
         $libraries_result = H5PLibrary::where('runnable', 1)
             ->whereNotNull('semantics')
             ->orderBy('title', 'ASC')
-            ->get();
+            ->get()
+            ->all();
 
         Helpers::fixCaseKeysArray(['majorVersion', 'minorVersion', 'patchVersion'], $libraries_result);
 
