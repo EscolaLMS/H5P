@@ -118,6 +118,7 @@ class H5PLibrary extends Model
     use HasFactory;
 
     protected $table = 'hh5p_libraries';
+
     protected $fillable = [
         'name',
         'title',
