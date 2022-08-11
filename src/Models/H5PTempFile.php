@@ -3,19 +3,20 @@
 namespace EscolaLms\HeadlessH5P\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use EscolaLms\HeadlessH5P\Models\H5PContent;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class H5PTempFile extends Model
 {
     protected $table = 'hh5p_temp_files';
+
     protected $fillable = [
         'path',
         'nonce',
         'created_at',
     ];
 
-    public function content():BelongsTo
+    public function content(): BelongsTo
     {
-        return $this->belongsTo(H5PContent::class, 'nonce');
+        return $this->belongsTo(H5PContent::class, 'nonce', 'nonce');
     }
 }

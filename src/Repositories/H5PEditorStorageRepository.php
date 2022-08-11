@@ -26,16 +26,17 @@ class H5PEditorStorageRepository implements H5peditorStorage
      * @param string $lang Language code
      * @return string Translation in JSON format
      */
-    public function getLanguage($machineName, $majorVersion, $minorVersion, $language)
+    public function getLanguage($machineName, $majorVersion, $minorVersion, $language): string
     {
         if (!isset($language)) {
-            return;
+            return '';
         }
         $library = H5PLibrary::select(['id'])->where([
             ['major_version',  $majorVersion],
             ['minor_version', $minorVersion],
             ['name', $machineName],
         ])->first();
+
 
         if ($library) {
             $libraryLanguage = H5PLibraryLanguage::where([
@@ -49,7 +50,7 @@ class H5PEditorStorageRepository implements H5peditorStorage
             }
         }
 
-        return null;
+        return '';
     }
 
     /**
@@ -99,17 +100,21 @@ class H5PEditorStorageRepository implements H5peditorStorage
     public function getLibraries($libraries = null)
     {
         if (isset($libraries)) {
-            return array_map(fn ($library) =>  H5PLibrary::where([
-                ['name', $library->name],
-                ['major_version', $library->majorVersion],
-                ['minor_version', $library->minorVersion]
-            ])->first(), $libraries);
+            return collect($libraries)
+                ->map(fn ($library) => H5PLibrary::where([
+                    ['name', $library->name],
+                    ['major_version', $library->majorVersion],
+                    ['minor_version', $library->minorVersion]
+                ])->first())
+                ->reject(fn($library) => !$library)
+                ->all();
         }
 
         $libraries_result = H5PLibrary::where('runnable', 1)
             ->whereNotNull('semantics')
             ->orderBy('title', 'ASC')
-            ->get();
+            ->get()
+            ->all();
 
         Helpers::fixCaseKeysArray(['majorVersion', 'minorVersion', 'patchVersion'], $libraries_result);
 
@@ -166,6 +171,11 @@ class H5PEditorStorageRepository implements H5peditorStorage
      */
     public static function removeTemporarilySavedFiles($filePath)
     {
-        // TODO implement this
+        if (is_dir($filePath)) {
+            Helpers::deleteFileTree($filePath);
+        }
+        else {
+            unlink($filePath);
+        }
     }
 }
