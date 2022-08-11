@@ -5,6 +5,7 @@ namespace EscolaLms\HeadlessH5P\Tests;
 use EscolaLms\Core\EscolaLmsServiceProvider;
 use EscolaLms\Core\Models\User;
 use EscolaLms\HeadlessH5P\Database\Seeders\PermissionTableSeeder;
+use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
@@ -34,6 +35,7 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
             PermissionServiceProvider::class,
             PassportServiceProvider::class,
             EscolaLmsServiceProvider::class,
+            EscolaLmsSettingsServiceProvider::class,
         ];
     }
 

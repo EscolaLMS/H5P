@@ -1,39 +1,42 @@
 {
-  "name": "escolalms/headless-h5p",
-  "description": "Headless H5P Laravel REST API",
-  "type": "package",
-  "require": {
-    "php": ">=7.4",
-    "laravel/framework": "^8|^9",
-    "h5p/h5p-core": "^1|dev-master",
-    "h5p/h5p-editor": "^1|dev-master",
-    "escolalms/core": "^1",
-    "escolalms/auth": "^0"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^9.0",
-    "orchestra/testbench": "^6.0",
-    "laravel/legacy-factories": "^1.0.4",
-    "guzzlehttp/guzzle": "^7"
-  },
-  "autoload": {
-    "psr-4": {
-      "EscolaLms\\HeadlessH5P\\": "src",
-      "EscolaLms\\HeadlessH5P\\Tests\\": "tests",
-      "EscolaLms\\HeadlessH5P\\Database\\Factories\\": "database/factories",
-      "EscolaLms\\HeadlessH5P\\Database\\Seeders\\": "database/seeders"
+    "name": "escolalms/headless-h5p",
+    "description": "Headless H5P Laravel REST API",
+    "type": "package",
+    "require": {
+        "php": ">=7.4",
+        "laravel/framework": "^8|^9",
+        "h5p/h5p-core": "^1|dev-master",
+        "h5p/h5p-editor": "^1|dev-master",
+        "escolalms/core": "^1",
+        "escolalms/auth": "^0",
+        "escolalms/settings": "^0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0",
+        "orchestra/testbench": "^6.0",
+        "laravel/legacy-factories": "^1.0.4",
+        "guzzlehttp/guzzle": "^7"
+    },
+    "autoload": {
+        "psr-4": {
+            "EscolaLms\\HeadlessH5P\\": "src",
+            "EscolaLms\\HeadlessH5P\\Tests\\": "tests",
+            "EscolaLms\\HeadlessH5P\\Database\\Factories\\": "database/factories",
+            "EscolaLms\\HeadlessH5P\\Database\\Seeders\\": "database/seeders"
+        }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mateusz Wojczal",
+            "email": "mateusz@wojczal.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "EscolaLms\\HeadlessH5P\\HeadlessH5PServiceProvider"
+            ]
+        }
     }
-  },
-  "license": "MIT",
-  "authors": [{
-    "name": "Mateusz Wojczal",
-    "email": "mateusz@wojczal.com"
-  }],
-  "extra": {
-    "laravel": {
-      "providers": [
-        "EscolaLms\\HeadlessH5P\\HeadlessH5PServiceProvider"
-      ]
-    }
-  }
 }
