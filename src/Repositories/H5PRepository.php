@@ -58,7 +58,6 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function fetchExternalData($url, $data = null, $blocking = true, $stream = null, $fullData = false, $headers = [], $files = [], $method = 'POST')
     {
-        // TODO add tests for this function with all possible parameters
         @set_time_limit(0);
         $options = [
             'timeout'  => !empty($blocking) ? 30 : 0.01,
@@ -70,29 +69,24 @@ class H5PRepository implements H5PFrameworkInterface
 
         $client = new Client(config('hh5p.guzzle'));
         try {
-
             if ($data !== null) {
                 // Post
                 $options['form_params'] = $data;
                 $response = $client->request('POST', $url, $options);
-
             } else {
                 $response = $client->request('GET', $url, $options);
             }
 
             if ($response->getStatusCode() === 200) {
-                $contents = null;
-                $body =  empty($response->getBody()) ? null : $response->getBody()->getContents();
+                $body = empty($response->getBody()) ? null : $response->getBody()->getContents();
 
-                if ($contents) {
-                    return $fullData ? ['status' => $response->getStatusCode(), 'data' => json_decode($contents)] : $contents;
-                }
                 if ($body) {
                     return $fullData ? ['status' => $response->getStatusCode(), 'data' => json_decode($body)] : $body;
                 }
+
                 return true;
             } else {
-                return;
+                return false;
             }
         } catch (RequestException $e) {
             return false;
