@@ -199,8 +199,7 @@ class H5PRepositoryTest extends TestCase
 
     public function testReplaceContentTypeCacheShouldCreateContentType(): void
     {
-        $data = new \stdClass();
-        $data->contentTypes = H5PContentTypeFixture::fixture()->count(3)->make()->object();
+        $data = H5PContentTypeFixture::fixture()->count(3)->make()->get();
 
         $this->assertDatabaseCount('hh5p_libraries_hub_cache', 0);
 
@@ -211,13 +210,14 @@ class H5PRepositoryTest extends TestCase
 
     public function testReplaceContentTypeCacheShouldTruncateExistingDataAndCreateContentType(): void
     {
-        $data = new \stdClass();
-        $data->contentTypes = H5PContentTypeFixture::fixture()->count(3)->make()->object();
+        $data = H5PContentTypeFixture::fixture()->count(3)->make()->get();
         $this->repository->replaceContentTypeCache($data);
 
         $this->assertDatabaseCount('hh5p_libraries_hub_cache', 3);
 
-        $data->contentTypes = H5PContentTypeFixture::fixture()->count(10)->make()->object();
-        $this->assertDatabaseCount('hh5p_libraries_hub_cache', 3);
+        $data = H5PContentTypeFixture::fixture()->count(10)->make()->get();
+        $this->repository->replaceContentTypeCache($data);
+
+        $this->assertDatabaseCount('hh5p_libraries_hub_cache', 10);
     }
 }

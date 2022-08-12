@@ -9,9 +9,14 @@ use stdClass;
 
 class H5PContentTypeFixture
 {
-    private array $data = [];
+    private stdClass $data;
 
     private int $count = 1;
+
+    public function __construct()
+    {
+        $this->data = new stdClass();
+    }
 
     public static function fixture(): H5PContentTypeFixture
     {
@@ -28,59 +33,53 @@ class H5PContentTypeFixture
     public function make(): self
     {
         if ($this->count <= 1) {
-            $this->data = $this->factory();
+            $this->data->contentTypes = $this->factory();
 
             return $this;
         }
 
         for ($i = 0; $i < $this->count; $i++)
         {
-            $this->data[] = $this->factory();
+            $this->data->contentTypes[] = $this->factory();
         }
 
         return $this;
     }
 
-    public function object(): stdClass|array
-    {
-        return json_decode(json_encode($this->data));
-    }
-
-    public function get(): array
+    public function get(): stdClass
     {
         return $this->data;
     }
 
-    private function factory(): array
+    private function factory(): stdClass
     {
         $faker = FakerFactory::create();
 
-        return array(
-            'id' => $faker->word,
-            'version' => array(
-                'major' => $faker->numberBetween(1, 10),
-                'minor' => $faker->numberBetween(1, 10),
-                'patch' => $faker->numberBetween(1, 10),
-            ),
-            'coreApiVersionNeeded' => array(
-                'major' => $faker->numberBetween(1, 10),
-                'minor' => $faker->numberBetween(1, 10),
-            ),
-            'title' => $faker->word,
-            'summary' => $faker->words(3, true),
-            'description' => $faker->words(3, true),
-            'icon' => $faker->url,
-            'createdAt' => Carbon::now()->toISOString(),
-            'updatedAt' =>  Carbon::now()->toISOString(),
-            'isRecommended' => $faker->boolean,
-            'popularity' => $faker->numberBetween(1, 10),
-            'screenshots' => $faker->url,
-            'license' => array(),
-            'example' => $faker->word,
-            'tutorial' => $faker->url,
-            'keywords' => array($faker->word),
-            'categories' => array($faker->word),
-            'owner' => $faker->firstName . ' ' . $faker->lastName
-        );
+        $data = new stdClass();
+        $data->id = $faker->word;
+        $data->version = new stdClass();
+        $data->version->major = $faker->numberBetween(1, 10);
+        $data->version->minor = $faker->numberBetween(1, 10);
+        $data->version->patch = $faker->numberBetween(1, 10);
+        $data->coreApiVersionNeeded = new stdClass();
+        $data->coreApiVersionNeeded->major = $faker->numberBetween(1, 10);
+        $data->coreApiVersionNeeded->minor = $faker->numberBetween(1, 10);
+        $data->title = $faker->word;
+        $data->summary = $faker->words(3, true);
+        $data->description = $faker->words(3, true);
+        $data->icon = $faker->url;
+        $data->createdAt = Carbon::now()->toISOString();
+        $data->updatedAt =  Carbon::now()->toISOString();
+        $data->isRecommended = $faker->boolean;
+        $data->popularity = $faker->numberBetween(1, 10);
+        $data->screenshots = $faker->url;
+        $data->license = array();
+        $data->example = $faker->word;
+        $data->tutorial = $faker->url;
+        $data->keywords = array($faker->word);
+        $data->categories = array($faker->word);
+        $data->owner = $faker->firstName . ' ' . $faker->lastName;
+
+        return $data;
     }
 }
