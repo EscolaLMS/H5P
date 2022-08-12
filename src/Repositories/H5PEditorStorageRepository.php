@@ -26,17 +26,17 @@ class H5PEditorStorageRepository implements H5peditorStorage
      * @param string $lang Language code
      * @return string Translation in JSON format
      */
-    public function getLanguage($machineName, $majorVersion, $minorVersion, $language): string
+    public function getLanguage($machineName, $majorVersion, $minorVersion, $language): ?string
     {
         if (!isset($language)) {
-            return '';
+            return null;
         }
+
         $library = H5PLibrary::select(['id'])->where([
             ['major_version',  $majorVersion],
             ['minor_version', $minorVersion],
             ['name', $machineName],
         ])->first();
-
 
         if ($library) {
             $libraryLanguage = H5PLibraryLanguage::where([
@@ -50,7 +50,7 @@ class H5PEditorStorageRepository implements H5peditorStorage
             }
         }
 
-        return '';
+        return null;
     }
 
     /**
