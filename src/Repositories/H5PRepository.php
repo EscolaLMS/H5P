@@ -1269,8 +1269,8 @@ class H5PRepository implements H5PFrameworkInterface
             ];
         }
 
-        DB::transaction(function () use($contentTypeCache, $data) {
-            H5pLibrariesHubCache::truncate();
+        DB::transaction(function () use($data) {
+            H5pLibrariesHubCache::query()->delete();
             H5pLibrariesHubCache::insert($data);
         });
     }
