@@ -17,6 +17,7 @@ use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\DB;
 use DateTime;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class H5PRepository implements H5PFrameworkInterface
 {
@@ -181,6 +182,8 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function getLibraryFileUrl($libraryFolderName, $fileName)
     {
+        $path = 'h5p/libraries/' . $libraryFolderName . '/' . $fileName;
+        return Storage::disk('local')->exists($path) ? Storage::disk('local')->url($path) : null;
     }
 
     /**
@@ -222,10 +225,25 @@ class H5PRepository implements H5PFrameworkInterface
      *
      * @return array
      */
-    public function loadAddons()
+    public function loadAddons(): array
     {
-        // TODO this should return something
-        return [];
+        return H5PLibrary::query()
+            ->select(['l1.id', 'l1.name', 'l1.major_version', 'l1.minor_version', 'l1.patch_version', 'l1.preloaded_js', 'l1.preloaded_css', 'l1.add_to'])
+            ->from('hh5p_libraries as l1')
+            ->leftJoin('hh5p_libraries as l2', fn($join) => $join
+                ->on('l1.name', '=', 'l2.name')
+                ->on(fn($query) => $query
+                    ->on('l1.major_version', '<', 'l2.major_version')
+                    ->orOn(fn ($query) => $query
+                        ->orOn('l1.major_version', '=', 'l2.major_version')
+                        ->on('l1.minor_version', '<', 'l2.minor_version')
+                    )
+                )
+            )
+            ->whereNotNull('l1.add_to')
+            ->whereNull('l2.name')
+            ->get()
+            ->toArray();
     }
 
     /**
@@ -262,6 +280,7 @@ class H5PRepository implements H5PFrameworkInterface
             ->orderBy('major_version', 'ASC')
             ->orderBy('minor_version', 'ASC')
             ->get();
+
         $libraries = [];
         foreach ($results as $library) {
             $libraries[$library->name][] = $library;
@@ -376,8 +395,6 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function mayUpdateLibraries()
     {
-        // TODO check if current user is allowed to do this action
-        // best option use middleware on router
         return true;
     }
 
@@ -453,8 +470,9 @@ class H5PRepository implements H5PFrameworkInterface
             'preloaded_css' => $this->pathsToCsv($libraryData, 'preloadedCss'),
             'drop_library_css' => '', // TODO, what is this ?
             'semantics' => isset($libraryData['semantics']) ? $libraryData['semantics'] : '',
-            'tutorial_url' => isset($libraryData['tutorial_url']) ? isset($libraryData['tutorial_url']) : '',
+            'tutorial_url' => isset($libraryData['tutorial_url']) ?: '',
             'has_icon' => isset($libraryData['hasIcon']) ? 1 : 0,
+            'add_to' => isset($library['addTo']) ? json_encode($library['addTo']) : null
         ];
 
         $libObj = H5PLibrary::firstOrCreate($library);
@@ -496,7 +514,7 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function insertContent($content, $contentMainId = null)
     {
-        return $this->updateContent($content, $contentMainId = null);
+        return $this->updateContent($content, $contentMainId);
     }
 
     private function fixContentParamsMetadataLibraryTitle($content)
@@ -659,6 +677,7 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function copyLibraryUsage($contentId, $copyFromId, $contentMainId = null)
     {
+
     }
 
     /**
@@ -679,6 +698,7 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function deleteLibraryUsage($contentId)
     {
+        H5PContent::findOrFail($contentId)->libraries()->delete();
     }
 
     /**
@@ -868,7 +888,7 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function deleteLibraryDependencies($libraryId)
     {
-        // TODO this must be implemented
+        H5PLibrary::findOrFail($libraryId)->dependencies()->delete();
     }
 
     /**
@@ -1053,6 +1073,7 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function updateContentFields($id, $fields)
     {
+        H5PContent::findOrFail($id)->update($fields);
     }
 
     /**
@@ -1064,6 +1085,7 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function clearFilteredParameters($library_ids)
     {
+         H5PContent::query()->whereIn('library_id', $library_ids)->update(['filtered' => null]);
     }
 
     /**
@@ -1119,6 +1141,7 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function getNumAuthors()
     {
+        return H5PContent::query()->select(['user_id'])->distinct()->count('user_id');
     }
 
     /**
@@ -1220,16 +1243,8 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function replaceContentTypeCache($contentTypeCache)
     {
-
-        // TODO refactor this ugly code
-        // Replace existing content type cache
-        DB::table('hh5p_libraries_hub_cache')->truncate();
-
-        // TODO wrap this in a transaction
-
         foreach ($contentTypeCache->contentTypes as $ct) {
-            // Insert into db
-            H5pLibrariesHubCache::create([
+           $data[] = [
                 'machine_name' => $ct->id,
                 'major_version' => $ct->version->major,
                 'minor_version' => $ct->version->minor,
@@ -1245,14 +1260,19 @@ class H5PRepository implements H5PFrameworkInterface
                 'is_recommended' => $ct->isRecommended === true ? 1 : 0,
                 'popularity' => $ct->popularity,
                 'screenshots' => json_encode($ct->screenshots),
-                'license' => json_encode(isset($ct->license) ? $ct->license : []),
+                'license' => json_encode($ct->license ?? []),
                 'example' => $ct->example,
-                'tutorial' => isset($ct->tutorial) ? $ct->tutorial : '',
-                'keywords' => json_encode(isset($ct->keywords) ? $ct->keywords : []),
-                'categories' => json_encode(isset($ct->categories) ? $ct->categories : []),
+                'tutorial' => $ct->tutorial ?? '',
+                'keywords' => json_encode($ct->keywords ?? []),
+                'categories' => json_encode($ct->categories ?? []),
                 'owner' => $ct->owner,
-            ]);
+            ];
         }
+
+        DB::transaction(function () use($contentTypeCache, $data) {
+            H5pLibrariesHubCache::truncate();
+            H5pLibrariesHubCache::insert($data);
+        });
     }
 
     /**

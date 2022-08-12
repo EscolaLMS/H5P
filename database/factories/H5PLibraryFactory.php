@@ -27,6 +27,7 @@ class H5PLibraryFactory extends Factory
             'semantics' => '',
             'tutorial_url' => '',
             'has_icon' => 0,
+            'add_to' => ''
         ];
     }
 }

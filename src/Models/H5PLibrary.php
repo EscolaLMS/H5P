@@ -170,7 +170,8 @@ class H5PLibrary extends Model
         'hasIcon',
         'libraryId',
         'children',
-        'languages'
+        'languages',
+        'addTo'
     ];
 
     protected $appends = [
@@ -184,7 +185,8 @@ class H5PLibrary extends Model
         'dropLibraryCss',
         'tutorialUrl',
         'hasIcon',
-        'libraryId'
+        'libraryId',
+        'addTo'
     ];
 
     protected $hidden = [
@@ -196,6 +198,7 @@ class H5PLibrary extends Model
         'drop_library_css',
         'tutorial_url',
         'has_icon',
+        'add_to'
     ];
 
     public function getSemanticsAttribute($value)
@@ -248,6 +251,11 @@ class H5PLibrary extends Model
         return isset($this->attributes['preloaded_css']) ? $this->attributes['preloaded_css'] : '';
     }
 
+    public function getAddToAttribute():string
+    {
+        return isset($this->attributes['add_to']) ? $this->attributes['add_to'] : '';
+    }
+
     public function getDropLibraryCssAttribute():string
     {
         return isset($this->attributes['drop_library_css']) ? $this->attributes['drop_library_css'] : '';
@@ -265,7 +273,7 @@ class H5PLibrary extends Model
 
     public function dependencies()
     {
-        return $this->hasMany(H5PLibraryDependency::class, 'library_id');
+        return $this->hasMany(H5PLibraryDependency::class, 'library_id', 'id');
     }
 
     public function children()
