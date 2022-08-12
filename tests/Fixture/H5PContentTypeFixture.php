@@ -55,17 +55,17 @@ class H5PContentTypeFixture
     {
         $faker = FakerFactory::create();
 
-        return [
+        return array(
             'id' => $faker->word,
-            'version' => [
+            'version' => array(
                 'major' => $faker->numberBetween(1, 10),
                 'minor' => $faker->numberBetween(1, 10),
                 'patch' => $faker->numberBetween(1, 10),
-            ],
-            'coreApiVersionNeeded' => [
+            ),
+            'coreApiVersionNeeded' => array(
                 'major' => $faker->numberBetween(1, 10),
                 'minor' => $faker->numberBetween(1, 10),
-            ],
+            ),
             'title' => $faker->word,
             'summary' => $faker->words(3, true),
             'description' => $faker->words(3, true),
@@ -75,12 +75,12 @@ class H5PContentTypeFixture
             'isRecommended' => $faker->boolean,
             'popularity' => $faker->numberBetween(1, 10),
             'screenshots' => $faker->url,
-            'license' => [],
+            'license' => array(),
             'example' => $faker->word,
             'tutorial' => $faker->url,
-            'keywords' => [$faker->word],
-            'categories' => [$faker->word],
+            'keywords' => array($faker->word),
+            'categories' => array($faker->word),
             'owner' => $faker->firstName . ' ' . $faker->lastName
-        ];
+        );
     }
 }
