@@ -81,7 +81,6 @@ class LibraryApiController extends EscolaLmsBaseController implements LibraryApi
 
     public function libraryInstall(LibraryInstallRequest $request): JsonResponse
     {
-        // TODO here is token sent somehow. validate this
         $library = $this->hh5pService->libraryInstall($request->getMachineName());
         return response()->json(['success' => true, 'data' => $library]);
     }

@@ -495,18 +495,10 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     {
         $library = H5pLibrary::findOrFail($id);
 
-        // TODO: check if runnable
-        // TODO: check is usable, against content. If yes should ne be deleted
-
-        // Error if in use
-        // TODO implement getLibraryUsage, once content is ready
-        // $usage = $this->getRepository()->getLibraryUsage($library);
-        /*
-        if ($usage['content'] !== 0 || $usage['libraries'] !== 0) {
-            return redirect()->route('h5p.library.index')
-                ->with('error', trans('laravel-h5p.library.used_library_can_not_destoroied'));
+        $libraryUsage = $this->getRepository()->getLibraryUsage($library->getKey());
+        if ($library->runnable || $libraryUsage['content'] > 0 || $libraryUsage['libraries'] > 0) {
+            return false;
         }
-        */
 
         $this->getRepository()->deleteLibrary($library);
 

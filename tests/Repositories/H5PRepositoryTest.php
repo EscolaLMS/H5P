@@ -220,4 +220,75 @@ class H5PRepositoryTest extends TestCase
 
         $this->assertDatabaseCount('hh5p_libraries_hub_cache', 10);
     }
+
+    public function testGetLibraryContentCount(): void
+    {
+        $library1 = H5PLibrary::factory()->create();
+        $library2 = H5PLibrary::factory()->create();
+        H5PContent::factory()->count(5)->create(['library_id' => $library1->getKey()]);
+        H5PContent::factory()->count(3)->create(['library_id' => $library2->getKey()]);
+
+        $result = $this->repository->getLibraryContentCount();
+
+        $this->assertEquals(5, $result[$library1->uberName]);
+        $this->assertEquals(3, $result[$library2->uberName]);
+        $this->assertArrayHasKey($library1->uberName, $result);
+        $this->assertArrayHasKey($library2->uberName, $result);
+    }
+
+    public function testGetLibraryContentCountShouldReturnEmptyArrayWhenContentNotExists(): void
+    {
+        H5PLibrary::factory()->create();
+        H5PLibrary::factory()->create();
+
+        $result = $this->repository->getLibraryContentCount();
+
+        $this->assertCount(0, $result);
+    }
+
+    public function testGetLibraryUsage(): void
+    {
+        $library = H5PLibrary::factory()->create();
+        H5PLibrary::factory()
+            ->count(3)
+            ->has(H5PLibraryDependency::factory()->state(['required_library_id' => $library->getKey()]), 'dependencies')
+            ->create();
+        H5PContent::factory()
+            ->count(5)
+            ->has(H5PContentLibrary::factory()->state(['library_id' => $library->getKey()]), 'libraries')
+            ->create(['library_id' => $library->getKey()]);
+
+        $result = $this->repository->getLibraryUsage($library->getKey());
+
+        $this->assertEquals(5, $result['content']);
+        $this->assertEquals(3, $result['libraries']);
+    }
+
+    public function testGetLibraryUsageSkipContent(): void
+    {
+        $library = H5PLibrary::factory()->create();
+        H5PLibrary::factory()
+            ->count(3)
+            ->has(H5PLibraryDependency::factory()->state(['required_library_id' => $library->getKey()]), 'dependencies')
+            ->create();
+        H5PContent::factory()
+            ->count(5)
+            ->has(H5PContentLibrary::factory()->state(['library_id' => $library->getKey()]), 'libraries')
+            ->create(['library_id' => $library->getKey()]);
+
+        $result = $this->repository->getLibraryUsage($library->getKey(), true);
+
+        $this->assertEquals(-1, $result['content']);
+        $this->assertEquals(3, $result['libraries']);
+    }
+
+    public function testGetLibraryUsageNoUsages(): void
+    {
+        $library = H5PLibrary::factory()->create();
+
+        $result = $this->repository->getLibraryUsage($library->getKey());
+
+        $this->assertEquals(0, $result['content']);
+        $this->assertEquals(0, $result['libraries']);
+    }
 }

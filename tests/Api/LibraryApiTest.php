@@ -2,8 +2,10 @@
 
 namespace EscolaLms\HeadlessH5P\Tests\Api;
 
+use EscolaLms\HeadlessH5P\Models\H5PContent;
+use EscolaLms\HeadlessH5P\Models\H5PContentLibrary;
+use EscolaLms\HeadlessH5P\Models\H5PLibraryDependency;
 use EscolaLms\HeadlessH5P\Tests\Traits\H5PTestingTrait;
-use GuzzleHttp\Psr7\Response;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use EscolaLms\HeadlessH5P\Tests\TestCase;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
@@ -45,19 +47,6 @@ class LibraryApiTest extends TestCase
         ]);
     }
 
-    public function test_library_delete(): void
-    {
-        $this->authenticateAsAdmin();
-        $library = H5PLibrary::factory()->create();
-        $id = $library->id;
-
-        $response = $this->actingAs($this->user, 'api')->deleteJson("/api/admin/hh5p/library/$id");
-        $response->assertStatus(200);
-
-        $response = $this->actingAs($this->user, 'api')->deleteJson("/api/admin/hh5p/library/$id");
-        $response->assertStatus(404);
-    }
-
     public function testGuestCannotDeleteLibrary(): void
     {
         $library = H5PLibrary::factory()->create();
@@ -82,5 +71,54 @@ class LibraryApiTest extends TestCase
         ]);
 
         $response->assertForbidden();
+    }
+
+    public function testLibraryDestroyShouldNotDestroyWhenLibraryIsRunnable(): void
+    {
+        $this->authenticateAsAdmin();
+        $this->uploadH5PLibrary();
+        $library = H5PLibrary::whereRunnable(1)->first();
+
+        $this->actingAs($this->user, 'api')
+            ->deleteJson('/api/admin/hh5p/library/' . $library->getKey())
+            ->assertUnprocessable()
+            ->assertJson(['message' => 'Library ' . $library->getKey() . ' note deleted']);
+    }
+
+    public function testLibraryDestroyShouldNotDestroyWhenLibraryIsInUsage(): void
+    {
+        $this->authenticateAsAdmin();
+        $this->uploadH5PLibrary();
+        $library = H5PLibrary::whereRunnable(0)->first();
+
+        H5PLibrary::factory()
+            ->count(3)
+            ->has(H5PLibraryDependency::factory()->state(['required_library_id' => $library->getKey()]), 'dependencies')
+            ->create();
+        H5PContent::factory()
+            ->count(5)
+            ->has(H5PContentLibrary::factory()->state(['library_id' => $library->getKey()]), 'libraries')
+            ->create(['library_id' => $library->getKey()]);
+
+        $this->actingAs($this->user, 'api')
+            ->deleteJson('/api/admin/hh5p/library/' . $library->getKey())
+            ->assertUnprocessable()
+            ->assertJson(['message' => 'Library ' . $library->getKey() . ' note deleted']);
+    }
+
+    public function testLibraryDestroy(): void
+    {
+        $this->authenticateAsAdmin();
+        $this->uploadH5PLibrary();
+        $library = H5PLibrary::whereRunnable(0)->first();
+        H5PContentLibrary::query()->delete();
+        H5PLibraryDependency::query()->delete();
+
+        $this->actingAs($this->user, 'api')
+            ->deleteJson('/api/admin/hh5p/library/' . $library->getKey())
+            ->assertOk();
+
+        $this->actingAs($this->user, 'api')->deleteJson('/api/admin/hh5p/library/' .  $library->getKey())
+            ->assertNotFound();
     }
 }
