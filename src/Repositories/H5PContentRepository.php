@@ -109,7 +109,6 @@ class H5PContentRepository implements H5PContentRepositoryContract
 
         $files = H5PTempFile::where(['nonce' => $nonce])->get();
 
-
         foreach ($files as $file) {
             $old_path = $storage_path . $file->path;
             if (strpos($file->path, '/editor') !== false) {
