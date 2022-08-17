@@ -34,9 +34,17 @@ class ContentApiController extends EscolaLmsBaseController implements ContentApi
     public function index(ContentListRequest $request): JsonResponse
     {
         $contentFilterDto = ContentFilterCriteriaDto::instantiateFromRequest($request);
+        $columns = [
+            'hh5p_contents.title',
+            'hh5p_contents.id',
+            'hh5p_contents.uuid',
+            'hh5p_contents.library_id',
+            'hh5p_contents.user_id',
+            'hh5p_contents.author'
+        ];
         $list = $request->get('per_page') !== null && $request->get('per_page') == 0 ?
-            $this->contentRepository->unpaginatedList($contentFilterDto) :
-            $this->contentRepository->list($contentFilterDto, $request->get('per_page'));
+            $this->contentRepository->unpaginatedList($contentFilterDto, $columns) :
+            $this->contentRepository->list($contentFilterDto, $request->get('per_page'), $columns);
 
         return $this->sendResponseForResource(ContentIndexResource::collection($list));
     }

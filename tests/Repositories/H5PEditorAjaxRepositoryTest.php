@@ -2,6 +2,7 @@
 namespace EscolaLms\HeadlessH5P\Tests\Repositories;
 
 
+use Carbon\Carbon;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\HeadlessH5P\Models\H5PContent;
 use EscolaLms\HeadlessH5P\Models\H5PContentLibrary;
@@ -164,24 +165,32 @@ class H5PEditorAjaxRepositoryTest extends TestCase
         $this->assertCount(0, $result);
     }
 
-    public function testValidateEditorToken(): void
+    public function tokenDataProvider(): array
     {
-        $this->authenticateAsAdmin();
-        $token = $this->user->createToken("test")->accessToken;
-
-        $result = $this->repository->validateEditorToken($token);
-
-        $this->assertTrue($result);
+        return [
+            [
+                'expire' => fn() => Passport::personalAccessTokensExpireIn(now()->subDay()),
+                'assert' => fn($result) => $this->assertFalse($result)
+            ],
+            [
+                'expire' => fn() => Passport::personalAccessTokensExpireIn(now()->addDay()),
+                'assert' => fn($result) => $this->assertTrue($result)
+            ],
+        ];
     }
 
-    public function testValidateEditorTokenExpiredToken(): void
+    /**
+     * @dataProvider tokenDataProvider
+     */
+    public function testValidateEditorToken($expireIn, $assert): void
     {
-        Passport::personalAccessTokensExpireIn(now()->subDay());
+        $expireIn();
+
         $this->authenticateAsAdmin();
         $token = $this->user->createToken("test")->accessToken;
 
         $result = $this->repository->validateEditorToken($token);
 
-        $this->assertFalse($result);
+        $assert($result);
     }
 }
