@@ -504,10 +504,12 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         return true;
     }
 
+
     /**
      * @param $id
      * @return array
      */
+
     public function getSettingsForContent($id): array
     {
         $content = $this->getCore()->loadContent($id);
