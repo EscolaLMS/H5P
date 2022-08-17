@@ -83,7 +83,7 @@ class H5PEditorAjaxRepository implements H5PEditorAjaxInterface
             ->join('hh5p_libraries', 'hh5p_contents_libraries.library_id', '=', 'hh5p_libraries.id')
             ->groupBy('hh5p_libraries.name', 'hh5p_libraries.created_at')
             ->orderBy('hh5p_libraries.created_at')
-            ->where('user_id', '=', auth()->user()->getKey())
+            ->where('user_id', '=', auth()->user() !== null ? auth()->user()->getKey() : null)
             ->pluck('hh5p_libraries.name')
             ->toArray();
     }

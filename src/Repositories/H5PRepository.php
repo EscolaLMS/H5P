@@ -770,6 +770,22 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function getLibraryUsage($libraryId, $skipContent = false)
     {
+        $contentsCount = $skipContent ? -1 : H5PLibrary::query()
+            ->join('hh5p_contents_libraries', 'hh5p_libraries.id', '=', 'hh5p_contents_libraries.library_id')
+            ->join('hh5p_contents', 'hh5p_contents_libraries.content_id', '=', 'hh5p_contents.id')
+            ->where('hh5p_libraries.id', '=', $libraryId)
+            ->distinct()
+            ->count('hh5p_contents.id');
+
+        $librariesCount = H5PLibrary::query()
+            ->with('dependencies')
+            ->whereHas('dependencies', fn($query) => $query->whereRequiredLibraryId($libraryId))
+            ->count();
+
+        return [
+            'content' => $contentsCount,
+            'libraries' => $librariesCount,
+        ];
     }
 
     /**
@@ -1179,7 +1195,14 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function getLibraryContentCount()
     {
-        return []; // TODO is used in h5p.classes.php => public function fetchLibrariesMetadata($fetchingDisabled = FALSE)
+        return H5PLibrary::query()
+            ->select('name', 'major_version', 'minor_version')
+            ->with('contents')
+            ->has('contents')
+            ->withCount('contents as count')
+            ->get()
+            ->mapWithKeys(fn($item, $key) => [$item->uberName => $item->count])
+            ->toArray();
     }
 
     /**

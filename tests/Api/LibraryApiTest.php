@@ -2,15 +2,31 @@
 
 namespace EscolaLms\HeadlessH5P\Tests\Api;
 
+use EscolaLms\HeadlessH5P\Http\Middleware\QueryToken;
+use EscolaLms\HeadlessH5P\Models\H5PContent;
+use EscolaLms\HeadlessH5P\Models\H5PContentLibrary;
+use EscolaLms\HeadlessH5P\Models\H5PLibraryDependency;
+use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
+use EscolaLms\HeadlessH5P\Tests\Stubs\StubHeadlessH5PService;
 use EscolaLms\HeadlessH5P\Tests\Traits\H5PTestingTrait;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use EscolaLms\HeadlessH5P\Tests\TestCase;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
+use Illuminate\Support\Facades\Route;
 
 class LibraryApiTest extends TestCase
 {
     use DatabaseTransactions, H5PTestingTrait;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->mock->reset();
+
+        Route::middleware([QueryToken::class, 'auth:api'])
+            ->group(__DIR__ . './../../src/routes.php');
+    }
 
     public function test_library_uploading(): void
     {
@@ -45,19 +61,6 @@ class LibraryApiTest extends TestCase
         ]);
     }
 
-    public function test_library_delete(): void
-    {
-        $this->authenticateAsAdmin();
-        $library = H5PLibrary::factory()->create();
-        $id = $library->id;
-
-        $response = $this->actingAs($this->user, 'api')->deleteJson("/api/admin/hh5p/library/$id");
-        $response->assertStatus(200);
-
-        $response = $this->actingAs($this->user, 'api')->deleteJson("/api/admin/hh5p/library/$id");
-        $response->assertStatus(404);
-    }
-
     public function testGuestCannotDeleteLibrary(): void
     {
         $library = H5PLibrary::factory()->create();
@@ -65,12 +68,12 @@ class LibraryApiTest extends TestCase
 
         $response = $this->deleteJson("/api/admin/hh5p/library/$id");
 
-        $response->assertForbidden();
+        $response->assertUnauthorized();
     }
 
     public function testGuestCannotIndexLibrary(): void
     {
-        $this->getJson('/api/admin/hh5p/library')->assertForbidden();
+        $this->getJson('/api/admin/hh5p/library')->assertUnauthorized();
     }
 
     public function testGuestCannotUploadLibrary(): void
@@ -81,6 +84,133 @@ class LibraryApiTest extends TestCase
             'h5p_file' => $h5pFile,
         ]);
 
-        $response->assertForbidden();
+        $response->assertUnauthorized();
+    }
+
+    public function testLibraryDestroyShouldNotDestroyWhenLibraryIsInUsage(): void
+    {
+        $this->authenticateAsAdmin();
+        $this->uploadH5PLibrary();
+        $library = H5PLibrary::whereRunnable(0)->first();
+
+        H5PLibrary::factory()
+            ->count(3)
+            ->has(H5PLibraryDependency::factory()->state(['required_library_id' => $library->getKey()]), 'dependencies')
+            ->create();
+        H5PContent::factory()
+            ->count(5)
+            ->has(H5PContentLibrary::factory()->state(['library_id' => $library->getKey()]), 'libraries')
+            ->create(['library_id' => $library->getKey()]);
+
+        $this->actingAs($this->user, 'api')
+            ->deleteJson('/api/admin/hh5p/library/' . $library->getKey())
+            ->assertUnprocessable()
+            ->assertJson(['message' => 'Library ' . $library->getKey() . ' note deleted']);
+    }
+
+    public function testLibraryDestroy(): void
+    {
+        $this->authenticateAsAdmin();
+        $this->uploadH5PLibrary();
+        $library = H5PLibrary::whereRunnable(0)->first();
+        H5PContentLibrary::query()->delete();
+        H5PLibraryDependency::query()->delete();
+
+        $this->actingAs($this->user, 'api')
+            ->deleteJson('/api/admin/hh5p/library/' . $library->getKey())
+            ->assertOk();
+
+        $this->actingAs($this->user, 'api')->deleteJson('/api/admin/hh5p/library/' .  $library->getKey())
+            ->assertNotFound();
+    }
+
+    public function testContentTypeCache(): void
+    {
+        $this->mock->append(new Response(200, [], json_encode(["uuid" => "123"])));
+        $this->mock->append(new Response(200, [], json_encode(["uuid" => "123"])));
+
+        $this->authenticateAsAdmin();
+        $token = $this->user->createToken("test")->accessToken;
+
+        $this
+            ->getJson('/api/hh5p/content-type-cache?_token=' . $token)
+            ->assertOk()
+            ->assertJsonStructure([
+                'apiVersion' => ['major', 'minor'],
+                'details',
+                'libraries',
+                'outdated',
+                'recentlyUsed',
+            ]);
+    }
+
+    public function testContentTypeCacheUnauthorized(): void
+    {
+        $this->getJson('/api/hh5p/content-type-cache')
+            ->assertUnauthorized();
+    }
+
+    public function testFilterLibraryParameters(): void
+    {
+        $this->authenticateAsAdmin();
+        $token = $this->user->createToken("test")->accessToken;
+        $h5pContent = $this->uploadHP5Content();
+
+        $params = json_encode([
+            'params' => $h5pContent->params,
+            'metadata' => $h5pContent->metadata,
+            'library' => $h5pContent->library->uberName
+        ]);
+
+        $this
+            ->postJson('/api/hh5p/filter?libraryParameters=' . $params . '&_token=' . $token)
+            ->assertOk();
+    }
+
+    public function testFilterLibraryParametersInvalidData(): void
+    {
+        $this->authenticateAsAdmin();
+        $token = $this->user->createToken("test")->accessToken;
+
+        $this
+            ->postJson('/api/hh5p/filter?_token=' . $token)
+            ->assertJson([
+                'message' => 'Could not parse post data.',
+            ])
+            ->assertUnprocessable();
+    }
+
+    public function testFilterLibraryParametersUnauthorized(): void
+    {
+        $this
+            ->postJson('/api/hh5p/filter')
+            ->assertUnauthorized();
+    }
+
+    public function testHubContentHubMetadataCache(): void
+    {
+        $this->authenticateAsAdmin();
+        $token = $this->user->createToken("test")->accessToken;
+        $this->app->singleton(HeadlessH5PServiceContract::class, StubHeadlessH5PService::instance());
+
+        $this
+            ->getJson('/api/hh5p/content-hub-metadata-cache?_token=' . $token)
+            ->assertOk()
+            ->assertJsonStructure([
+                'data' => [
+                    'disciplines',
+                    'languages',
+                    'levels',
+                    'licenses',
+                ],
+                'success'
+            ]);
+    }
+
+    public function testHubContentHubMetadataCacheUnauthorized(): void
+    {
+        $this
+            ->getJson('/api/hh5p/content-hub-metadata-cache')
+            ->assertUnauthorized();
     }
 }

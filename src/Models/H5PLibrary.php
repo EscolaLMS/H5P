@@ -5,6 +5,8 @@ namespace EscolaLms\HeadlessH5P\Models;
 use EscolaLms\HeadlessH5P\Database\Factories\H5PLibraryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @OA\Schema(
@@ -236,7 +238,7 @@ class H5PLibrary extends Model
         return isset($this->attributes['minor_version']) ? $this->attributes['minor_version'] : '';
     }
 
-    public function getPatchVersionAttribute():int
+    public function getPatchVersionAttribute()
     {
         return isset($this->attributes['patch_version']) ? $this->attributes['patch_version'] : '';
     }
@@ -271,19 +273,24 @@ class H5PLibrary extends Model
         return isset($this->attributes['has_icon']) ? $this->attributes['has_icon'] : '';
     }
 
-    public function dependencies()
+    public function dependencies(): HasMany
     {
         return $this->hasMany(H5PLibraryDependency::class, 'library_id', 'id');
     }
 
-    public function children()
+    public function children(): BelongsToMany
     {
         return $this->belongsToMany(H5PLibrary::class, 'hh5p_libraries_dependencies', 'library_id', 'required_library_id')->with('children');
     }
 
-    public function languages()
+    public function languages(): HasMany
     {
         return $this->hasMany(H5PLibraryLanguage::class, 'library_id');
+    }
+
+    public function contents(): HasMany
+    {
+        return $this->hasMany(H5PContent::class, 'library_id');
     }
 
     protected static function newFactory(): H5PLibraryFactory

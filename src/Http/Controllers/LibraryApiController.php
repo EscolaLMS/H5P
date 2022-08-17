@@ -4,6 +4,7 @@ namespace EscolaLms\HeadlessH5P\Http\Controllers;
 
 use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
 use EscolaLms\HeadlessH5P\Http\Requests\LibraryDeleteRequest;
+use EscolaLms\HeadlessH5P\Http\Requests\LibraryFilterRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\LibraryInstallRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\LibraryListRequest;
 use EscolaLms\HeadlessH5P\Http\Requests\LibraryUploadRequest;
@@ -81,7 +82,6 @@ class LibraryApiController extends EscolaLmsBaseController implements LibraryApi
 
     public function libraryInstall(LibraryInstallRequest $request): JsonResponse
     {
-        // TODO here is token sent somehow. validate this
         $library = $this->hh5pService->libraryInstall($request->getMachineName());
         return response()->json(['success' => true, 'data' => $library]);
     }
@@ -93,9 +93,9 @@ class LibraryApiController extends EscolaLmsBaseController implements LibraryApi
         return response()->json(['success' => true, 'data' => $library]);
     }
 
-    public function filter(Request $request): JsonResponse
+    public function filter(LibraryFilterRequest $request): JsonResponse
     {
-        $libraryParameters = $request->get('libraryParameters');
+        $libraryParameters = $request->getLibraryParameters();
         $libraries = $this->hh5pService->filterLibraries($libraryParameters);
 
         return response()->json(['success' => true, 'data' => $libraries]);
