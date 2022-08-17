@@ -495,7 +495,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $library = H5pLibrary::findOrFail($id);
 
         $libraryUsage = $this->getRepository()->getLibraryUsage($library->getKey());
-        if ($library->runnable || $libraryUsage['content'] > 0 || $libraryUsage['libraries'] > 0) {
+        if ($libraryUsage['content'] > 0 ) {
             return false;
         }
 

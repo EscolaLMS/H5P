@@ -87,18 +87,6 @@ class LibraryApiTest extends TestCase
         $response->assertUnauthorized();
     }
 
-    public function testLibraryDestroyShouldNotDestroyWhenLibraryIsRunnable(): void
-    {
-        $this->authenticateAsAdmin();
-        $this->uploadH5PLibrary();
-        $library = H5PLibrary::whereRunnable(1)->first();
-
-        $this->actingAs($this->user, 'api')
-            ->deleteJson('/api/admin/hh5p/library/' . $library->getKey())
-            ->assertUnprocessable()
-            ->assertJson(['message' => 'Library ' . $library->getKey() . ' note deleted']);
-    }
-
     public function testLibraryDestroyShouldNotDestroyWhenLibraryIsInUsage(): void
     {
         $this->authenticateAsAdmin();
