@@ -188,7 +188,8 @@ class LibraryApiTest extends TestCase
             ->postJson('/api/hh5p/filter?_token=' . $token)
             ->assertJson([
                 'message' => 'Could not parse post data.',
-            ]);
+            ])
+            ->assertUnprocessable();
     }
 
     public function testFilterLibraryParametersUnauthorized(): void
@@ -206,7 +207,16 @@ class LibraryApiTest extends TestCase
 
         $this
             ->getJson('/api/hh5p/content-hub-metadata-cache?_token=' . $token)
-            ->assertOk();
+            ->assertOk()
+            ->assertJsonStructure([
+                'data' => [
+                    'disciplines',
+                    'languages',
+                    'levels',
+                    'licenses',
+                ],
+                'success'
+            ]);
     }
 
     public function testHubContentHubMetadataCacheUnauthorized(): void

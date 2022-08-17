@@ -732,15 +732,9 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
      * End-point for filter parameter values according to semantics.
      *
      * @param {string} $libraryParameters
-     * @throws H5PException
      */
     public function filterLibraries($libraryParameters)
     {
-        $libraryParameters = json_decode($libraryParameters);
-        if (!$libraryParameters) {
-            throw new H5PException(H5PException::NO_LIBRARY_PARAMETERS);
-        }
-
         // Filter parameters and send back to client
         $this->getContentValidator()->validateLibrary($libraryParameters, (object) array('options' => array($libraryParameters->library)));
 
