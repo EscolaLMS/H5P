@@ -213,40 +213,7 @@ class LibraryApiTest extends TestCase
             ->assertUnauthorized();
     }
 
-    public function testLibraryDestroyShouldNotDestroyWhenLibraryIsInUsage(): void
-    {
-        $this->authenticateAsAdmin();
-        $this->uploadH5PLibrary();
-        $library = H5PLibrary::whereRunnable(0)->first();
+   
 
-        H5PLibrary::factory()
-            ->count(3)
-            ->has(H5PLibraryDependency::factory()->state(['required_library_id' => $library->getKey()]), 'dependencies')
-            ->create();
-        H5PContent::factory()
-            ->count(5)
-            ->has(H5PContentLibrary::factory()->state(['library_id' => $library->getKey()]), 'libraries')
-            ->create(['library_id' => $library->getKey()]);
-
-        $this->actingAs($this->user, 'api')
-            ->deleteJson('/api/admin/hh5p/library/' . $library->getKey())
-            ->assertUnprocessable()
-            ->assertJson(['message' => 'Library ' . $library->getKey() . ' note deleted']);
-    }
-
-    public function testLibraryDestroy(): void
-    {
-        $this->authenticateAsAdmin();
-        $this->uploadH5PLibrary();
-        $library = H5PLibrary::whereRunnable(0)->first();
-        H5PContentLibrary::query()->delete();
-        H5PLibraryDependency::query()->delete();
-
-        $this->actingAs($this->user, 'api')
-            ->deleteJson('/api/admin/hh5p/library/' . $library->getKey())
-            ->assertOk();
-
-        $this->actingAs($this->user, 'api')->deleteJson('/api/admin/hh5p/library/' .  $library->getKey())
-            ->assertNotFound();
-    }
+ 
 }
