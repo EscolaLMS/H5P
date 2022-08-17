@@ -18,12 +18,11 @@ use H5PStorage;
 use H5PValidator;
 use H5PPermission;
 use H5PHubEndpoints;
-
-
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
+use JsonSerializable;
 
 class HeadlessH5PService implements HeadlessH5PServiceContract
 {
@@ -505,7 +504,11 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         return true;
     }
 
-    public function getSettingsForContent($id)
+    /**
+     * @param $id
+     * @return array
+     */
+    public function getSettingsForContent($id): array
     {
         $content = $this->getCore()->loadContent($id);
         $content['metadata']['title'] = $content['title'];
@@ -590,11 +593,8 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
      *
      * @param bool $cacheOutdated The cache is outdated and not able to update
      */
-
-
     private function isContentTypeCacheUpdated()
     {
-
         // Update content type cache if enabled and too old
         $ct_cache_last_update = $this->core->h5pF->getOption('content_type_cache_updated_at', 0);
         $outdated_cache = $ct_cache_last_update + (60 * 60 * 24 * 7); // 1 week
@@ -607,21 +607,21 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
                 return false;
             }
         }
+
         return true;
     }
 
-
-    // TODO add annotations and update contract
-    // TODO add test
+    /**
+     * @return array
+     */
     public function getContentTypeCache(): array
     {
-
         // https://github.com/Lumieducation/H5P-Nodejs-library/wiki/Communication-with-the-H5P-Hub
-
         $cacheOutdated = $this->isContentTypeCacheUpdated();
 
         $canUpdateOrInstall = ($this->core->h5pF->hasPermission(H5PPermission::INSTALL_RECOMMENDED) ||
             $this->core->h5pF->hasPermission(H5PPermission::UPDATE_LIBRARIES));
+
         return array(
             'outdated' => $cacheOutdated && $canUpdateOrInstall,
             'libraries' => $this->editor->getLatestGlobalLibrariesData(),
@@ -634,30 +634,36 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         );
     }
 
-    // TODO add annotations and update contract
-    // TODO add test
+    /**
+     * @return JsonSerializable|string|null
+     */
     public function getUpdatedContentHubMetadataCache()
     {
         $lang = config('hh5p.language');
-        return $this->core->getUpdatedContentHubMetadataCache($lang);
+        return $this->getCore()->getUpdatedContentHubMetadataCache($lang);
     }
 
-    // TODO add annotations
-    // TODO add test
-    private function callHubEndpoint($endpoint)
+    /**
+     * @param $endpoint
+     * @return bool
+     * @throws H5PException
+     */
+    private function callHubEndpoint($endpoint): bool
     {
         $path = $this->core->h5pF->getUploadedH5pPath();
         $response = $this->core->h5pF->fetchExternalData(H5PHubEndpoints::createURL($endpoint), NULL, TRUE, empty($path) ? TRUE : $path);
         if (!$response) {
             throw new H5PException(H5PException::DOWNLOAD_FAILED . ' ' . $this->core->h5pF->getMessages('error'));
-            return FALSE;
         }
 
         return TRUE;
     }
 
-    // TODO add annotations and update contract
-    // TODO add test
+    /**
+     * @param $machineName
+     * @return array|void
+     * @throws H5PException
+     */
     public function libraryInstall($machineName)
     {
         // Determine which content type to install from post data
@@ -698,9 +704,13 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         return $this->getContentTypeCache();
     }
 
-    // TODO add annotations and update contract
-    // TODO add test
-    public function uploadLibrary($token, $file, $contentId)
+    /**
+     * @param $token
+     * @param $file
+     * @param $contentId
+     * @return array
+     */
+    public function uploadLibrary($token, $file, $contentId): array
     {
         $this->validatePackage($file, false, false);
         $this->getStorage()->savePackage(NULL, NULL, TRUE);
@@ -717,26 +727,31 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'contentTypes' => $this->getContentTypeCache()
         ];
     }
+
     /**
      * End-point for filter parameter values according to semantics.
      *
      * @param {string} $libraryParameters
+     * @throws H5PException
      */
-    // TODO add test
     public function filterLibraries($libraryParameters)
     {
-
         $libraryParameters = json_decode($libraryParameters);
         if (!$libraryParameters) {
             throw new H5PException(H5PException::NO_LIBRARY_PARAMETERS);
         }
 
         // Filter parameters and send back to client
-        $this->getContentValidator()->validateLibrary($libraryParameters, (object)array('options' => array($libraryParameters->library)));
+        $this->getContentValidator()->validateLibrary($libraryParameters, (object) array('options' => array($libraryParameters->library)));
 
         return $libraryParameters;
     }
 
+    /**
+     * @param array $libraries
+     * @param string|null $language
+     * @return array
+     */
     public function getTranslations(array $libraries, ?string $language = null): array
     {
         $language = $language ?? config('hh5p.language');

@@ -49,5 +49,15 @@ interface HeadlessH5PServiceContract
 
     public function deleteLibrary($id): bool;
 
+    public function uploadLibrary($token, $file, $contentId): array;
+
+    public function getContentTypeCache(): array;
+
+    public function getUpdatedContentHubMetadataCache();
+
+    public function libraryInstall($machineName);
+
+    public function filterLibraries($libraryParameters);
+
     public function getTranslations(array $libraries, ?string $language = null): array;
 }
