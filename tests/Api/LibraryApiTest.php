@@ -13,6 +13,8 @@ use EscolaLms\HeadlessH5P\Tests\Traits\H5PTestingTrait;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use EscolaLms\HeadlessH5P\Tests\TestCase;
 use Illuminate\Support\Facades\Route;
+use GuzzleHttp\Psr7\Response;
+
 
 class LibraryApiTest extends TestCase
 {
