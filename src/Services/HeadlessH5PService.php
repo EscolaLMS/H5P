@@ -496,7 +496,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $library = H5pLibrary::findOrFail($id);
 
         $libraryUsage = $this->getRepository()->getLibraryUsage($library->getKey());
-        if ($library->runnable || $libraryUsage['content'] > 0 || $libraryUsage['libraries'] > 0) {
+        if ($libraryUsage['content'] > 0 ) {
             return false;
         }
 
@@ -505,7 +505,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         return true;
     }
 
-    public function getSettingsForContent($id)
+    public function getSettingsForContent($id): array
     {
         $content = $this->getCore()->loadContent($id);
         $content['metadata']['title'] = $content['title'];
