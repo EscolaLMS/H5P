@@ -929,7 +929,7 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function deleteLibrary($library)
     {
-        $libraryObj = H5pLibrary::with(['dependencies', 'children', 'languages'])->findOrFail($library->id);
+        $libraryObj = H5pLibrary::with(['dependencies', 'languages'])->findOrFail($library->id);
 
         // Remove main library from files
         $libraryPath = storage_path('app/h5p/libraries/' . $library->name . '-' . $library->major_version . '.' . $library->minor_version);
