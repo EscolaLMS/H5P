@@ -172,7 +172,8 @@ class H5PLibrary extends Model
         'hasIcon',
         'libraryId',
         'languages',
-        'addTo'
+        'addTo',
+        'usage_count',
     ];
 
     protected $appends = [
@@ -187,7 +188,7 @@ class H5PLibrary extends Model
         'tutorialUrl',
         'hasIcon',
         'libraryId',
-        'addTo'
+        'addTo',
     ];
 
     protected $hidden = [
@@ -270,6 +271,11 @@ class H5PLibrary extends Model
     public function getHasIconAttribute():string
     {
         return isset($this->attributes['has_icon']) ? $this->attributes['has_icon'] : '';
+    }
+
+    public function getUsageCountAttribute(): int
+    {
+        return $this->contents()->count();
     }
 
     public function dependencies(): HasMany
