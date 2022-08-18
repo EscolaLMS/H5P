@@ -171,7 +171,6 @@ class H5PLibrary extends Model
         'tutorialUrl',
         'hasIcon',
         'libraryId',
-        'children',
         'languages',
         'addTo'
     ];
@@ -276,11 +275,6 @@ class H5PLibrary extends Model
     public function dependencies(): HasMany
     {
         return $this->hasMany(H5PLibraryDependency::class, 'library_id', 'id');
-    }
-
-    public function children(): BelongsToMany
-    {
-        return $this->belongsToMany(H5PLibrary::class, 'hh5p_libraries_dependencies', 'library_id', 'required_library_id')->with('children');
     }
 
     public function languages(): HasMany

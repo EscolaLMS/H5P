@@ -44,7 +44,6 @@ class LibraryResource extends JsonResource
             'tutorialUrl' => $this->tutorialUrl,
             'hasIcon' => $this->hasIcon,
             'libraryId' => $this->libraryId,
-            'children' => $this->children,
             'languages' => $this->languages,
         ];
     }
