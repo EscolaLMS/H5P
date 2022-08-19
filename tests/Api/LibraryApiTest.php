@@ -57,7 +57,9 @@ class LibraryApiTest extends TestCase
                 'id',
                 'machineName',
                 'majorVersion',
-                'minorVersion'
+                'minorVersion',
+                'contentsCount',
+                'requiredLibrariesCount'
             ]]
         ]);
     }
@@ -215,7 +217,26 @@ class LibraryApiTest extends TestCase
             ->assertUnauthorized();
     }
 
-   
+    public function testGetLibrariesAdmin(): void
+    {
+        $this->authenticateAsAdmin();
 
- 
+        $lib1 = H5PLibrary::factory()->create();
+        $lib2 = H5PLibrary::factory()->create();
+        H5PLibraryDependency::factory()->count(3)->create(['required_library_id' => $lib1->getKey()]);
+        H5PLibraryDependency::factory()->count(7)->create(['required_library_id' => $lib2->getKey()]);
+        H5PContent::factory()->count(2)->create(['library_id' => $lib1->getKey()]);
+        H5PContent::factory()->count(5)->create(['library_id' => $lib2->getKey()]);
+
+        $response = $this
+            ->actingAs($this->user, 'api')
+            ->getJson('api/admin/hh5p/libraries')
+            ->assertOk();
+
+        $data = $response->getData();
+        $this->assertEquals(2, current(array_filter($data, fn($item) => $item->id === $lib1->getKey()))->contentsCount);
+        $this->assertEquals(5, current(array_filter($data, fn($item) => $item->id === $lib2->getKey()))->contentsCount);
+        $this->assertEquals(3, current(array_filter($data, fn($item) => $item->id === $lib1->getKey()))->requiredLibrariesCount);
+        $this->assertEquals(7, current(array_filter($data, fn($item) => $item->id === $lib2->getKey()))->requiredLibrariesCount);
+    }
 }

@@ -172,7 +172,9 @@ class H5PLibrary extends Model
         'hasIcon',
         'libraryId',
         'languages',
-        'addTo'
+        'addTo',
+        'contentsCount',
+        'requiredLibrariesCount',
     ];
 
     protected $appends = [
@@ -187,7 +189,7 @@ class H5PLibrary extends Model
         'tutorialUrl',
         'hasIcon',
         'libraryId',
-        'addTo'
+        'addTo',
     ];
 
     protected $hidden = [
@@ -272,9 +274,24 @@ class H5PLibrary extends Model
         return isset($this->attributes['has_icon']) ? $this->attributes['has_icon'] : '';
     }
 
+    public function getContentsCountAttribute(): int
+    {
+        return $this->contents()->count();
+    }
+
+    public function getRequiredLibrariesCountAttribute(): int
+    {
+        return $this->requiredLibraries()->count();
+    }
+
     public function dependencies(): HasMany
     {
         return $this->hasMany(H5PLibraryDependency::class, 'library_id', 'id');
+    }
+
+    public function requiredLibraries(): HasMany
+    {
+        return $this->hasMany(H5PLibraryDependency::class, 'required_library_id', 'id');
     }
 
     public function languages(): HasMany

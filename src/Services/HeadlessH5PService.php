@@ -170,15 +170,19 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     public function getLibraries(string $machineName = null, string $major_version = null, string $minor_version = null)
     {
         $lang = config('hh5p.language');
-
         $libraries_url = url(config('hh5p.h5p_library_url'));
+
         if ($machineName) {
             $defaultLang = $this->getEditor()->getLibraryLanguage($machineName, $major_version, $minor_version, $lang);
 
             return $this->getEditor()->getLibraryData($machineName, $major_version, $minor_version, $lang, '', $libraries_url, $defaultLang);
         }
 
-        return $this->getEditor()->getLibraries();
+        return collect($this->getEditor()->getLibraries())
+            ->each(fn($item) => $item
+                ->append('contentsCount')
+                ->append('requiredLibrariesCount')
+            );
     }
 
     public function getEditorSettings($content = null): array
@@ -495,7 +499,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $library = H5pLibrary::findOrFail($id);
 
         $libraryUsage = $this->getRepository()->getLibraryUsage($library->getKey());
-        if ($libraryUsage['content'] > 0 ) {
+        if ($libraryUsage['content'] > 0) {
             return false;
         }
 

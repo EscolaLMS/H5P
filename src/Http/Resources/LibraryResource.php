@@ -45,6 +45,8 @@ class LibraryResource extends JsonResource
             'hasIcon' => $this->hasIcon,
             'libraryId' => $this->libraryId,
             'languages' => $this->languages,
+            'contentsCount' => $this->contentsCount,
+            'requiredLibrariesCount' => $this->requiredLibrariesCount,
         ];
     }
 }
