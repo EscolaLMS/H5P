@@ -8,9 +8,9 @@
 [![downloads](https://img.shields.io/packagist/l/escolalms/headless-h5p)](https://packagist.org/packages/escolalms/headless-h5p)
 [![Maintainability](https://api.codeclimate.com/v1/badges/6316e8dc93a06d28c6a0/maintainability)](https://codeclimate.com/github/EscolaLMS/H5P/maintainability)
 
-## Working demo 
+## Working demo
 
-Proof of concept demo is available at [https://github.com/EscolaLMS/h5p-laravel-demo](https://github.com/EscolaLMS/h5p-laravel-demo) and deployed to heroku [https://h5p-laravel-demo.herokuapp.com/](https://h5p-laravel-demo.herokuapp.com/). 
+Proof of concept demo is available at [https://h5p-laravel-demo.stage.etd24.pl/](https://h5p-laravel-demo.stage.etd24.pl/).
 
 ## Features
 
@@ -33,8 +33,8 @@ To play the content you can use [EscolaLMS H5P Player](https://github.com/Escola
 
 1. `composer require escolalms/headless-h5p`
 2. `php artisan migrate`
-3. `php artisan h5p:storage-link` see below 
-4. `php db:seed --class="EscolaLms\HeadlessH5P\Database\Seeders\PermissionTableSeeder"  see below 
+3. `php artisan h5p:storage-link` see below
+4. `php db:seed --class="EscolaLms\HeadlessH5P\Database\Seeders\PermissionTableSeeder" see below
 
 ### Storage links
 
@@ -60,17 +60,17 @@ location ~* \.(eot|ttf|woff|woff2|jpg|jpeg|gif|png|wav|mp3|mp4|mov|ogg|webv)$ {
 }
 ```
 
-### Authorisation 
+### Authorisation
 
-Most of the endpoints require authorisation, this is possible with laravel passport 
+Most of the endpoints require authorisation, this is possible with laravel passport
 
-There is a [seeder](database/seeders/PermissionTableSeeder.php) to must be run in order to authrize 
+There is a [seeder](database/seeders/PermissionTableSeeder.php) to must be run in order to authrize
 
-User model is taken from [Auth](https://github.com/EscolaLMS/Auth) package. 
+User model is taken from [Auth](https://github.com/EscolaLMS/Auth) package.
 
 ### Seeder
 
-To seed content and library 
+To seed content and library
 
 ```
 php artisan db:seed --class="\EscolaLms\HeadlessH5P\Database\Seeders\ContentLibrarySeeder"
