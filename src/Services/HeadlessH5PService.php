@@ -178,7 +178,11 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             return $this->getEditor()->getLibraryData($machineName, $major_version, $minor_version, $lang, '', $libraries_url, $defaultLang);
         }
 
-        return collect($this->getEditor()->getLibraries())->each(fn($item) => $item->append('usage_count'));
+        return collect($this->getEditor()->getLibraries())
+            ->each(fn($item) => $item
+                ->append('contentsCount')
+                ->append('requiredLibrariesCount')
+            );
     }
 
     public function getEditorSettings($content = null): array
