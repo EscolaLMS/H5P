@@ -32,11 +32,6 @@ class H5PRepository implements H5PFrameworkInterface
         $this->mainData = $mainData;
     }
 
-    public function getMainData(): array
-    {
-        return $this->mainData;
-    }
-
     /**
      * Returns info for the current platform.
      *
