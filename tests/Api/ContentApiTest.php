@@ -210,6 +210,43 @@ class ContentApiTest extends TestCase
         $this->assertContentListResponse($response);
     }
 
+    public function testContentUnpaginatedList(): void
+    {
+        H5PContent::factory()
+            ->count(50)
+            ->create(['library_id' => H5PLibrary::factory()->create(['runnable' => 1])->getKey()]);
+
+        $this->authenticateAsAdmin();
+        $response = $this->actingAs($this->user, 'api')
+            ->get('/api/admin/hh5p/content?per_page=0');
+
+        $response
+            ->assertOk()
+            ->assertJsonCount(50, 'data')
+            ->assertJsonStructure(['data' => [[
+                'id',
+                'created_at',
+                'updated_at',
+                'user_id',
+                'author',
+                'title',
+                'library_id',
+                'library' => [
+                    'id',
+                    'name',
+                    'title',
+                    'created_at',
+                    'updated_at',
+                    'machineName',
+                    'uberName',
+                    'libraryId',
+                ],
+                'slug',
+                'filtered',
+                'disable',
+            ]]]);
+    }
+
     public function testContentListFilterByAuthorId(): void
     {
         H5PContent::factory()
@@ -489,11 +526,13 @@ class ContentApiTest extends TestCase
         $response->assertStatus(200);
 
         $data = $response->getData()->data;
-
         $this->assertTrue(is_integer($data->id));
         $this->assertTrue(is_object($data->params));
+        $this->assertEquals('Arithmetic Quiz', $data->title);
+        $this->assertNotEquals('New Content (from file)', $data->title);
         $this->assertDatabaseHas('hh5p_contents', [
-            'uuid' => $data->uuid
+            'uuid' => $data->uuid,
+            'title' => 'Arithmetic Quiz'
         ]);
     }
 

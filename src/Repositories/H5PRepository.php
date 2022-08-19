@@ -10,8 +10,8 @@ use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Models\H5PLibraryDependency;
 use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
 use EscolaLms\HeadlessH5P\Models\H5pLibrariesHubCache;
+use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PFrameworkInterface;
 use H5PPermission;
-use H5PFrameworkInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\DB;
@@ -24,6 +24,13 @@ class H5PRepository implements H5PFrameworkInterface
     protected $messages = ['error' => [], 'updated' => []];
 
     private array $downloadFiles;
+
+    private array $mainData;
+
+    public function setMainData(array $mainData): void
+    {
+        $this->mainData = $mainData;
+    }
 
     /**
      * Returns info for the current platform.
@@ -519,7 +526,7 @@ class H5PRepository implements H5PFrameworkInterface
 
     private function fixContentParamsMetadataLibraryTitle($content)
     {
-        $defaultTitle = 'New Content (from file)';
+        $defaultTitle = isset($this->mainData['title']) ? $this->mainData['title'] : 'New Content (from file)';
 
         if (is_array($content['library'])) {
             $content['library_id'] = isset($content['library']['libraryId']) ? $content['library']['libraryId'] : $content['library']['id'];
