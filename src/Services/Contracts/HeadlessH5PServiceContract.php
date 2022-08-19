@@ -2,10 +2,10 @@
 
 namespace EscolaLms\HeadlessH5P\Services\Contracts;
 
+use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PFrameworkInterface;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 
-use H5PFrameworkInterface;
 use H5PFileStorage;
 use H5PStorage;
 use H5PCore;

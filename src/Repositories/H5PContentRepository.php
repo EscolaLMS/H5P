@@ -192,6 +192,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
         $valid = $this->hh5pService->validatePackage($file, false, false);
 
         if ($valid) {
+            $this->hh5pService->getRepository()->setMainData($this->hh5pService->getCore()->mainJsonData);
             $this->hh5pService->getStorage()->savePackage();
             // $this->hh5pService->getRepository()->deleteLibraryUsage($content['id']);
             $id = $this->hh5pService->getStorage()->contentId;
