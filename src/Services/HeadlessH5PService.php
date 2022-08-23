@@ -629,7 +629,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             $this->core->h5pF->hasPermission(H5PPermission::UPDATE_LIBRARIES));
 
         return array(
-            'outdated' => $cacheOutdated && $canUpdateOrInstall,
+            'outdated' => !$cacheOutdated && $canUpdateOrInstall,
             'libraries' => $this->editor->getLatestGlobalLibrariesData(),
             'recentlyUsed' => $this->editor->ajaxInterface->getAuthorsRecentlyUsedLibraries(),
             'apiVersion' => array(
