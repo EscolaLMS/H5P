@@ -85,7 +85,7 @@ class ContentApiController extends EscolaLmsBaseController implements ContentApi
     public function show(AdminContentReadRequest $request, int $id): JsonResponse
     {
         try {
-            $settings = $this->hh5pService->getContentSettings($id);
+            $settings = $this->hh5pService->getContentSettings($id, $request->bearerToken());
         } catch (Exception $error) {
             return $this->sendError($error->getMessage(), 422);
         }
@@ -96,7 +96,7 @@ class ContentApiController extends EscolaLmsBaseController implements ContentApi
     public function frontShow(ContentReadRequest $request, string $uuid): JsonResponse
     {
         try {
-            $settings = $this->hh5pService->getContentSettings($request->getH5PContent()->id);
+            $settings = $this->hh5pService->getContentSettings($request->getH5PContent()->id, $request->bearerToken());
         } catch (Exception $error) {
             return $this->sendError($error->getMessage(), 422);
         }

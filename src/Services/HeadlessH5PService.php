@@ -363,7 +363,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         return $settings;
     }
 
-    public function getContentSettings($id): array
+    public function getContentSettings($id, ?string $token = null): array
     {
         $lang = config('hh5p.language');
 
@@ -383,7 +383,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'saveFreq' => false,
             'siteUrl' => $config['domain'],
             'l10n' => [
-                'H5P' => __('h5p::h5p'),
+                'H5P' => __('h5p::h5p')['h5p'],
             ],
             'hubIsEnabled' => config('hh5p.h5p_hub_is_enabled'),
             'crossorigin' => 'anonymous',
@@ -449,7 +449,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'jsonContent' => $safe_parameters,
             'fullScreen' => $content['library']['fullscreen'],
             // TODO check all of those endpointis are working fine
-            'exportUrl' => config('hh5p.h5p_export') ? route('hh5p.content.export', [$content['id']]) : '',
+            'exportUrl' => config('hh5p.h5p_export') && $token ? route('hh5p.content.export', [$content['id'], '_token' => $token]) : '',
             //'embedCode'       => '<iframe src="'.route('h5p.embed', ['id' => $content['id']]).'" width=":w" height=":h" frameborder="0" allowfullscreen="allowfullscreen"></iframe>',
             //'resizeCode'      => '<script src="'.self::get_h5pcore_url('/js/h5p-resizer.js').'" charset="UTF-8"></script>',
             //'url'             => route('h5p.embed', ['id' => $content['id']]),
