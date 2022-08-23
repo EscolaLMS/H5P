@@ -548,6 +548,21 @@ class ContentApiTest extends TestCase
             ->assertDownload();
     }
 
+    public function testContentExportByTokenInQuery(): void
+    {
+        $this->authenticateAsAdmin();
+        $this->authenticateAsAdmin();
+        $token = $this->user->createToken("test")->accessToken;
+
+        $data = $this->uploadH5PFile();
+        $id = $data['id'];
+
+        $this
+            ->get("/api/admin/hh5p/content/$id/export?_token=$token")
+            ->assertStatus(200)
+            ->assertDownload();
+    }
+
     public function testGuestCannotCreateContent(): void
     {
         $library = H5PLibrary::factory()->create(['runnable' => 1]);
