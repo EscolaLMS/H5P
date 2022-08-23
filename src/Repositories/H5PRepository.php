@@ -17,7 +17,6 @@ use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\DB;
 use DateTime;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
 
 class H5PRepository implements H5PFrameworkInterface
 {
@@ -189,8 +188,8 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function getLibraryFileUrl($libraryFolderName, $fileName)
     {
-        $path = 'h5p/libraries/' . $libraryFolderName . '/' . $fileName;
-        return Storage::disk('local')->exists($path) ? Storage::disk('local')->url($path) : null;
+        $path = '/h5p/libraries/' . $libraryFolderName . '/' . $fileName;
+        return file_exists(storage_path($path)) ? env('APP_URL') . $path : null;
     }
 
     /**
