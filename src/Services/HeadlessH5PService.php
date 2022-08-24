@@ -454,7 +454,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             //'resizeCode'      => '<script src="'.self::get_h5pcore_url('/js/h5p-resizer.js').'" charset="UTF-8"></script>',
             //'url'             => route('h5p.embed', ['id' => $content['id']]),
             'title' => $content['title'],
-            'displayOptions' => $this->getCore()->getDisplayOptionsForView(0, $content['id']),
+            'displayOptions' => $this->getCore()->getDisplayOptionsForView(!config('hh5p.h5p_show_display_option'), $content['id']),
             'contentUserData' => [
                 0 => [
                     'state' => '{}', // TODO this should be retrived
@@ -538,7 +538,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             //'resizeCode'      => '<script src="'.self::get_h5pcore_url('/js/h5p-resizer.js').'" charset="UTF-8"></script>',
             //'url'             => route('h5p.embed', ['id' => $content['id']]),
             'title' => $content['title'],
-            'displayOptions' => $this->getCore()->getDisplayOptionsForView(0, $content['id']),
+            'displayOptions' => $this->getCore()->getDisplayOptionsForView(!config('hh5p.h5p_show_display_option'), $content['id']),
             'contentUserData' => [
                 0 => [
                     'state' => '{}', // TODO get user actual state
