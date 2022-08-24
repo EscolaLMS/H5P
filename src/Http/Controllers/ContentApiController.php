@@ -35,12 +35,12 @@ class ContentApiController extends EscolaLmsBaseController implements ContentApi
     {
         $contentFilterDto = ContentFilterCriteriaDto::instantiateFromRequest($request);
         $columns = [
-            'hh5p_contents.title',
             'hh5p_contents.id',
             'hh5p_contents.uuid',
             'hh5p_contents.library_id',
             'hh5p_contents.user_id',
-            'hh5p_contents.author'
+            'hh5p_contents.author',
+            'hh5p_contents.parameters',
         ];
         $list = $request->get('per_page') !== null && $request->get('per_page') == 0 ?
             $this->contentRepository->unpaginatedList($contentFilterDto, $columns) :
@@ -52,7 +52,11 @@ class ContentApiController extends EscolaLmsBaseController implements ContentApi
     public function update(ContentUpdateRequest $request, int $id): JsonResponse
     {
         try {
-            $contentId = $this->contentRepository->edit($id, $request->get('title'), $request->get('library'), $request->get('params'), $request->get('nonce'));
+            $contentId = $this->contentRepository->edit(
+                $id,
+                $request->get('library'), $request->get('params'),
+                $request->get('nonce')
+            );
         } catch (Exception $error) {
             return $this->sendError($error->getMessage(), 422);
         }
@@ -63,7 +67,11 @@ class ContentApiController extends EscolaLmsBaseController implements ContentApi
     public function store(ContentCreateRequest $request): JsonResponse
     {
         try {
-            $contentId = $this->contentRepository->create($request->get('title'), $request->get('library'), $request->get('params'), $request->get('nonce'));
+            $contentId = $this->contentRepository->create(
+                $request->get('library'),
+                $request->get('params'),
+                $request->get('nonce')
+            );
         } catch (Exception $error) {
             return $this->sendError($error->getMessage(), 422);
         }

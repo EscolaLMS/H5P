@@ -29,7 +29,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
         $this->hh5pService = $hh5pService;
     }
 
-    public function create(string $title, string $library, string $params, string $nonce): int
+    public function create(string $library, string $params, string $nonce): int
     {
         $user = auth()->user();
         $libNames = $this->hh5pService->getCore()->libraryFromString($library);
@@ -49,8 +49,8 @@ class H5PContentRepository implements H5PContentRepositoryContract
         }
 
         $content = $this->hh5pService->getCore()->saveContent([
+            'title' => $json->metadata->title ?? null,
             'library_id' => $libDb->id,
-            'title' => $title,
             'library' => $library,
             'parameters' => $params,
             'nonce' => $nonce,
@@ -63,7 +63,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
         return $content;
     }
 
-    public function edit(int $id, string $title, string $library, string $params, string $nonce): int
+    public function edit(int $id, string $library, string $params, string $nonce): int
     {
         $libNames = $this->hh5pService->getCore()->libraryFromString($library);
 
@@ -90,9 +90,9 @@ class H5PContentRepository implements H5PContentRepositoryContract
         }
 
         $id = $this->hh5pService->getCore()->saveContent([
+            'title' => $json->metadata->title ?? null,
             'id' => $id,
             'library_id' => $libDb->id,
-            'title' => $title,
             'library' => $library,
             'parameters' => $params,
             //'nonce'=>$nonce

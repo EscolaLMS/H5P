@@ -99,7 +99,8 @@ class H5PContent extends Model
 
     protected $appends = [
         'params',
-        'metadata'
+        'metadata',
+        'title'
     ];
 
     protected $visible = [
@@ -121,6 +122,12 @@ class H5PContent extends Model
         'embed_type',
         'nonce'
     ];
+
+    public function getTitleAttribute()
+    {
+        $parameters = json_decode($this->parameters);
+        return $parameters->metadata->title ?? null;
+    }
 
     public function getParamsAttribute()
     {

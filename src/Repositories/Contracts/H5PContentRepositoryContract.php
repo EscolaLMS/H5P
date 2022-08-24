@@ -11,9 +11,9 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 interface H5PContentRepositoryContract
 {
-    public function create(string $title, string $library, string $params, string $nonce): int;
+    public function create(string $library, string $params, string $nonce): int;
 
-    public function edit(int $id, string $title, string $library, string $params, string $nonce): int;
+    public function edit(int $id, string $library, string $params, string $nonce): int;
 
     public function list(
         ContentFilterCriteriaDto $contentFilterDto,

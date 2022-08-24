@@ -17,7 +17,6 @@ class ContentCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title'   => ['required', 'string'],
             'library' => ['required', 'string'],
             'params'  => ['required', 'string'],
             'nonce'  => ['required', 'string'],

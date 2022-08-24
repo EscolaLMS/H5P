@@ -536,35 +536,38 @@ class H5PRepository implements H5PFrameworkInterface
         // `parameters` is string, encode
         if (isset($content['parameters']) && is_string($content['parameters'])) {
             $parameters = json_decode($content['parameters']);
-            if (is_object($parameters) && isset($parameters->params)) {
-                $parameters = $parameters->params;
+
+            if (is_array($parameters) && isset($parameters['metadata'])) {
+                $metadata = $parameters['metadata'];
             }
             if (is_object($parameters) && isset($parameters->metadata)) {
                 $metadata = $parameters->metadata;
             }
+            if (is_object($parameters) && isset($parameters->params)) {
+                $parameters = $parameters->params;
+            }
             if (is_array($parameters) && isset($parameters['params'])) {
                 $parameters = $parameters['params'];
-            }
-            if (is_array($parameters) && isset($parameters['metadata'])) {
-                $metadata = $parameters['metadata'];
             }
         }
 
         // `params` is string, encode
         if (!isset($parameters) && is_string($content['params'])) {
             $parameters = json_decode($content['params']);
-            if (is_object($parameters) && isset($parameters->params)) {
-                $parameters = $parameters->params;
-            }
+
             if (is_object($parameters) && isset($parameters->metadata)) {
                 $metadata = $parameters->metadata;
-            }
-            if (is_array($parameters) && isset($parameters['params'])) {
-                $parameters = $parameters['params'];
             }
             if (is_array($parameters) && isset($parameters['metadata'])) {
                 $metadata = $parameters['metadata'];
             }
+            if (is_object($parameters) && isset($parameters->params)) {
+                $parameters = $parameters->params;
+            }
+            if (is_array($parameters) && isset($parameters['params'])) {
+                $parameters = $parameters['params'];
+            }
+
         }
         // `params is array
         if (!isset($parameters) && is_array($content['params'])) {
@@ -972,6 +975,7 @@ class H5PRepository implements H5PFrameworkInterface
     public function loadContent($id)
     {
         $content = H5PContent::with('library')->where(['id' => $id])->firstOrFail();
+
         if (is_null($content->library)) {
             throw new H5PException(H5PException::LIBRARY_NOT_FOUND);
         }
@@ -979,7 +983,6 @@ class H5PRepository implements H5PFrameworkInterface
         $content['contentId'] = $content['id']; // : Identifier for the content
         $content['params'] = json_encode($content['params']); // : json content as string
         $content['embedType'] = \H5PCore::determineEmbedType($content['embed_type'] ?? 'div', $content['library']['embed_types']); // : csv of embed types
-        //$content ['title'] // : The contents title
         //$content ['language'] // : Language code for the content
         $content['libraryId'] = $content['library_id']; // : Id for the main library
         $content['libraryName'] = $content['library']['machineName']; // The library machine name
