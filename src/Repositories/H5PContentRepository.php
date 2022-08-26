@@ -49,7 +49,6 @@ class H5PContentRepository implements H5PContentRepositoryContract
         }
 
         $content = $this->hh5pService->getCore()->saveContent([
-            'title' => $json->metadata->title ?? null,
             'library_id' => $libDb->id,
             'library' => $library,
             'parameters' => $params,
@@ -90,7 +89,6 @@ class H5PContentRepository implements H5PContentRepositoryContract
         }
 
         $id = $this->hh5pService->getCore()->saveContent([
-            'title' => $json->metadata->title ?? null,
             'id' => $id,
             'library_id' => $libDb->id,
             'library' => $library,
@@ -198,7 +196,6 @@ class H5PContentRepository implements H5PContentRepositoryContract
             $id = $this->hh5pService->getStorage()->contentId;
 
             $content = $this->hh5pService->getCore()->loadContent($id);
-            $content['metadata']['title'] = $content['title'];
 
             $safe_parameters = $this->hh5pService->getCore()->filterParameters($content);
 
