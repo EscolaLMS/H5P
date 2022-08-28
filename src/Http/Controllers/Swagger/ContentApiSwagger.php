@@ -17,11 +17,6 @@ use EscolaLms\HeadlessH5P\Http\Requests\LibraryStoreRequest;
      *      schema="H5PContentStore",
      *      type="object",
      *      @OA\Property(
-     *          property="title",
-     *          description="Title of new content",
-     *          type="string"
-     *      ),
-     *      @OA\Property(
      *          property="library",
      *          description="ubername of library",
      *          type="string"
