@@ -881,10 +881,6 @@
         "schemas": {
             "H5PContentStore": {
                 "properties": {
-                    "title": {
-                        "description": "Title of new content",
-                        "type": "string"
-                    },
                     "library": {
                         "description": "ubername of library",
                         "type": "string"
