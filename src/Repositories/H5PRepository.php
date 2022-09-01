@@ -582,10 +582,6 @@ class H5PRepository implements H5PFrameworkInterface
             $content['nonce'] = bin2hex(random_bytes(4));
         }
 
-        if (!isset($content['title'])) {
-            $content['title'] = $defaultTitle;
-        }
-
         if (!isset($metadata)) {
             $metadata = ['license' => 'U', 'authors' => [], 'changes' => [], 'extraTitle' => $defaultTitle, 'title' => $defaultTitle];
         }
