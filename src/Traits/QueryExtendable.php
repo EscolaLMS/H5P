@@ -46,7 +46,7 @@ trait QueryExtendable
     public static function applyQueryGroupBy(Builder $query): Builder
     {
         foreach (self::$extendQueryGroupBy as $extension) {
-            $query->groupBy($extension());
+            $query->groupByRaw(implode(', ', $extension()));
         }
 
         return $query;
