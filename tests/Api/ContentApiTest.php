@@ -188,7 +188,7 @@ class ContentApiTest extends TestCase
     public function testContentList(): void
     {
         $library = H5PLibrary::factory()->create(['runnable' => 1]);
-        H5PContent::factory()
+        $h5pContents = H5PContent::factory()
             ->count(10)
             ->create([
                 'library_id' => $library->getKey()
@@ -199,11 +199,14 @@ class ContentApiTest extends TestCase
             ->get('/api/admin/hh5p/content');
 
         $this->assertContentListResponse($response);
+        $data = $response->getData()->data;
+        $this->assertEquals($h5pContents->last()->getKey(), $data[0]->id);
+        $this->assertEquals($h5pContents->first()->getKey(), $data[count($data) - 1]->id);
     }
 
     public function testContentUnpaginatedList(): void
     {
-        H5PContent::factory()
+        $h5pContents = H5PContent::factory()
             ->count(50)
             ->create(['library_id' => H5PLibrary::factory()->create(['runnable' => 1])->getKey()]);
 
@@ -236,6 +239,10 @@ class ContentApiTest extends TestCase
                 'filtered',
                 'disable',
             ]]]);
+
+        $data = $response->getData()->data;
+        $this->assertEquals($h5pContents->last()->getKey(), $data[0]->id);
+        $this->assertEquals($h5pContents->first()->getKey(), $data[count($data) - 1]->id);
     }
 
     public function testContentListFilterByAuthorId(): void

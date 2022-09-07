@@ -250,9 +250,9 @@ class H5PContentRepository implements H5PContentRepositoryContract
 
     private function getQueryContent(ContentFilterCriteriaDto $contentFilterDto, array $columns = ['*']): Builder
     {
-        $query = H5PContent::with(
-            ['library']
-        )->select($columns);
+        $query = H5PContent::with(['library'])
+            ->select($columns)
+            ->orderBy('id', 'desc');
 
         $query = self::applyQueryJoin($query);
         $query = self::applyQuerySelect($query);
