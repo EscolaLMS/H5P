@@ -64,6 +64,7 @@ class ContentLibrarySeeder extends Seeder
 
         $this->hh5pService = $hh5pService;
         $libs = [
+            // TODO this is not working (after removing title attributes from model 
             /*
             "example-content-arts-of-europe-443085.h5p",
             "advanced-blanks-example-1-503253.h5p",
@@ -111,8 +112,8 @@ class ContentLibrarySeeder extends Seeder
             "arithmetic-quiz-22-57860.h5p",
             "agamotto-80158.h5p",
             "advent-blue-snowman-1075566.h5p",
-            */
             "accordion-6-7138.h5p"
+            */
         ];
 
         foreach ($libs as $lib) {
