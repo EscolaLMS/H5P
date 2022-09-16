@@ -42,7 +42,6 @@ class ContentLibrarySeeder extends Seeder
         $h5p_upgrade_only = false;
 
         if ($this->hh5pService->getValidator()->isValidPackage($skipContent, $h5p_upgrade_only)) {
-            $content['title'] = $lib;
             $this->hh5pService->getStorage()->savePackage($content, null, $skipContent);
         } else {
             echo "Invalid package $filename \n";
@@ -64,8 +63,6 @@ class ContentLibrarySeeder extends Seeder
 
         $this->hh5pService = $hh5pService;
         $libs = [
-            // TODO this is not working (after removing title attributes from model 
-            /*
             "example-content-arts-of-europe-443085.h5p",
             "advanced-blanks-example-1-503253.h5p",
             "course-presentation-21-21180.h5p",
@@ -113,7 +110,6 @@ class ContentLibrarySeeder extends Seeder
             "agamotto-80158.h5p",
             "advent-blue-snowman-1075566.h5p",
             "accordion-6-7138.h5p"
-            */
         ];
 
         foreach ($libs as $lib) {
