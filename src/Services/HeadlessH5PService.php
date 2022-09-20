@@ -20,6 +20,7 @@ use H5PPermission;
 use H5PHubEndpoints;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
 use JsonSerializable;
@@ -274,7 +275,6 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         }
 
         $language_script = '/language/' . $lang . '.js';
-
         $settings['editor']['assets']['js'][] = $config['get_h5peditor_url'] . ($language_script);
 
         $h5pEditorDir = file_exists(__DIR__ . '/../../vendor/h5p/h5p-editor')
@@ -284,6 +284,10 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             ? __DIR__ . '/../../vendor/h5p/h5p-core'
             : __DIR__ . '/../../../../../vendor/h5p/h5p-core';
 
+        if ($lang === 'pl') {
+            $resourceFile = __DIR__ . '/../../resources/js/pl.js';
+            File::replace($h5pEditorDir . $language_script, File::get($resourceFile));
+        }
 
         $settings['core']['scripts'] = $this->margeFileList(
             $settings['core']['scripts'],
@@ -302,7 +306,6 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
             [$h5pEditorDir, $h5pCoreDir]
         );*/
-
 
         $settings['editor']['assets']['js'] = $this->margeFileList(
             $settings['editor']['assets']['js'],
