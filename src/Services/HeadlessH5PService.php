@@ -274,20 +274,9 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             }
         }
 
-        $language_script = '/language/' . $lang . '.js';
+        [$h5pEditorDir, $h5pCoreDir] = $this->getH5pEditorDir();
+        $language_script = $this->getEditorLangScript($lang, $h5pEditorDir);
         $settings['editor']['assets']['js'][] = $config['get_h5peditor_url'] . ($language_script);
-
-        $h5pEditorDir = file_exists(__DIR__ . '/../../vendor/h5p/h5p-editor')
-            ? __DIR__ . '/../../vendor/h5p/h5p-editor'
-            : __DIR__ . '/../../../../../vendor/h5p/h5p-editor';
-        $h5pCoreDir = file_exists(__DIR__ . '/../../vendor/h5p/h5p-core')
-            ? __DIR__ . '/../../vendor/h5p/h5p-core'
-            : __DIR__ . '/../../../../../vendor/h5p/h5p-core';
-
-        if ($lang === 'pl') {
-            $resourceFile = __DIR__ . '/../../resources/js/pl.js';
-            File::replace($h5pEditorDir . $language_script, File::get($resourceFile));
-        }
 
         $settings['core']['scripts'] = $this->margeFileList(
             $settings['core']['scripts'],
@@ -415,13 +404,9 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         }
         //$settings['core']['scripts'][] = $config['get_h5peditor_url'].'/language/' . $lang . '.js';
 
-        $h5pEditorDir = file_exists(__DIR__ . '/../../vendor/h5p/h5p-editor')
-            ? __DIR__ . '/../../vendor/h5p/h5p-editor'
-            : __DIR__ . '/../../../../../vendor/h5p/h5p-editor';
-        $h5pCoreDir = file_exists(__DIR__ . '/../../vendor/h5p/h5p-core')
-            ? __DIR__ . '/../../vendor/h5p/h5p-core'
-            : __DIR__ . '/../../../../../vendor/h5p/h5p-core';
-
+        [$h5pEditorDir, $h5pCoreDir] = $this->getH5pEditorDir();
+        $language_script = $this->getEditorLangScript($lang, $h5pEditorDir);
+        $settings['editor']['assets']['js'][] = $config['get_h5peditor_url'] . ($language_script);
         $settings['core']['scripts'] = $this->margeFileList(
             $settings['core']['scripts'],
             'js',
@@ -470,8 +455,6 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
         $settings['nonce'] = $settings['contents']["cid-$id"]['nonce'];
 
-        $language_script = '/language/' . $lang . '.js';
-
         $preloaded_dependencies = $this->getCore()->loadContentDependencies($id, 'preloaded');
         $files = $this->getCore()->getDependenciesFiles($preloaded_dependencies);
 
@@ -511,12 +494,10 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         return true;
     }
 
-
     /**
      * @param $id
      * @return array
      */
-
     public function getSettingsForContent($id): array
     {
         $content = $this->getCore()->loadContent($id);
@@ -772,5 +753,27 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         }
 
         return $this->editorAjaxRepository->getTranslations($libs, $language);
+    }
+
+    private function getEditorLangScript(string $lang, string $h5pEditorDir): string {
+        $language_script = '/language/' . $lang . '.js';
+
+        if ($lang === 'pl') {
+            $resourceFile = __DIR__ . '/../../resources/lang/' . $lang . '/h5p.js';
+            !File::exists($resourceFile) ?: File::replace($h5pEditorDir . $language_script, File::get($resourceFile));
+        }
+
+        return $language_script;
+    }
+
+    private function getH5pEditorDir(): array {
+        $h5pEditorDir = file_exists(__DIR__ . '/../../vendor/h5p/h5p-editor')
+            ? __DIR__ . '/../../vendor/h5p/h5p-editor'
+            : __DIR__ . '/../../../../../vendor/h5p/h5p-editor';
+        $h5pCoreDir = file_exists(__DIR__ . '/../../vendor/h5p/h5p-core')
+            ? __DIR__ . '/../../vendor/h5p/h5p-core'
+            : __DIR__ . '/../../../../../vendor/h5p/h5p-core';
+
+        return [$h5pEditorDir, $h5pCoreDir];
     }
 }
