@@ -41,7 +41,12 @@ class MargeFiles
 
     public function getHash(): string
     {
-        return md5(serialize($this->arrayFiles));
+        $hash = [];
+        foreach ($this->arrayFiles as $file) {
+            $hash[] = hash_file('md5', $file);
+        }
+
+        return md5(serialize($hash));
     }
 
     /**
