@@ -17,6 +17,7 @@ use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\DB;
 use DateTime;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\File;
 
 class H5PRepository implements H5PFrameworkInterface
 {
@@ -482,28 +483,65 @@ class H5PRepository implements H5PFrameworkInterface
         ];
 
         $libObj = H5PLibrary::firstOrCreate($library);
-
         $library['libraryId'] = $libObj->id;
         $this->deleteLibraryDependencies($library['libraryId']);
 
         if (isset($libraryData['language'])) {
-            $languages = [];
-
             foreach ($libraryData['language'] as $languageCode => $translation) {
-                $translation = [
-                    'library_id' => $library['libraryId'],
-                    'language_code' => $languageCode,
-                    'translation' => $translation,
-                ];
-                $languages[] = $translation;
-                H5PLibraryLanguage::firstOrCreate($translation);
+                $libraryName = $this->getLibraryName($library);
+                $localTranslation = $this->getTranslation($languageCode, $libraryName);
+                $this->createH5PLibraryLanguage($library, $languageCode, $localTranslation ?: $translation);
             }
+            $this->additionalTranslations($libraryData['language'], $library);
         }
+
 
         // This is essential, as this method should mutate the `libraryData`
         // I hate mutations
 
         $libraryData = array_merge($libraryData, $library);
+    }
+
+    private function additionalTranslations($libraryLanguages, $library): array
+    {
+        $additionalLanguageCodes = ['pl'];
+        foreach ($additionalLanguageCodes as $code) {
+            if (isset($libraryLanguages) && !isset($libraryLanguages[$code])) {
+                $libraryName = $this->getLibraryName($library);
+                $localTranslation = $this->getTranslation($code, $libraryName);
+
+                if ($localTranslation === null) {
+                    continue; // TODO
+                }
+
+                $libraryLanguages[$code] = $this->createH5PLibraryLanguage($library, $code, $localTranslation);
+            }
+        }
+
+        return $libraryLanguages;
+    }
+
+    private function createH5PLibraryLanguage(array $library, string $languageCode, string $translation): string
+    {
+        H5PLibraryLanguage::firstOrCreate([
+            'library_id' => $library['libraryId'],
+            'language_code' => $languageCode,
+            'translation' => $translation,
+        ]);
+
+        return $translation;
+    }
+
+    private function getLibraryName($libraryData): string
+    {
+        return $libraryData['name'] . '-' . $libraryData['major_version'] . '.' .$libraryData['minor_version'];
+    }
+
+    // TODO move to helper/service class
+    private function getTranslation(string $langCode, string $libraryName): ?string
+    {
+        $semantics = __DIR__ . '/../../resources/lang/' . $langCode . '/' . $libraryName . '/' . $langCode . '.json';
+        return File::exists($semantics) ? File::get($semantics) : null;
     }
 
     /**

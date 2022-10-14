@@ -8,6 +8,7 @@ use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
 use EscolaLms\HeadlessH5P\Models\H5PContent;
 use EscolaLms\HeadlessH5P\Models\H5PTempFile;
 use EscolaLms\HeadlessH5P\Helpers\Helpers;
+use Illuminate\Support\Facades\File;
 
 /**
  * A defined interface for the editor to communicate with the database of the
@@ -32,7 +33,7 @@ class H5PEditorStorageRepository implements H5peditorStorage
             return null;
         }
 
-        $library = H5PLibrary::select(['id'])->where([
+        $library = H5PLibrary::where([
             ['major_version',  $majorVersion],
             ['minor_version', $minorVersion],
             ['name', $machineName],
@@ -45,12 +46,68 @@ class H5PEditorStorageRepository implements H5peditorStorage
             ])->first();
 
             if ($libraryLanguage) {
-                return is_string($libraryLanguage->translation) ? $libraryLanguage->translation : json_encode($libraryLanguage->translation);
-                return $libraryLanguage->translation;
+                $this->updateH5pLibraryLanguage($library, $libraryLanguage, $language);
+                return $this->processTranslation($libraryLanguage->translation);
+            }
+
+            // if is empty try to create from local translation files
+            if (empty($libraryLanguage)) {
+                $libraryLanguage = $this->createH5PLibraryLanguage($library, $language);
+                return $libraryLanguage ? $this->processTranslation($libraryLanguage->translation) : null;
             }
         }
 
         return null;
+    }
+
+    // TODO move to helper/service class
+    private function processTranslation($translation): bool|string
+    {
+        if (empty($translation)) {
+            return '';
+        }
+
+        return is_string($translation) ? $translation : json_encode($translation);
+    }
+
+    private function getTranslation(string $langCode, string $libraryName): ?string
+    {
+        $semantics = __DIR__ . '/../../resources/lang/' . $langCode . '/' . $libraryName . '/' . $langCode . '.json';
+        return File::exists($semantics) ? File::get($semantics) : null;
+    }
+
+    private function updateH5pLibraryLanguage(H5PLibrary $library, H5PLibraryLanguage $libraryLanguage, string $languageCode): ?H5PLibraryLanguage
+    {
+        $libraryName = $library->name . '-' . $library->major_version . '.' . $library->minor_version;
+        $translation = $this->getTranslation($languageCode, $libraryName);
+
+        if (empty($translation)) {
+            return $libraryLanguage;
+        }
+
+        if (json_decode($translation) == $libraryLanguage->translation) {
+            return $libraryLanguage;
+        }
+
+        $libraryLanguage->translation = $translation;
+        $libraryLanguage->save();
+        return $libraryLanguage;
+    }
+
+    private function createH5PLibraryLanguage(H5PLibrary $library, string $languageCode): ?H5PLibraryLanguage
+    {
+        $libraryName = $library->machineName . '-' . $library->majorVersion . '.' . $library->minorVersion;
+        $translation = $this->getTranslation($languageCode, $libraryName);
+
+        if (empty($translation)) {
+            return null;
+        }
+
+        return H5PLibraryLanguage::firstOrCreate([
+            'library_id' => $library->getKey(),
+            'language_code' => $languageCode,
+            'translation' => $translation,
+        ]);
     }
 
     /**

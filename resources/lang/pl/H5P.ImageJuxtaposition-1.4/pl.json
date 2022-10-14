@@ -1,0 +1,60 @@
+{
+    "semantics": [
+        {
+            "label": "Tytuł",
+            "placeholder": "Tutaj możesz dodać opcjonalny nagłówek.",
+            "description": "Nagłówek będzie wyświetlany pod/nad obrazem"
+        },
+        {
+            "label": "Pierwszy obraz",
+            "fields": [
+                {
+                    "label": "Pierwszy obraz",
+                    "description": "Pierwsze zdjęcie. Upewnij się, że ma ten sam rozmiar co drugie."
+                },
+                {
+                    "label": "Podpis pierwszego zdjęcia",
+                    "description": "Tekst wyświetlany nad obrazem"
+                }
+            ]
+        },
+        {
+            "label": "Drugi obraz",
+            "fields": [
+                {
+                    "label": "Drugi obraz",
+                    "description": "Drugie zdjęcie. Upewnij się, że ma ten sam rozmiar co pierwsze."
+                },
+                {
+                    "label": "Podpis drugiego zdjęcia",
+                    "description": "Tekst wyświetlany nad pierwszym obrazem"
+                }
+            ]
+        },
+        {
+            "label": "Ustawienia zachowania.",
+            "description": "Niektóre szczegóły można ustawić tutaj.",
+            "fields": [
+                {
+                    "label": "Pozycja początkowa suwaka w %",
+                    "description": "Ustawia pozycję początkową suwaka"
+                },
+                {
+                    "label": "Kierunek suwaka",
+                    "description": "Poziomo na lewo i prawo, pionowo na górę i na dół",
+                    "options": [
+                        {
+                            "label": "Poziomy"
+                        },
+                        {
+                            "label": "Pionowy"
+                        }
+                    ]
+                },
+                {
+                    "label": "Kolor suwaka"
+                }
+            ]
+        }
+    ]
+}
