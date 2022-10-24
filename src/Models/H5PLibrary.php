@@ -219,6 +219,11 @@ class H5PLibrary extends Model
         return $this->getAttributeValue('name');
     }
 
+    public function getDirectoryNameAttribute(): string
+    {
+        return $this->name . '-' . $this->major_version . '.' .$this->minor_version;
+    }
+
     public function getVersionAttribute(): string
     {
         return $this->major_version. '.' . $this->minor_version . '.' . $this->patch_version;

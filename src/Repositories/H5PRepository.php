@@ -11,6 +11,7 @@ use EscolaLms\HeadlessH5P\Models\H5PLibraryDependency;
 use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
 use EscolaLms\HeadlessH5P\Models\H5pLibrariesHubCache;
 use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PFrameworkInterface;
+use EscolaLms\HeadlessH5P\Services\Contracts\H5PLibraryLanguageServiceContract;
 use H5PPermission;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -21,11 +22,19 @@ use Illuminate\Support\Facades\File;
 
 class H5PRepository implements H5PFrameworkInterface
 {
-    protected $messages = ['error' => [], 'updated' => []];
+
+    private H5PLibraryLanguageServiceContract $h5PLibraryLanguageService;
 
     private array $downloadFiles;
 
     private array $mainData;
+
+    protected $messages = ['error' => [], 'updated' => []];
+
+    public function __construct(H5PLibraryLanguageServiceContract $h5PLibraryLanguageService)
+    {
+        $this->h5PLibraryLanguageService = $h5PLibraryLanguageService;
+    }
 
     public function setMainData(array $mainData): void
     {
@@ -475,7 +484,7 @@ class H5PRepository implements H5PFrameworkInterface
             'embed_types' => isset($libraryData['embedTypes']) ? implode(', ', $libraryData['embedTypes']) : '',
             'preloaded_js' => $this->pathsToCsv($libraryData, 'preloadedJs'),
             'preloaded_css' => $this->pathsToCsv($libraryData, 'preloadedCss'),
-            'drop_library_css' => '', // TODO, what is this ?
+            'drop_library_css' => '',
             'semantics' => isset($libraryData['semantics']) ? $libraryData['semantics'] : '',
             'tutorial_url' => isset($libraryData['tutorial_url']) ?: '',
             'has_icon' => isset($libraryData['hasIcon']) ? 1 : 0,
@@ -488,13 +497,10 @@ class H5PRepository implements H5PFrameworkInterface
 
         if (isset($libraryData['language'])) {
             foreach ($libraryData['language'] as $languageCode => $translation) {
-                $libraryName = $this->getLibraryName($library);
-                $localTranslation = $this->getTranslation($languageCode, $libraryName);
-                $this->createH5PLibraryLanguage($library, $languageCode, $localTranslation ?: $translation);
+                $this->h5PLibraryLanguageService->createDefaults($libObj, $languageCode, $translation);
             }
-            $this->additionalTranslations($libraryData['language'], $library);
+            $this->additionalTranslations($libraryData['language'], $libObj);
         }
-
 
         // This is essential, as this method should mutate the `libraryData`
         // I hate mutations
@@ -502,46 +508,20 @@ class H5PRepository implements H5PFrameworkInterface
         $libraryData = array_merge($libraryData, $library);
     }
 
-    private function additionalTranslations($libraryLanguages, $library): array
+    private function additionalTranslations(array $libraryLanguages, H5PLibrary $library): array
     {
         $additionalLanguageCodes = ['pl'];
-        foreach ($additionalLanguageCodes as $code) {
-            if (isset($libraryLanguages) && !isset($libraryLanguages[$code])) {
-                $libraryName = $this->getLibraryName($library);
-                $localTranslation = $this->getTranslation($code, $libraryName);
+        foreach ($additionalLanguageCodes as $languageCode) {
+            if (isset($libraryLanguages) && !isset($libraryLanguages[$languageCode])) {
+                $libraryLanguage = $this->h5PLibraryLanguageService->create($library, $languageCode);
 
-                if ($localTranslation === null) {
-                    continue; // TODO
+                if (isset($libraryLanguage)) {
+                    $libraryLanguages[$languageCode] = $libraryLanguage;
                 }
-
-                $libraryLanguages[$code] = $this->createH5PLibraryLanguage($library, $code, $localTranslation);
             }
         }
 
         return $libraryLanguages;
-    }
-
-    private function createH5PLibraryLanguage(array $library, string $languageCode, string $translation): string
-    {
-        H5PLibraryLanguage::firstOrCreate([
-            'library_id' => $library['libraryId'],
-            'language_code' => $languageCode,
-            'translation' => $translation,
-        ]);
-
-        return $translation;
-    }
-
-    private function getLibraryName($libraryData): string
-    {
-        return $libraryData['name'] . '-' . $libraryData['major_version'] . '.' .$libraryData['minor_version'];
-    }
-
-    // TODO move to helper/service class
-    private function getTranslation(string $langCode, string $libraryName): ?string
-    {
-        $semantics = __DIR__ . '/../../resources/lang/' . $langCode . '/' . $libraryName . '/' . $langCode . '.json';
-        return File::exists($semantics) ? File::get($semantics) : null;
     }
 
     /**

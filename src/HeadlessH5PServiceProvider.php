@@ -12,7 +12,9 @@ use EscolaLms\HeadlessH5P\Repositories\H5PEditorAjaxRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PEditorStorageRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PFileStorageRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PRepository;
+use EscolaLms\HeadlessH5P\Services\Contracts\H5PLibraryLanguageServiceContract;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
+use EscolaLms\HeadlessH5P\Services\H5PLibraryLanguageService;
 use EscolaLms\HeadlessH5P\Services\HeadlessH5PService;
 use H5PContentValidator;
 use H5PCore;
@@ -28,6 +30,7 @@ class HeadlessH5PServiceProvider extends ServiceProvider
 {
     public $singletons = [
         H5PContentRepositoryContract::class => H5PContentRepository::class,
+        H5PLibraryLanguageServiceContract::class => H5PLibraryLanguageService::class,
     ];
 
     public function register(): void
@@ -41,13 +44,14 @@ class HeadlessH5PServiceProvider extends ServiceProvider
     private function bindH5P(): void
     {
         $this->app->singleton(HeadlessH5PServiceContract::class, function ($app) {
-            $repository = new H5PRepository();
+            $language = new H5PLibraryLanguageService();
+            $repository = new H5PRepository($language);
             $fileStorage = new H5PFileStorageRepository(storage_path('app/h5p'));
             $core = new H5PCore($repository, $fileStorage, url('h5p'), config('hh5p.language'), true);
             $core->aggregateAssets = true;
             $validator = new H5PValidator($repository, $core);
             $storage = new H5PStorage($repository, $core);
-            $editorStorage = new H5PEditorStorageRepository();
+            $editorStorage = new H5PEditorStorageRepository($language);
             $editorAjaxRepository = new H5PEditorAjaxRepository();
             // TODO might be replaced with custom H5peditor
             $editor = new H5peditor($core, $editorStorage, $editorAjaxRepository);
