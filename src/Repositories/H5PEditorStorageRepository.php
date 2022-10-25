@@ -2,7 +2,7 @@
 
 namespace EscolaLms\HeadlessH5P\Repositories;
 
-use EscolaLms\HeadlessH5P\Services\Contracts\H5PLibraryLanguageServiceContract;
+use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PLibraryLanguageRepositoryContract;
 use H5peditorStorage;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
@@ -18,9 +18,9 @@ use EscolaLms\HeadlessH5P\Helpers\Helpers;
 class H5PEditorStorageRepository implements H5peditorStorage
 {
 
-    private H5PLibraryLanguageServiceContract $h5PLibraryLanguageService;
+    private H5PLibraryLanguageRepositoryContract $h5PLibraryLanguageService;
 
-    public function __construct(H5PLibraryLanguageServiceContract $h5PLibraryLanguageService)
+    public function __construct(H5PLibraryLanguageRepositoryContract $h5PLibraryLanguageService)
     {
         $this->h5PLibraryLanguageService = $h5PLibraryLanguageService;
     }

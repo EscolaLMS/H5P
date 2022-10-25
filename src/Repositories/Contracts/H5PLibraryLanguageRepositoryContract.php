@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Services\Contracts;
+namespace EscolaLms\HeadlessH5P\Repositories\Contracts;
 
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
 
-interface H5PLibraryLanguageServiceContract
+interface H5PLibraryLanguageRepositoryContract
 {
     public function getTranslation(string $langCode, string $libraryName): ?string;
 

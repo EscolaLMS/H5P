@@ -8,22 +8,21 @@ use EscolaLms\HeadlessH5P\Models\H5PContent;
 use EscolaLms\HeadlessH5P\Models\H5PContentLibrary;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Models\H5PLibraryDependency;
-use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
 use EscolaLms\HeadlessH5P\Models\H5pLibrariesHubCache;
 use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PFrameworkInterface;
-use EscolaLms\HeadlessH5P\Services\Contracts\H5PLibraryLanguageServiceContract;
+use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PLibraryLanguageRepositoryContract;
 use H5PPermission;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\DB;
 use DateTime;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\File;
+
 
 class H5PRepository implements H5PFrameworkInterface
 {
 
-    private H5PLibraryLanguageServiceContract $h5PLibraryLanguageService;
+    private H5PLibraryLanguageRepositoryContract $h5PLibraryLanguageService;
 
     private array $downloadFiles;
 
@@ -31,7 +30,7 @@ class H5PRepository implements H5PFrameworkInterface
 
     protected $messages = ['error' => [], 'updated' => []];
 
-    public function __construct(H5PLibraryLanguageServiceContract $h5PLibraryLanguageService)
+    public function __construct(H5PLibraryLanguageRepositoryContract $h5PLibraryLanguageService)
     {
         $this->h5PLibraryLanguageService = $h5PLibraryLanguageService;
     }
