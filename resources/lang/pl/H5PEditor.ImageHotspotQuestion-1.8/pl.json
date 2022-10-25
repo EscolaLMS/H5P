@@ -1,0 +1,11 @@
+{
+    "libraryStrings": {
+        "noImage": "Aby dodać interakcję, trzeba najpierw dodać zdjęcie w tle.",
+        "noImageTitle": "Brak zdjęcia",
+        "done": "Gotowe",
+        "back": "Wstecz",
+        "remove": "Usuń hotspot",
+        "rectangle": "Dodaj prostokąt",
+        "circle": "Dodaj okrąg"
+    }
+}
