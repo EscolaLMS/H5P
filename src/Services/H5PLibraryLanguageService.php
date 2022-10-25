@@ -16,7 +16,7 @@ class H5PLibraryLanguageService implements H5PLibraryLanguageServiceContract
         return File::exists($semantics) ? File::get($semantics) : null;
     }
 
-    public function getTranslationString(mixed $translation): string
+    public function getTranslationString($translation): string
     {
         if (empty($translation)) {
             return '';

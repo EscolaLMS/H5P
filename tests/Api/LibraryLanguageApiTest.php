@@ -77,7 +77,7 @@ class LibraryLanguageApiTest extends TestCase
         ]);
 
         $this->actingAs($this->user, 'api')
-            ->getJson('/api/hh5p/libraries?_token=' . $token . '&machineName=' . $library->machineName . '&majorVersion=' . $library->majorVersion . '&minorVersion=' . $library->minorVersion)
+            ->getJson('/api/hh5p/libraries?_token=' . $token . '&machineName=' . $library->machineName . '&majorVersion=' . $library->majorVersion . '&minorVersion=' . $library->minorVersion . '&lang=pl')
             ->assertStatus(200);
         $this->assertDatabaseHas('hh5p_libraries_languages', [
             'library_id' => $library->getKey(),

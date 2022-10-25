@@ -9,7 +9,7 @@ interface H5PLibraryLanguageServiceContract
 {
     public function getTranslation(string $langCode, string $libraryName): ?string;
 
-    public function getTranslationString(mixed $translation): string;
+    public function getTranslationString($translation): string;
 
     public function update(H5PLibraryLanguage $libraryLanguage, H5PLibrary $library, string $languageCode): H5PLibraryLanguage;
 
