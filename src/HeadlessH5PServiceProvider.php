@@ -7,10 +7,12 @@ use EscolaLms\HeadlessH5P\Commands\StorageH5PLinkCommand;
 use EscolaLms\HeadlessH5P\Enums\ConfigEnum;
 use EscolaLms\HeadlessH5P\Providers\SettingsServiceProvider;
 use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
+use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PLibraryLanguageRepositoryContract;
 use EscolaLms\HeadlessH5P\Repositories\H5PContentRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PEditorAjaxRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PEditorStorageRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PFileStorageRepository;
+use EscolaLms\HeadlessH5P\Repositories\H5PLibraryLanguageRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PRepository;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 use EscolaLms\HeadlessH5P\Services\HeadlessH5PService;
@@ -28,6 +30,7 @@ class HeadlessH5PServiceProvider extends ServiceProvider
 {
     public $singletons = [
         H5PContentRepositoryContract::class => H5PContentRepository::class,
+        H5PLibraryLanguageRepositoryContract::class => H5PLibraryLanguageRepository::class,
     ];
 
     public function register(): void
@@ -41,13 +44,14 @@ class HeadlessH5PServiceProvider extends ServiceProvider
     private function bindH5P(): void
     {
         $this->app->singleton(HeadlessH5PServiceContract::class, function ($app) {
-            $repository = new H5PRepository();
+            $languageRepository = new H5PLibraryLanguageRepository();
+            $repository = new H5PRepository($languageRepository);
             $fileStorage = new H5PFileStorageRepository(storage_path('app/h5p'));
             $core = new H5PCore($repository, $fileStorage, url('h5p'), config('hh5p.language'), true);
             $core->aggregateAssets = true;
             $validator = new H5PValidator($repository, $core);
             $storage = new H5PStorage($repository, $core);
-            $editorStorage = new H5PEditorStorageRepository();
+            $editorStorage = new H5PEditorStorageRepository($languageRepository);
             $editorAjaxRepository = new H5PEditorAjaxRepository();
             // TODO might be replaced with custom H5peditor
             $editor = new H5peditor($core, $editorStorage, $editorAjaxRepository);

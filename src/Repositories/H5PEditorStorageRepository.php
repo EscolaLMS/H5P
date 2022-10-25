@@ -2,6 +2,7 @@
 
 namespace EscolaLms\HeadlessH5P\Repositories;
 
+use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PLibraryLanguageRepositoryContract;
 use H5peditorStorage;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
@@ -9,12 +10,20 @@ use EscolaLms\HeadlessH5P\Models\H5PContent;
 use EscolaLms\HeadlessH5P\Models\H5PTempFile;
 use EscolaLms\HeadlessH5P\Helpers\Helpers;
 
+
 /**
  * A defined interface for the editor to communicate with the database of the
  * web system.
  */
 class H5PEditorStorageRepository implements H5peditorStorage
 {
+
+    private H5PLibraryLanguageRepositoryContract $h5PLibraryLanguageService;
+
+    public function __construct(H5PLibraryLanguageRepositoryContract $h5PLibraryLanguageService)
+    {
+        $this->h5PLibraryLanguageService = $h5PLibraryLanguageService;
+    }
 
     /**
      * Load language file(JSON) from database.
@@ -32,7 +41,7 @@ class H5PEditorStorageRepository implements H5peditorStorage
             return null;
         }
 
-        $library = H5PLibrary::select(['id'])->where([
+        $library = H5PLibrary::where([
             ['major_version',  $majorVersion],
             ['minor_version', $minorVersion],
             ['name', $machineName],
@@ -45,8 +54,14 @@ class H5PEditorStorageRepository implements H5peditorStorage
             ])->first();
 
             if ($libraryLanguage) {
-                return is_string($libraryLanguage->translation) ? $libraryLanguage->translation : json_encode($libraryLanguage->translation);
-                return $libraryLanguage->translation;
+                $this->h5PLibraryLanguageService->update($libraryLanguage, $library, $language);
+                return $this->h5PLibraryLanguageService->getTranslationString($libraryLanguage->translation);
+            }
+
+            // if is empty try to create from local translation files
+            if (empty($libraryLanguage)) {
+                $libraryLanguage = $this->h5PLibraryLanguageService->create($library, $language);
+                return $libraryLanguage ? $this->h5PLibraryLanguageService->getTranslationString($libraryLanguage->translation) : null;
             }
         }
 

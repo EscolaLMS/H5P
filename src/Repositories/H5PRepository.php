@@ -8,9 +8,9 @@ use EscolaLms\HeadlessH5P\Models\H5PContent;
 use EscolaLms\HeadlessH5P\Models\H5PContentLibrary;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Models\H5PLibraryDependency;
-use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
 use EscolaLms\HeadlessH5P\Models\H5pLibrariesHubCache;
 use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PFrameworkInterface;
+use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PLibraryLanguageRepositoryContract;
 use H5PPermission;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -18,13 +18,22 @@ use Illuminate\Support\Facades\DB;
 use DateTime;
 use Illuminate\Support\Facades\Cache;
 
+
 class H5PRepository implements H5PFrameworkInterface
 {
-    protected $messages = ['error' => [], 'updated' => []];
+
+    private H5PLibraryLanguageRepositoryContract $h5PLibraryLanguageService;
 
     private array $downloadFiles;
 
     private array $mainData;
+
+    protected $messages = ['error' => [], 'updated' => []];
+
+    public function __construct(H5PLibraryLanguageRepositoryContract $h5PLibraryLanguageService)
+    {
+        $this->h5PLibraryLanguageService = $h5PLibraryLanguageService;
+    }
 
     public function setMainData(array $mainData): void
     {
@@ -474,7 +483,7 @@ class H5PRepository implements H5PFrameworkInterface
             'embed_types' => isset($libraryData['embedTypes']) ? implode(', ', $libraryData['embedTypes']) : '',
             'preloaded_js' => $this->pathsToCsv($libraryData, 'preloadedJs'),
             'preloaded_css' => $this->pathsToCsv($libraryData, 'preloadedCss'),
-            'drop_library_css' => '', // TODO, what is this ?
+            'drop_library_css' => '',
             'semantics' => isset($libraryData['semantics']) ? $libraryData['semantics'] : '',
             'tutorial_url' => isset($libraryData['tutorial_url']) ?: '',
             'has_icon' => isset($libraryData['hasIcon']) ? 1 : 0,
@@ -482,28 +491,36 @@ class H5PRepository implements H5PFrameworkInterface
         ];
 
         $libObj = H5PLibrary::firstOrCreate($library);
-
         $library['libraryId'] = $libObj->id;
         $this->deleteLibraryDependencies($library['libraryId']);
 
         if (isset($libraryData['language'])) {
-            $languages = [];
-
             foreach ($libraryData['language'] as $languageCode => $translation) {
-                $translation = [
-                    'library_id' => $library['libraryId'],
-                    'language_code' => $languageCode,
-                    'translation' => $translation,
-                ];
-                $languages[] = $translation;
-                H5PLibraryLanguage::firstOrCreate($translation);
+                $this->h5PLibraryLanguageService->createDefaults($libObj, $languageCode, $translation);
             }
+            $this->additionalTranslations($libraryData['language'], $libObj);
         }
 
         // This is essential, as this method should mutate the `libraryData`
         // I hate mutations
 
         $libraryData = array_merge($libraryData, $library);
+    }
+
+    private function additionalTranslations(array $libraryLanguages, H5PLibrary $library): array
+    {
+        $additionalLanguageCodes = ['pl'];
+        foreach ($additionalLanguageCodes as $languageCode) {
+            if (isset($libraryLanguages) && !isset($libraryLanguages[$languageCode])) {
+                $libraryLanguage = $this->h5PLibraryLanguageService->create($library, $languageCode);
+
+                if (isset($libraryLanguage)) {
+                    $libraryLanguages[$languageCode] = $libraryLanguage;
+                }
+            }
+        }
+
+        return $libraryLanguages;
     }
 
     /**

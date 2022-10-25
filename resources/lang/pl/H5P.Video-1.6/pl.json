@@ -1,0 +1,136 @@
+{
+  "semantics": [
+    {
+      "label": "Źródła wideo",
+      "description": "Aby upewnić się, że wideo działa we wszystkich przeglądarkach, należy dodać pliki w formacie WebM lub MP4."
+    },
+    {
+      "label": "Materiały ilustracyjne",
+      "fields": [
+        {
+          "label": "Plakat"
+        },
+        {
+          "label": "Dopasuj rozmiar odtwarzacz wideo, aby wykorzystać całą dostępną przestrzeń",
+          "description": "Jeśli ta opcja nie jest zaznaczona, odtwarzacz wideo będzie miał takie same proporcje jak film."
+        },
+        {
+          "label": "Pokaż przyciski sterujące odtwarzaczem wideo",
+          "description": "Przyciski sterujące odtwarzaczem wideo. Dzięki temu użytkownicy mogą odtwarzać, pauzować itp."
+        }
+      ]
+    },
+    {
+      "label": "Odtwarzanie",
+      "fields": [
+        {
+          "label": "Automatyczne odtwarzanie wideo",
+          "description": "Automatycznie rozpocznij odtwarzanie filmu. Może nie działać na urządzeniach mobilnych."
+        },
+        {
+          "label": "Film w pętli",
+          "description": "Automatyczne rozpoczynanie filmu od nowa po jego zakończeniu."
+        }
+      ]
+    },
+    {
+      "label": "Lokalizacja filmu",
+      "fields": [
+        {
+          "label": "Nazwa",
+          "default": "Video",
+          "description": "Pomaga zidentyfikować zawartość tego typu."
+        },
+        {
+          "label": "Ładowanie",
+          "default": "Ładowanie odtwarzacza..."
+        },
+        {
+          "label": "Nie znaleziono odtwarzacza",
+          "default": "Nie znaleziono odtwarzacza wideo obsługującego podany format wideo."
+        },
+        {
+          "label": "Brak źródeł",
+          "default": "W materiale wideo brakuje źródeł."
+        },
+        {
+          "label": "Przerwano",
+          "default": "Odtwarzanie zostało przerwane."
+        },
+        {
+          "label": "Awaria sieci",
+          "default": "Awaria sieci."
+        },
+        {
+          "label": "Nie można zdekodować źródła wideo",
+          "default": "Nie można zdekodować źródła wideo."
+        },
+        {
+          "label": "Nieobsługiwany format",
+          "default": "Nieobsługiwany format wideo."
+        },
+        {
+          "label": "Media zakodowane",
+          "default": "Media zakodowane."
+        },
+        {
+          "label": "Nieznany błąd",
+          "default": "Nieznany błąd."
+        },
+        {
+          "label": "Nieprawidłowy YouTube ID",
+          "default": "Nieprawidłowy YouTube ID."
+        },
+        {
+          "label": "Nieznany YouTube ID",
+          "default": "Nie można znaleźć filmu o podanym YouTube ID."
+        },
+        {
+          "label": "Zastrzeżony film YouTube",
+          "default": "Właściciel tego filmu nie pozwala na jego osadzenie."
+        }
+      ]
+    },
+    {
+      "label": "Dostępność",
+      "fields": [
+        {
+          "label": "Dodaj ścieżkę wideo",
+          "entity": "ścieżkę",
+          "field": {
+            "label": "Ścieżka",
+            "fields": [
+              {
+                "label": "Ścieżka"
+              },
+              {
+                "label": "Przejdź do <a target=\"_blank\" href=\"https://html.spec.whatwg.org/multipage/embedded-content.html#the-track-element\">HTML living standard</a>",
+                "options": [
+                  {
+                    "label": "Napisy"
+                  },
+                  {
+                    "label": "Podpisy"
+                  },
+                  {
+                    "label": "Opisy"
+                  },
+                  {
+                    "label": "Rozdziały"
+                  }
+                ]
+              },
+              {
+                "label": "Język – musi być określony dla tłumaczenia",
+                "description": "Wpisz poprawny kod języka w standardzie BCP 47. Jeśli ścieżka zawiera tłumaczenie, należy określić język"
+              },
+              {
+                "label": "Plik z napisami (WebVTT)"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
