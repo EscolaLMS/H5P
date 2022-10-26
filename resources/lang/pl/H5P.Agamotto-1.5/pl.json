@@ -1,0 +1,74 @@
+{
+  "semantics": [
+    {
+      "label": "Nagłówek",
+      "placeholder": "Tutaj możesz dodać opcjonalny nagłówek.",
+      "description": "Nagłówek, który chcesz pokazać nad obrazem"
+    },
+    {
+      "label": "Elementy",
+      "entity": "element",
+      "widgets": [
+        {
+          "label": "Domyślny"
+        }
+      ],
+      "field": {
+        "label": "Element",
+        "fields": [
+          {
+            "label": "Zdjęcie"
+          },
+          {
+            "label": "Label",
+            "description": "Opcjonalna etykieta dla znaku wyboru. Upewnij się, że nie jest zbyt długa, w przeciwnym razie zostanie ukryta."
+          },
+          {
+            "label": "Opis",
+            "placeholder": "Opis mojego obrazu...",
+            "description": "Opcjonalny opis obrazu"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Ustawienia zachowania",
+      "description": "Te opcje pozwolą Ci kontrolować zachowanie zadania.",
+      "fields": [
+        {
+          "label": "Zdjęcie początkowe",
+          "description": "Ustaw numer obrazu, którey ma być wyświetlany jako pierwszy."
+        },
+        {
+          "label": "Suwak",
+          "description": "Jeśli jest włączony, suwak przeskoczy do pozycji obrazu."
+        },
+        {
+          "label": "Wyświetlanie znaczników zaznaczenia",
+          "description": "Jeśli jest włączony, na pasku suwaka będzie wyświetlany znak zaznaczenia dla każdego obrazu."
+        },
+        {
+          "label": "Wyświetlanie etykiet",
+          "description": "Jeśli jest włączony, suwak będzie wyświetlał etykietę zamiast znaków zaznaczeń."
+        },
+        {
+          "label": "Kolor zastępujący przezroczystość",
+          "description": "Ustaw kolor, który zastąpi przezroczyste obszary obrazów."
+        }
+      ]
+    },
+    {
+      "label": "Readspeaker",
+      "fields": [
+        {
+          "label": "Zdjęcie",
+          "default": "Zdjęcie"
+        },
+        {
+          "label": "Suwak obrazów",
+          "default": "Suwak obrazów"
+        }
+      ]
+    }
+  ]
+}
