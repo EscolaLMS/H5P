@@ -55,11 +55,11 @@
               "label": "Lokalizacja",
               "fields": [
                 {
-                  "label": "Tekst przycisku ponów",
+                  "label": "Tekst przycisku \"Ponów\"",
                   "default": "Ponów"
                 },
                 {
-                  "label": "Tekst przycisku zamknij",
+                  "label": "Tekst przycisku \"Zamknij\"",
                   "default": "Zamknij"
                 }
               ]

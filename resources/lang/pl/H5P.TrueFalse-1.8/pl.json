@@ -79,7 +79,7 @@
           "default": "Pokaż odpowiedzi. Zadanie zostanie oznaczone jako poprawnie rozwiązane."
         },
         {
-          "label": "Opis przycisku \"Powtórz\" dla technologii wspomagających niewidomych",
+          "label": "Opis przycisku \"Ponów\" dla technologii wspomagających niewidomych",
           "default": "Ponów zadanie. Zresetuj wszystkie odpowiedzi i rozpocznij zadanie od nowa."
         }
       ]

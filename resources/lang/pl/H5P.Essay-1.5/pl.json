@@ -1,0 +1,287 @@
+{
+  "semantics": [
+    {
+      "label": "Medium",
+      "fields": [
+        {
+          "label": "Typ",
+          "description": "Medium, które jest opcjonalnie wyświetlane nad zadaniem."
+        },
+        {
+          "label": "Wyłącz powiększanie obrazu"
+        }
+      ]
+    },
+    {
+      "label": "Opis zadania",
+      "description": "Opis pojawi się nad polem wprowadzania tekstu.",
+      "placeholder": "Streść książkę w nie więcej niż 500 znakach ..."
+    },
+    {
+      "label": "Tekst pomocniczy",
+      "description": "Ten tekst ma na celu wsparcie początkujących uczniów.",
+      "placeholder": "Ta książka jest o ..."
+    },
+    {
+      "label": "Proponowane rozwiązanie",
+      "description": "Możesz opcjonalnie podać proponowane rozwiązanie, które będzie widoczne, gdy uczeń sprawdzi swoje rozwiązanie. Nazywa się to rozwiązaniem proponowanym, ponieważ istnieje więcej niż jedno poprawne rozwiązanie.",
+      "fields": [
+        {
+          "label": "Wstęp",
+          "description": "Możesz opcjonalnie umieścić wyjaśnienie przed swoim proponowanym rozwiązaniem. Zostanie wyświetlone jeśli dodasz proponowane rozwiązanie.",
+          "placeholder": "Pamiętaj, że nie oczekiwano od Ciebie dokładnie takiego samego rozwiązania. To tylko przykład."
+        },
+        {
+          "label": "Tekst proponowanego rozwiązania",
+          "description": "Po sprawdzeniu rozwiązania uczniowie zobaczą przycisk \"Pokaż rozwiązanie\", jeśli uzupełnisz to pole."
+        }
+      ]
+    },
+    {
+      "label": "Słowa kluczowe",
+      "widgets": [
+        {
+          "label": "Pole wprowadzania danych"
+        }
+      ],
+      "entity": "Słowo kluczowe",
+      "field": {
+        "label": "Słowo kluczowe",
+        "fields": [
+          {
+            "label": "Słowo kluczowe",
+            "description": "Wyszukane słowo kluczowe lub fraza. Możesz użyć gwiazdki \"*\" dla jednej lub więcej liter. W wyrażeniach regularnych na początku i końcu można używać ukośników '/'."
+          },
+          {
+            "label": "Wariacje",
+            "description": "Opcjonalnie dodaj odmiany dla słów kluczowych. Przykład: \"Miasto\", \"Gmina\" itp. może również odpowiadać wartości \"Miasto\". Punkty przyznawane są również za słowa alternatywne.",
+            "entity": "Wariant",
+            "field": {
+              "label": "Odmiana słów kluczowych"
+            }
+          },
+          {
+            "label": "Punkty, opcje i opinie",
+            "fields": [
+              {
+                "label": "Punkty",
+                "description": "Punkty, które otrzymują uczniowie, gdy użyją słowa kluczowego lub jego odmiany."
+              },
+              {
+                "label": "Odniesienia",
+                "description": "Określ ile wystąpień tego samego słowa kluczowego lub jego odmian ma mieć przypisane punkty."
+              },
+              {
+                "label": "Zwróć uwagę na duże i małe litery",
+                "description": "Wymusza zgodność rozwiązania z jego definicją."
+              },
+              {
+                "label": "Akceptuj drobne błędy ortograficzne",
+                "description": "Jeśli ta opcja jest zaznaczona, odpowiedź nadal jest uznawana za poprawną, jeśli są w niej drobne błędy ortograficzne. (3-9 znaków: 1 błąd, więcej niż 9 znaków: 2 błędy)."
+              },
+              {
+                "label": "Informacja zwrotna, jeśli użyto słowa kluczowego",
+                "description": "Informacja zwrotna wyświetlana, gdy uczeń użyje słowa kluczowego lub jego odmian w tekście."
+              },
+              {
+                "label": "Informacja zwrotna, jeśli słowo kluczowe nie zostało użyte",
+                "description": "Informacja zwrotna wyświetlana, gdy uczeń nie użyje słowa kluczowego ani jego odmian w tekście."
+              },
+              {
+                "label": "Słowo w informacji zwrotnej, jeśli użyto słowa kluczowego",
+                "description": "Ta opcja pozwala określić, które słowo jest wyświetlane przed informacją zwrotną, gdy słowo kluczowe zostało użyte.",
+                "options": [
+                  {
+                    "label": "Słowo kluczowe"
+                  },
+                  {
+                    "label": "Znaleziono alternatywne słowo"
+                  },
+                  {
+                    "label": "Udzielona odpowiedź"
+                  },
+                  {
+                    "label": "Puste"
+                  }
+                ]
+              },
+              {
+                "label": "Słowo w informacji zwrotnej, jeśli nie użyto słowa kluczowego",
+                "description": "Ta opcja pozwala określić, które słowo jest wyświetlane przed informacją zwrotną, gdy słowo kluczowe zostało użyte.",
+                "options": [
+                  {
+                    "label": "Słowo kluczowe"
+                  },
+                  {
+                    "label": "Puste"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "Ogólne uwagi",
+      "fields": [
+        {
+          "widgets": [
+            {
+              "label": "Domyślnie"
+            }
+          ],
+          "label": "Ustawienie informacji zwrotnej dla poszczególnych obszarów punktowych",
+          "description": "Kliknij przycisk \"Dodaj zakres\", aby dodać odpowiedni zakres. Przykład: 0-20% Słaba ocena, 21-91% Średnia ocena, 91-100% Świetna ocena!",
+          "entity": "Obszar",
+          "field": {
+            "fields": [
+              {
+                "label": "Zakres punktów"
+              },
+              {},
+              {
+                "label": "Informacja zwrotna dla danego zakresu punktów",
+                "placeholder": "Wprowadź informacje zwrotne"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "label": "Ustawienia zachowania",
+      "description": "Opcje te określają szczegółowo sposób działania zadania.",
+      "fields": [
+        {
+          "label": "Minimalna liczba znaków",
+          "description": "Określ minimalną liczbę znaków."
+        },
+        {
+          "label": "Maksymalna liczba znaków",
+          "description": "Określ maksymalną liczbę znaków."
+        },
+        {
+          "label": "Wielkość pola",
+          "description": "Wielkość pola jako liczba wierszy",
+          "options": [
+            {
+              "label": "1 wiersz"
+            },
+            {
+              "label": "3 wiersze"
+            },
+            {
+              "label": "10 wierszy"
+            }
+          ]
+        },
+        {
+          "label": "Zezwól na \"Powtórz\".",
+          "description": "Jeśli ta opcja jest zaznaczona, uczniowie mogą powtórzyć zadanie."
+        },
+        {
+          "label": "Zignoruj punktację",
+          "description": "Jeśli ta opcja jest zaznaczona, uczestnicy będą widzieć tylko Twoją opinię, nie punktację. Nic nie jest punktowane."
+        },
+        {
+          "label": "Punkty w systemie",
+          "description": "Służy do przyznawania punktów w systemie wyłącznie za wykonanie zadania (nie jest wyświetlany uczniom)."
+        },
+        {
+          "label": "Minimalna wartość procentowa do zaliczenia zadania",
+          "description": "Procent poprawności wymagany do zaliczenia"
+        },
+        {
+          "label": "Procent do opanowania",
+          "description": "Wartość poniżej 100% odpowiednio obniża ocenę. Ma to na celu dać uczniom swobodę, zamiast akceptować rozwiązania."
+        },
+        {
+          "label": "Rozróżnianie wielkości liter.",
+          "description": "Ta opcja określa, czy opcja \"Rozróżnianie wielkości liter\" jest włączona czy wyłączona dla wszystkich słów kluczowych.",
+          "options": [
+            {
+              "label": "Aktywna"
+            },
+            {
+              "label": "Nieaktywna"
+            }
+          ]
+        },
+        {
+          "label": "Zaakceptuj drobne błędy ortograficzne",
+          "description": "Ta opcja określa, czy włączyć lub wyłączyć opcję „Akceptuj drobne błędy ortograficzne” dla wszystkich słów kluczowych.",
+          "options": [
+            {
+              "label": "Aktywna"
+            },
+            {
+              "label": "Nieaktywna"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Etykieta przycisku \"Sprawdź\"",
+      "default": "Sprawdź"
+    },
+    {
+      "label": "Etykieta przycisku \"Wyślij\"",
+      "default": "Wyślij"
+    },
+    {
+      "label": "Etykieta przycisku \"Powtórz\"",
+      "default": "Powtórz"
+    },
+    {
+      "label": "Etykieta przycisku \"Pokaż rozwiązanie\"",
+      "default": "Pokaż rozwiązanie"
+    },
+    {
+      "label": "Nagłówek do sekcji z informacją zwrotną na temat słów kluczowych",
+      "default": "Wiadomość zwrotna"
+    },
+    {
+      "label": "Etykieta proponowanego rozwiązania",
+      "default": "Proponowane rozwiązanie"
+    },
+    {
+      "label": "Pozostała liczba znaków",
+      "default": "Pozostało znaków: @chars",
+      "description": "Komunikat informujący o pozostałej liczbie znaków. Zmienna @chars zostanie zastąpiona odpowiednim numerem."
+    },
+    {
+      "label": "Za mało znaków",
+      "default": "Musisz wprowadzić co najmniej @chars znaków!",
+      "description": "Komunikat informujący, że w tekście jest za mało znaków. Zmienna @chars zostanie zastąpiona odpowiednim numerem."
+    },
+    {
+      "label": "Zapisz rozwiązanie",
+      "description": "Komunikat informujący, że tekst został zapisany",
+      "default": "Zapisano"
+    },
+    {
+      "label": "Twój wynik (nie wyświetla się)",
+      "description": "Wyświetlaj tekst dla niesłyszących (dostępność). Zmienna @score jest zastępowana przez zdobyte punkty. Zmienna @total jest zastępowana przez maksymalną możliwą liczbę punktów.",
+      "default": "Masz @score z @total punktów"
+    },
+    {
+      "label": "Komunikat nawigacji (nie wyświetla się)",
+      "description": "Wyświetlaj tekst dla niesłyszących (dostępność)",
+      "default": "Przykładowe rozwiązanie zostało dodane poniżej pola wprowadzania tekstu. Przejdź."
+    },
+    {
+      "label": "Opis przycisku \"Sprawdź\" (dostępność)",
+      "default": "Sprawdź odpowiedź."
+    },
+    {
+      "label": "Opis przycisku \"Pokaż rozwiązanie\" (dostępność)",
+      "default": "Pokaż rozwiązanie. Wyświetli przykładowe rozwiązanie."
+    },
+    {
+      "label": "Opis przycisku \"Powtórz\" (dostępność)",
+      "default": "Powtórz zadanie. Możesz poprawić swoją odpowiedź, jeśli zadanie to umożliwia."
+    }
+  ]
+}
