@@ -20,7 +20,7 @@
             "label": "Zdjęcie"
           },
           {
-            "label": "Label",
+            "label": "Etykieta",
             "description": "Opcjonalna etykieta dla znaku wyboru. Upewnij się, że nie jest zbyt długa, w przeciwnym razie zostanie ukryta."
           },
           {
