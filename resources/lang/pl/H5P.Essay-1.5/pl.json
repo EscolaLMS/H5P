@@ -53,7 +53,7 @@
             "description": "Wyszukane słowo kluczowe lub fraza. Możesz użyć gwiazdki \"*\" dla jednej lub więcej liter. W wyrażeniach regularnych na początku i końcu można używać ukośników '/'."
           },
           {
-            "label": "Wariacje",
+            "label": "Warianty",
             "description": "Opcjonalnie dodaj odmiany dla słów kluczowych. Przykład: \"Miasto\", \"Gmina\" itp. może również odpowiadać wartości \"Miasto\". Punkty przyznawane są również za słowa alternatywne.",
             "entity": "Wariant",
             "field": {

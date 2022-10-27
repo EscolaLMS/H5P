@@ -1,0 +1,91 @@
+{
+    "semantics": [
+        {
+            "label": "Edytor Image Multiple Hotspot Question",
+            "fields": [
+                {
+                    "label": "Zdjęcie w tle",
+                    "fields": [
+                        {
+                            "label": "Tytuł pytania",
+                            "default": "Pytanie dotyczące hotspotu",
+                            "description": "Używane w podsumowaniach, statystykach itp."
+                        },
+                        {
+                            "label": "Zdjęcie w tle",
+                            "description": "Wybierz obraz, który ma być używany jako tło dla pytania."
+                        }
+                    ]
+                },
+                {
+                    "label": "Hotspoty",
+                    "description": "Wybierz odpowiednią ikonę dla hotspotu, skonfiguruj ją, a następnie przeciągnij na obraz, gdzie możesz zmienić jej rozmiar lub położenie",
+                    "fields": [
+                        {
+                            "label": "Opis zadania",
+                            "description": "Instrukcje dla użytkownika."
+                        },
+                        {
+                            "label": "Nazwa Hotspotu",
+                            "description": "Podaj, co użytkownik próbuje znaleźć, tj. zagrożenia, obiekty, błędy (dane tę będą wyświetlane w informacji zwrotnej)."
+                        },
+                        {
+                            "label": "Liczba prawidłowych hotspotów, które należy znaleźć do zaliczenia zadania",
+                            "description": "Jeśli pozostawisz to pole puste, zostanie domyślnie przypisana liczba utworzonych hotspotów."
+                        },
+                        {
+                            "label": "Hotspot",
+                            "entity": "Hotspot",
+                            "field": {
+                                "label": "Hotspot",
+                                "fields": [
+                                    {
+                                        "label": "Ustawienia użytkownika",
+                                        "fields": [
+                                            {
+                                                "label": "Odpowiedź poprawna",
+                                                "description": "Może istnieć wiele poprawnych hotspotów. Jednak użytkownik otrzymuje informację zwrotną o poprawności/niepoprawności po pierwszym kliknięciu. Informacja zwrotna będzie wyświetlana w postaci - (Tekst wprowadzona poniżej) (Liczba znalezionych hotspotów) z (Wymagane poprawne hotspoty) (Nazwa hotspotu wprowadzona powyżej)."
+                                            },
+                                            {
+                                                "label": "Informacja zwrotna",
+                                                "placeholder": "Znalazłeś prawidłową odpowiedź"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "label": "computedSettings",
+                                        "fields": [
+                                            {
+                                                "label": "x"
+                                            },
+                                            {
+                                                "label": "y"
+                                            },
+                                            {
+                                                "label": "szerokość"
+                                            },
+                                            {
+                                                "label": "wysokość"
+                                            },
+                                            {
+                                                "label": "figure"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "label": "Informacja zwrotna, jeśli użytkownik wybierze pusty spot:",
+                            "placeholder": "Nie znalazłeś żadnych hotspotów, spróbuj ponownie!"
+                        },
+                        {
+                            "label": "Informacja zwrotna, jeśli użytkownik wybierze już znaleziony hotspot:",
+                            "placeholder": "Ten punkt już znalazłeś!"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
