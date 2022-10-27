@@ -1,0 +1,49 @@
+{
+  "semantics": [
+    {
+      "label": "Pliki źródłowe"
+    },
+    {
+      "label": "Tryb odtwarzacza",
+      "description": "Wybierz układ odtwarzacza.",
+      "options": [
+        {
+          "label": "Prosty"
+        },
+        {
+          "label": "Pełny"
+        },
+        {
+          "label": "Przezroczysty"
+        }
+      ]
+    },
+    {
+      "label": "Dopasowanie do opakowania"
+    },
+    {
+      "label": "Sterowanie",
+      "description": "Sterowanie pozwala użytkownikowi na przykład wstrzymać dźwięk"
+    },
+    {
+      "label": "Auto odtwarzanie",
+      "description": "Dźwięk odtwarza się po wczytaniu zadania. Pamiętaj, że ta funkcja nie jest obsługiwana przez wszystkie przeglądarki."
+    },
+    {
+      "label": "Odtwórz dźwięk (Readspeaker)",
+      "default": "Odtwórz dźwięk"
+    },
+    {
+      "label": "Wstrzymaj dźwięk (Readspeaker)",
+      "default": "Wstrzymaj dźwięk"
+    },
+    {
+      "label": "Nazwa treści audio",
+      "default": "Audio"
+    },
+    {
+      "label": "Wiadomość dla nieobsługiwanego pliku audio",
+      "default": "Twoja przeglądarka nie obsługuje tego pliku audio"
+    }
+  ]
+}

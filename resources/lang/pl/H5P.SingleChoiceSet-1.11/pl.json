@@ -12,14 +12,14 @@
                 }
             ],
             "field": {
-                "label": "Pytania &amp; odpowiedzi",
+                "label": "Pytania i odpowiedzi",
                 "fields": [
                     {
                         "label": "Pytanie"
                     },
                     {
                         "label": "Odpowiedzi - pierwsza odpowiedź jest prawidłowa.",
-                        "entity": "answer",
+                        "entity": "odpowiedź",
                         "field": {
                             "label": "Odpowiedź"
                         }
@@ -89,7 +89,7 @@
             "fields": [
                 {
                     "label": "Etykieta dla przycisku \"Dalej\"",
-                    "default": "Next question"
+                    "default": "Następne pytanie"
                 },
                 {
                     "label": "Etykieta dla przycisku \"Pokaż odpowiedzi\"",

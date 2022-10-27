@@ -112,7 +112,7 @@ return [
         "showMore" => "Pokaż więcej",
         "showLess" => "Pokaż mniej",
         "subLevel" => "Podpoziom",
-        "confirmDialogHeader" => "Confirm action",
+        "confirmDialogHeader" => "Potwierdzi akcję",
         "confirmDialogBody" => "Czy na pewno kontynuować? Tej czynności nie można cofnąć.",
         "cancelLabel" => "Anuluj",
         "confirmLabel" => "Potwierdź",

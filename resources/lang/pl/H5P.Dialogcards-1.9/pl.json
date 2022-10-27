@@ -52,7 +52,7 @@
             "fields": [
               {
                 "label": "Wskazówka do tekstu",
-                "description": "TWskazówka dotycząca pierwszej części dialogu"
+                "description": "Wskazówka dotycząca pierwszej części dialogu"
               },
               {
                 "label": "Wskazówka do odpowiedzi",
@@ -75,7 +75,7 @@
           "description": "Włączenie tej opcji pozwala nawigować tylko do następnych kart dialogowych"
         },
         {
-          "label": "SSkaluj tekst, aby zmieścił się na karcie",
+          "label": "Skaluj tekst, aby zmieścił się na karcie",
           "description": "Odznaczenie tej opcji spowoduje, że karta dostosuje swój rozmiar do rozmiaru tekstu"
         },
         {
