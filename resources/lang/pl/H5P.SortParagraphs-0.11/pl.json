@@ -1,0 +1,224 @@
+{
+    "semantics": [
+        {
+            "label": "Medium",
+            "fields": [
+                {
+                    "label": "Typ",
+                    "description": "Medium, które jest opcjonalnie wyświetlane nad zadaniem."
+                },
+                {
+                    "label": "Wyłącz powiększanie obrazu"
+                }
+            ]
+        },
+        {
+            "label": "Opis zadania",
+            "placeholder": "Opisz, czego oczekujesz od uczniów...",
+            "description": "Co twoi uczniowie powinni wiedzieć."
+        },
+        {
+            "label": "Paragrafy",
+            "entity": "paragraf",
+            "field": {
+                "label": "Paragraf"
+            }
+        },
+        {
+            "label": "Ogólna informacja zwrotna",
+            "fields": [
+                {
+                    "widgets": [
+                        {
+                            "label": "Ustawienia wstępne"
+                        }
+                    ],
+                    "label": "Ustawienie informacji zwrotnej dla poszczególnych obszarów punktowych",
+                    "description": "Kliknij przycisk \"Dodaj zakres\", aby dodać odpowiedni zakres. Przykład: 0-20% Słaba ocena, 21-91% Średnia ocena, 91-100% Świetna ocena!",
+                    "entity": "Obszar",
+                    "field": {
+                        "fields": [
+                            {
+                                "label": "Zakres punktów"
+                            },
+                            {},
+                            {
+                                "label": "Informacja zwrotna dla danego zakresu punktów",
+                                "placeholder": "Wprowadź informacje zwrotne"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "label": "Ustawienia zachowania",
+            "description": "Opcje te określają szczegółowo sposób działania zadania.",
+            "fields": [
+                {
+                    "label": "Tryb oceny",
+                    "description": "Wybierz, czy punkty są przyznawane za każdy umieszczony akapit, czy za każdy akapit umieszczony po akapicie, za którym powinien być umieszczony („według kolejności”)",
+                    "options": [
+                        {
+                            "label": "Kolejność"
+                        },
+                        {
+                            "label": "Prawidłowo umieszczony akapit"
+                        }
+                    ]
+                },
+                {
+                    "label": "Odliczenia punktów",
+                    "description": "Wybierz, czy odjąć punkt za każdy akapit, który nie jest prawidłowo umieszczony."
+                },
+                {
+                    "label": "Pomijaj identyczne akapity",
+                    "description": "Jeśli opcja jest zaznaczona, akapity z tym samym sformułowaniem są pomijane podczas sprawdzania odpowiedzi."
+                },
+                {
+                    "label": "Pokaż przyciski do nawigacji",
+                    "description": "Na urządzeniach mobilnych przyciski do przenoszenia akapitów mogą poprawić nawigowanie. Możesz je wyłączyć tutaj."
+                },
+                {
+                    "label": "Pokaż przycisk \"Powtórz\""
+                },
+                {
+                    "label": "Pokaż przycisk \"Pokaż rozwiązanie\""
+                }
+            ]
+        },
+        {
+            "label": "Oznaczenia i etykiety",
+            "fields": [
+                {
+                    "label": "Etykieta dla przycisku \"Sprawdź\"",
+                    "default": "Sprawdź"
+                },
+                {
+                    "label": "Etykieta dla przycisku \"Wyślij\"",
+                    "default": "Wyślij"
+                },
+                {
+                    "label": "Etykieta dla przycisku \"Powtórz\"",
+                    "default": "Powtórz"
+                },
+                {
+                    "label": "Etykieta dla przycisku \"Pokaż rozwiązanie\"",
+                    "default": "Pokaż rozwiązanie"
+                },
+                {
+                    "label": "Etykieta dla przycisku \"Do góry\"",
+                    "default": "Do góry"
+                },
+                {
+                    "label": "Etykieta dla przycisku \"W dół\"",
+                    "default": "W dół"
+                },
+                {
+                    "label": "Etykieta dla przycisku, który jest nieaktywny",
+                    "default": "Nieaktywny"
+                }
+            ]
+        },
+        {
+            "label": "Narzędzie wspomagające niewidomych",
+            "fields": [
+                {
+                    "label": "Opis przycisku \"Sprawdź\" dla technologii wspomagających niewidomych",
+                    "default": "Sprawdź odpowiedzi. Odpowiedź jest oznaczona jako poprawna lub niepoprawna."
+                },
+                {
+                    "label": "Opis przycisku \"Pokaż rozwiązanie\" dla technologii wspomagających niewidomych",
+                    "default": "Pokaż rozwiązanie. Wyświetlone zostanie prawidłowe rozwiązanie."
+                },
+                {
+                    "label": "Opis przycisku \"Powtórz\" dla technologii wspomagających niewidomych",
+                    "default": "Powtórz zadanie. Resetuje wszystkie postępy i rozpoczyna zadanie od nowa."
+                },
+                {
+                    "label": "Twój wynik",
+                    "description": "Zmienna @score jest zastępowana osiągniętymi punktami. Zmienna @total jest zastępowana przez maksymalny możliwy wynik.",
+                    "default": "Udało Ci się osiągnąć @score z @total punktów"
+                },
+                {
+                    "label": "Opis listy",
+                    "default": "Sortowana lista paragrafów."
+                },
+                {
+                    "label": "Opis listy (w trybie \"Sprawdź odpowiedź\")",
+                    "default": "Lista z wynikami."
+                },
+                {
+                    "label": "Opis listy (w trybie \"Pokaż rozwiązanie\")",
+                    "default": "Lista z rozwiązaniami."
+                },
+                {
+                    "label": "Paragraf",
+                    "default": "paragraf"
+                },
+                {
+                    "label": "Poprawnie",
+                    "default": "poprawnie"
+                },
+                {
+                    "label": "Niepoprawnie",
+                    "default": "niepoprawnie"
+                },
+                {
+                    "description": "@score jest zastępowane przez 1 lub -1.",
+                    "label": "Objaśnieni dotyczące punktacji",
+                    "default": "@score pkt."
+                },
+                {
+                    "label": "Numeracja paragrafów",
+                    "default": "@current z @total",
+                    "description": "@current jest zastępowane bieżącym numerem paragrafu. @total jest zastępowany liczbą paragrafów."
+                },
+                {
+                    "label": "Aktualna pozycja na liście",
+                    "default": "Aktualna pozycja na liście",
+                    "description": "Następuje po \"numeracja paragrafów\"."
+                },
+                {
+                    "label": "Komunikat po wybraniu akapitu",
+                    "default": "Wciśnij spację, aby ponownie posortować"
+                },
+                {
+                    "label": "Komunikat o zmianie pozycji paragrafu",
+                    "default": "Naciśnij klawisze strzałek w górę lub w dół, aby zmienić pozycję, spację, aby upuścić, Esc, aby anulować"
+                },
+                {
+                    "label": "Wybrany do przeniesienia",
+                    "default": "Wybrany do przeniesienia"
+                },
+                {
+                    "label": "Przeniesiony",
+                    "default": "Przeniesiony"
+                },
+                {
+                    "label": "Odrzucone",
+                    "default": "Odrzucone"
+                },
+                {
+                    "label": "Sortowanie przerwane",
+                    "default": "Sortowanie przerwane"
+                },
+                {
+                    "description": "Następuje po \"Numeracja paragrafów\".",
+                    "label": "Ostatni paragraf",
+                    "default": "Ostatni paragraf"
+                },
+                {
+                    "label": "Następny paragraf",
+                    "default": "Następny paragraf",
+                    "description": "\"Prawda\" lub \"Fałsz\""
+                },
+                {
+                    "label": "Poprawny paragraf",
+                    "description": "Następuje po \"Numeracja paragrafów\".",
+                    "default": "Prawidłowa pozycja paragrafu"
+                }
+            ]
+        }
+    ]
+}
