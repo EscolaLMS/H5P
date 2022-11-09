@@ -1,0 +1,80 @@
+{
+  "semantics": [
+    {
+      "label": "Edytor Image Hotspot Question",
+      "fields": [
+        {
+          "label": "Zdjęcie w tle",
+          "fields": [
+            {
+              "label": "Zdjęcie w tle",
+              "description": "Wybierz obraz, który ma być używany jako tło dla pytania."
+            }
+          ]
+        },
+        {
+          "label": "Hotspoty",
+          "description": "Przeciągnij i upuść ikonę z paska narzędzi, aby utworzyć nowy punkt. Kliknij dwukrotnie, aby edytować istniejący punkt. Przeciągnij hotspot, aby go przenieść. Przeciągnij ikonę zmiany rozmiaru w prawym dolnym rogu, aby zmienić rozmiar.",
+          "fields": [
+            {
+              "label": "Opis zadania",
+              "description": "Instrukcje dla użytkownika."
+            },
+            {
+              "label": "Hotspot",
+              "entity": "Hotspot",
+              "field": {
+                "label": "Hotspot",
+                "fields": [
+                  {
+                    "label": "Ustawienia użytkownika",
+                    "fields": [
+                      {
+                        "label": "Odpowiedź poprawna",
+                        "description": "Może istnieć wiele poprawnych hotspotów. Jednak użytkownik otrzymuje informację zwrotną o poprawności/niepoprawności po pierwszym kliknięciu."
+                      },
+                      {
+                        "label": "Informacja zwrotna"
+                      }
+                    ]
+                  },
+                  {
+                    "label": "computedSettings"
+                  }
+                ]
+              }
+            },
+            {
+              "label": "Informacja zwrotna, jeśli użytkownik wybierze pusty hotspot spot:",
+              "placeholder": "Nie znalazłeś żadnych hotspotów, spróbuj ponownie!"
+            },
+            {
+              "label": "Pokaż opinię w dymku"
+            },
+            {
+              "label": "Lokalizacja",
+              "fields": [
+                {
+                  "label": "Tekst przycisku \"Ponów\"",
+                  "default": "Ponów"
+                },
+                {
+                  "label": "Tekst przycisku \"Zamknij\"",
+                  "default": "Zamknij"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Tekstowa reprezentacja wyników dla technologii wspomagających niewidomych.",
+      "default": "Otrzymałeś :num z of :total punktów"
+    },
+    {
+      "label": "Etykieta przycisku \"Ponów\" dla technologii wspomagających niewidomych.",
+      "default": "Ponów próbę wykonania zadania. Zresetuj wszystkie odpowiedzi i rozpocznij zadanie od nowa."
+    }
+  ]
+}

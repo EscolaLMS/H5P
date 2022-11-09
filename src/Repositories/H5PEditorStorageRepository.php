@@ -18,11 +18,11 @@ use EscolaLms\HeadlessH5P\Helpers\Helpers;
 class H5PEditorStorageRepository implements H5peditorStorage
 {
 
-    private H5PLibraryLanguageRepositoryContract $h5PLibraryLanguageService;
+    private H5PLibraryLanguageRepositoryContract $h5PLibraryLanguageRepository;
 
-    public function __construct(H5PLibraryLanguageRepositoryContract $h5PLibraryLanguageService)
+    public function __construct(H5PLibraryLanguageRepositoryContract $h5PLibraryLanguageRepository)
     {
-        $this->h5PLibraryLanguageService = $h5PLibraryLanguageService;
+        $this->h5PLibraryLanguageRepository = $h5PLibraryLanguageRepository;
     }
 
     /**
@@ -54,14 +54,14 @@ class H5PEditorStorageRepository implements H5peditorStorage
             ])->first();
 
             if ($libraryLanguage) {
-                $this->h5PLibraryLanguageService->update($libraryLanguage, $library, $language);
-                return $this->h5PLibraryLanguageService->getTranslationString($libraryLanguage->translation);
+                $this->h5PLibraryLanguageRepository->update($libraryLanguage, $library, $language);
+                return $this->h5PLibraryLanguageRepository->getTranslationString($libraryLanguage->translation);
             }
 
             // if is empty try to create from local translation files
             if (empty($libraryLanguage)) {
-                $libraryLanguage = $this->h5PLibraryLanguageService->create($library, $language);
-                return $libraryLanguage ? $this->h5PLibraryLanguageService->getTranslationString($libraryLanguage->translation) : null;
+                $libraryLanguage = $this->h5PLibraryLanguageRepository->create($library, $language);
+                return $libraryLanguage ? $this->h5PLibraryLanguageRepository->getTranslationString($libraryLanguage->translation) : null;
             }
         }
 

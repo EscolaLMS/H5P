@@ -9,11 +9,13 @@ use Illuminate\Support\Facades\File;
 
 class H5PLibraryLanguageRepository implements H5PLibraryLanguageRepositoryContract
 {
-    public function getTranslation(string $langCode, string $libraryName): ?string
+    public function getTranslation(H5PLibrary $library, string $langCode): ?string
     {
-        $semantics = __DIR__ . '/../../resources/lang/' . $langCode . '/' . $libraryName . '/' . $langCode . '.json';
+        $translation = $this->getLibraryTranslationVersion($langCode, $library->name, $library->mainVersion);
 
-        return File::exists($semantics) ? File::get($semantics) : null;
+        return empty($translation) ?
+            $this->getLibraryTranslation($langCode, $library->name)
+            : $translation;
     }
 
     public function getTranslationString($translation): string
@@ -27,7 +29,7 @@ class H5PLibraryLanguageRepository implements H5PLibraryLanguageRepositoryContra
 
     public function update(H5PLibraryLanguage $libraryLanguage, H5PLibrary $library, string $languageCode): H5PLibraryLanguage
     {
-        $translation = $this->getTranslation($languageCode, $library->directoryName);
+        $translation = $this->getTranslation($library, $languageCode);
 
         if (empty($translation)) {
             return $libraryLanguage;
@@ -45,7 +47,7 @@ class H5PLibraryLanguageRepository implements H5PLibraryLanguageRepositoryContra
 
     public function create(H5PLibrary $library, string $languageCode): ?H5PLibraryLanguage
     {
-        $translation = $this->getTranslation($languageCode, $library->directoryName);
+        $translation = $this->getTranslation($library, $languageCode);
 
         if (empty($translation)) {
             return null;
@@ -60,12 +62,26 @@ class H5PLibraryLanguageRepository implements H5PLibraryLanguageRepositoryContra
 
     public function createDefaults(H5PLibrary $library, string $languageCode, string $translation): ?H5PLibraryLanguage
     {
-        $localTranslation = $this->getTranslation($languageCode, $library->directoryName);
+        $localTranslation = $this->getTranslation($library, $languageCode);
+
         return H5PLibraryLanguage::firstOrCreate([
             'library_id' => $library->getKey(),
             'language_code' => $languageCode,
             'translation' => $localTranslation ?: $translation,
         ]);
+    }
 
+    private function getLibraryTranslation(string $langCode, string $libraryName): ?string
+    {
+        $semantics = __DIR__ . '/../../resources/lang/' . $langCode . '/' . $libraryName . '/' . $langCode . '.json';
+
+        return File::exists($semantics) ? File::get($semantics) : null;
+    }
+
+    private function getLibraryTranslationVersion(string $langCode, string $libraryName, string $libraryVersion): ?string
+    {
+        $semantics = __DIR__ . '/../../resources/lang/' . $langCode . '/' . $libraryName . '/' . $libraryVersion . '/' . $langCode . '.json';
+
+        return File::exists($semantics) ? File::get($semantics) : null;
     }
 }

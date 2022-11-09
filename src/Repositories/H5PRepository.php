@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Cache;
 class H5PRepository implements H5PFrameworkInterface
 {
 
-    private H5PLibraryLanguageRepositoryContract $h5PLibraryLanguageService;
+    private H5PLibraryLanguageRepositoryContract $h5PLibraryLanguageRepository;
 
     private array $downloadFiles;
 
@@ -30,9 +30,9 @@ class H5PRepository implements H5PFrameworkInterface
 
     protected $messages = ['error' => [], 'updated' => []];
 
-    public function __construct(H5PLibraryLanguageRepositoryContract $h5PLibraryLanguageService)
+    public function __construct(H5PLibraryLanguageRepositoryContract $h5PLibraryLanguageRepository)
     {
-        $this->h5PLibraryLanguageService = $h5PLibraryLanguageService;
+        $this->h5PLibraryLanguageRepository = $h5PLibraryLanguageRepository;
     }
 
     public function setMainData(array $mainData): void
@@ -496,7 +496,7 @@ class H5PRepository implements H5PFrameworkInterface
 
         if (isset($libraryData['language'])) {
             foreach ($libraryData['language'] as $languageCode => $translation) {
-                $this->h5PLibraryLanguageService->createDefaults($libObj, $languageCode, $translation);
+                $this->h5PLibraryLanguageRepository->createDefaults($libObj, $languageCode, $translation);
             }
             $this->additionalTranslations($libraryData['language'], $libObj);
         }
@@ -512,7 +512,7 @@ class H5PRepository implements H5PFrameworkInterface
         $additionalLanguageCodes = ['pl'];
         foreach ($additionalLanguageCodes as $languageCode) {
             if (isset($libraryLanguages) && !isset($libraryLanguages[$languageCode])) {
-                $libraryLanguage = $this->h5PLibraryLanguageService->create($library, $languageCode);
+                $libraryLanguage = $this->h5PLibraryLanguageRepository->create($library, $languageCode);
 
                 if (isset($libraryLanguage)) {
                     $libraryLanguages[$languageCode] = $libraryLanguage;
