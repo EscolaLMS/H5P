@@ -1,0 +1,219 @@
+{
+  "semantics": [
+    {
+      "label": "Nagłówek"
+    },
+    {
+      "label": "Tryb",
+      "description": "Sposób prezentacji kart dialogowych",
+      "options": [
+        {
+          "label": "Normalny"
+        },
+        {
+          "label": "Powtórzenia"
+        }
+      ]
+    },
+    {
+      "label": "Opis zadania"
+    },
+    {
+      "widgets": [
+        {
+          "label": "Domyślny"
+        }
+      ],
+      "label": "Dialogi",
+      "entity": "dialog",
+      "field": {
+        "label": "Pytanie",
+        "fields": [
+          {
+            "label": "Tekst",
+            "description": "Wskazówka do pierwszej części dialogu"
+          },
+          {
+            "label": "Odpowiedź",
+            "description": "Wskazówka do drugiej części dialogu"
+          },
+          {
+            "label": "Zdjęcie",
+            "description": "Opcjonalny zdjęcie karty. (Karta może zawierać obraz i tekst)"
+          },
+          {
+            "label": "Tekst alternatywny dla zdjęcia"
+          },
+          {
+            "label": "Pliki audio"
+          },
+          {
+            "label": "Wskazówki",
+            "fields": [
+              {
+                "label": "Wskazówka do tekstu",
+                "description": "Wskazówka dotycząca pierwszej części dialogu"
+              },
+              {
+                "label": "Wskazówka do odpowiedzi",
+                "description": "Wskazówka dotycząca drugiej części dialogu"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "Ustawienie zachowania",
+      "description": "Te opcje pozwolą Ci kontrolować zachowanie zadania.",
+      "fields": [
+        {
+          "label": "Włącz przycisk \"Ponów\""
+        },
+        {
+          "label": "Wyłącz nawigację wsteczną",
+          "description": "Włączenie tej opcji pozwala nawigować tylko do następnych kart dialogowych"
+        },
+        {
+          "label": "Skaluj tekst, aby zmieścił się na karcie",
+          "description": "Odznaczenie tej opcji spowoduje, że karta dostosuje swój rozmiar do rozmiaru tekstu"
+        },
+        {
+          "label": "Losuj karty",
+          "description": "Włącz losową kolejność kart."
+        },
+        {
+          "label": "Maksymalny poziom umiejętności"
+        },
+        {
+          "label": "Zezwalaj na szybki postęp",
+          "description": "Jeśli opcja jest zaznaczona, uczniowie mogą pomijać karty"
+        }
+      ]
+    },
+    {
+      "label": "Tekst dla przycisku przełącz",
+      "default": "Przełącz"
+    },
+    {
+      "label": "Tekst dla przycisku następny",
+      "default": "Następny"
+    },
+    {
+      "label": "Tekst dla przycisku poprzedni",
+      "default": "Poprzedni"
+    },
+    {
+      "label": "Tekst dla przycisku ponów",
+      "default": "Ponów"
+    },
+    {
+      "label": "Tekst dla przycisku \"poprawna odpowiedź\"",
+      "default": "Udało się!"
+    },
+    {
+      "label": "Tekst dla przycisku \"błędna odpowiedź\"",
+      "default": "Błędna odpowiedź!"
+    },
+    {
+      "label": "Tekst komunikatu „Runda” pod kartami i na ekranie podsumowania",
+      "description": "Zmienna @round zostanie zastąpiona aktualnym numerem",
+      "default": "Runda @round"
+    },
+    {
+      "label": "Tekst wiadomości \"Pozostałe karty\"",
+      "description": "Zmienna @number zostanie zastąpiona liczbą pozostałych kart w tej rundzie",
+      "default": "Pozostało kart: @number"
+    },
+    {
+      "label": "Tekst dla przycisku \"następna runda\"",
+      "description": "Zmienna @round zostanie zastąpiona numerem aktualnej rundy",
+      "default": "Przejdź do rundy @round"
+    },
+    {
+      "label": "Tekst przycisku \"Zacznij od nowa\"",
+      "default": "Zacznij od nowa"
+    },
+    {
+      "label": "Tekst przycisku \"pokaż podsumowanie\"",
+      "default": "Pokaż podsumowanie"
+    },
+    {
+      "label": "Tekst tytułu strony podsumowania",
+      "default": "Podsumowanie"
+    },
+    {
+      "label": "Tekst dla \"Poprawne karty:\"",
+      "default": "Poprawne karty:"
+    },
+    {
+      "label": "Tekst dla \"Niepoprawne karty:\"",
+      "default": "Niepoprawne karty:"
+    },
+    {
+      "label": "Tekst dla \"Niewyświetlone karty:\"",
+      "default": "Niewyświetlone karty:"
+    },
+    {
+      "label": "Tekst dla \"Wynik\"",
+      "default": "Wynik"
+    },
+    {
+      "label": "Tekst dla \"Ukończone karty\"",
+      "default": "Karty, które ukończyłeś:"
+    },
+    {
+      "label": "Tekst dla \"Ukończonych rund:\"",
+      "default": "Ukończone rundy:"
+    },
+    {
+      "label": "Komunikat, gdy wszystkie karty zostały ukończone",
+      "description": "@cards zostanie zastąpione przez liczbę wszystkich kart. @max zostanie zastąpiony przez uzyskaną wartość",
+      "default": "Dobra robota! Opanowałeś wszystkie karty @cards uzyskując @max!"
+    },
+    {
+      "label": "Tekst dotyczący postępu",
+      "description": "Dostępne zmienne to @card i @total.",
+      "default": "Karta @card z @total"
+    },
+    {
+      "label": "Etykieta dla przodu karty",
+      "description": "Wykorzystywane do zapewnienia dostępności przez technologie dla niesłyszących",
+      "default": "Przód karty"
+    },
+    {
+      "label": "Etykieta na tył karty",
+      "description": "Wykorzystywane do zapewnienia dostępności przez technologie dla niesłyszących",
+      "default": "Tył karty"
+    },
+    {
+      "label": "Etykieta dla przycisku pokazującego wskazówkę",
+      "default": "Pokaż wskazówkę"
+    },
+    {
+      "label": "Komunikat o nieobsługiwanym dźwięku",
+      "default": "Twoja przeglądarka nie obsługuje tego formatu"
+    },
+    {
+      "label": "Okno potwierdzające rozpoczynania od nowa",
+      "fields": [
+        {
+          "label": "Tekst nagłówka",
+          "default": "Zacząć od nowa?"
+        },
+        {
+          "label": "Tekst główny",
+          "default": "Wszystkie postępy zostaną utracone. Czy na pewno chcesz zacząć od nowa?"
+        },
+        {
+          "label": "Etykieta przycisku \"Anuluj\"",
+          "default": "Anuluj"
+        },
+        {
+          "label": "Etykieta przycisku \"Potwierdź\"",
+          "default": "Zacznij od nowa"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "semantics": [
+    {
+      "label": "Obraz"
+    },
+    {
+      "label": "Obraz dekoracyjny",
+      "description": "Włącz tę opcję, jeśli obraz jest czysto dekoracyjny i nie dodaje żadnych informacji do treści na stronie. Zostanie zignorowany przez czytniki ekranu i nie otrzyma żadnego alternatywnego tekstu."
+    },
+    {
+      "label": "Tekst alternatywny",
+      "description": "Wymagany. Ten tekst zostanie wyświetlony, jeśli przeglądarka nie zdoła załadować obrazu. Potrzebny także dla czytników ekranu."
+    },
+    {
+      "label": "Tekst w dymku",
+      "description": "Opcjonalna. Ten tekst zostanie wyświetlony, gdy użytkownik najedzie kursorem na obraz."
+    },
+    {
+      "label": "Nazwa obrazu",
+      "default": "Obraz"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "semantics":[
+    {
+      "label":"Panele",
+      "entity":"panel",
+      "field":{
+        "label":"Treść",
+        "entity":"treść",
+        "fields":[
+          {
+            "label":"Tytuł"
+          },
+          {
+            "label":"Typ treści",
+            "entity":"treść"
+          }
+        ]
+      }
+    },
+    {
+      "label":"H znaczniki dla etykiet (nie mają wpływu na rozmiar etykiety)",
+      "description":"Znacznik h używany w etykietach. Domyślnie H2, jeśli znacznik należy do nagłówka H2, użyj nagłówka H3. Nie wpływa na rozmiar etykiet, tag używany jest tylko do celów semantycznych.",
+      "options":[
+        {
+          "label":"H2"
+        },
+        {
+          "label":"H3"
+        },
+        {
+          "label":"H4"
+        }
+      ]
+    }
+  ]
+}

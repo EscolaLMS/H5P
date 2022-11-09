@@ -7,7 +7,7 @@ use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
 
 interface H5PLibraryLanguageRepositoryContract
 {
-    public function getTranslation(string $langCode, string $libraryName): ?string;
+    public function getTranslation(H5PLibrary $library, string $langCode): ?string;
 
     public function getTranslationString($translation): string;
 

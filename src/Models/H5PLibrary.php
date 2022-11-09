@@ -224,6 +224,11 @@ class H5PLibrary extends Model
         return $this->name . '-' . $this->major_version . '.' .$this->minor_version;
     }
 
+    public function getMainVersionAttribute(): string
+    {
+        return $this->major_version. '.' . $this->minor_version;
+    }
+
     public function getVersionAttribute(): string
     {
         return $this->major_version. '.' . $this->minor_version . '.' . $this->patch_version;

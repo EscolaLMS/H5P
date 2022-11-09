@@ -1,0 +1,147 @@
+{
+    "semantics": [
+        {
+            "label": "Lista pytań",
+            "entity": "pytanie",
+            "widgets": [
+                {
+                    "label": "Domyślny"
+                },
+                {
+                    "label": "Tekstowy"
+                }
+            ],
+            "field": {
+                "label": "Pytania i odpowiedzi",
+                "fields": [
+                    {
+                        "label": "Pytanie"
+                    },
+                    {
+                        "label": "Odpowiedzi - pierwsza odpowiedź jest prawidłowa.",
+                        "entity": "odpowiedź",
+                        "field": {
+                            "label": "Odpowiedź"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "label": "Ogólna opinia",
+            "fields": [
+                {
+                    "widgets": [
+                        {
+                            "label": "Domyślny"
+                        }
+                    ],
+                    "label": "Ustawienie informacji zwrotnej dla poszczególnych obszarów punktowych",
+                    "description": "Kliknij przycisk \"Dodaj zakres\", aby dodać odpowiedni zakres. Przykład: 0-20% Słaba ocena, 21-91% Średnia ocena, 91-100% Świetna ocena!",
+                    "entity": "Obszar",
+                    "field": {
+                        "fields": [
+                            {
+                                "label": "Zakres punktów"
+                            },
+                            {},
+                            {
+                                "label": "Informacja zwrotna dla danego zakresu punktów",
+                                "placeholder": "Wprowadź informacje zwrotne"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "label": "Ustawienia zachowania",
+            "fields": [
+                {
+                    "label": "Kontynuuj automatycznie",
+                    "description": "Automatycznie przejdź do następnego pytania po wybraniu odpowiedzi"
+                },
+                {
+                    "label": "Limit czasu na poprawne odpowiedzi",
+                    "description": "Wartość w milisekundach"
+                },
+                {
+                    "label": "Limit czasu przy błędnych odpowiedziach",
+                    "description": "Wartość w milisekundach"
+                },
+                {
+                    "label": "Efekty dźwiękowe"
+                },
+                {
+                    "label": "Przycisk \"Ponów\""
+                },
+                {
+                    "label": "Przycisk \"Pokaż rozwiązanie\""
+                },
+                {
+                    "label": "Procent zaliczenia",
+                    "description": "Procent całkowitego wyniku wymaganego do zaliczenia quizu."
+                }
+            ]
+        },
+        {
+            "label": "Tłumaczenia - Single-Choice-Set",
+            "fields": [
+                {
+                    "label": "Etykieta dla przycisku \"Dalej\"",
+                    "default": "Następne pytanie"
+                },
+                {
+                    "label": "Etykieta dla przycisku \"Pokaż odpowiedzi\"",
+                    "default": "Pokaż odpowiedzi"
+                },
+                {
+                    "label": "Etykieta dla przycisku \"Ponów\"",
+                    "default": "Ponów"
+                },
+                {
+                    "label": "Tytuł w widoku odpowiedzi",
+                    "default": "Lista odpowiedzi"
+                },
+                {
+                    "label": "Tekst audio dla poprawnej odpowiedzi",
+                    "default": "Brawo!"
+                },
+                {
+                    "label": "Tekst audio dla niepoprawnej odpowiedzi",
+                    "default": "Niepoprawnie!"
+                },
+                {
+                    "label": "Etykieta dla przycisku \"wycisz\", aby wyłączyć dźwięk",
+                    "default": "Wyciszenie dźwięku zwrotnego"
+                },
+                {
+                    "label": "Etykieta dla przycisku \"Zamknij\"",
+                    "default": "Zamknij"
+                },
+                {
+                    "label": "Tekst numeru slajdu",
+                    "description": "Pokazuje bieżący slajd i całkowitą liczbę slajdów, zmienne to :num i :total",
+                    "default": "Slajd :num z :total"
+                },
+                {
+                    "label": "Tekstowa reprezentacja paska wyników dla osób korzystających z technologii dla niesłyszących",
+                    "default": "Otrzymałeś :num z :total punktów"
+                },
+                {
+                    "label": "Etykieta numeru pytania na liście rozwiązań",
+                    "description": "Pokazuje aktualny indeks pytania na liście, zmienne to :num",
+                    "default": "Pytanie :num"
+                },
+                {
+                    "label": "Opis przycisku \"Pokaż odpowiedź\" dla technologii wspomagających niewidomych",
+                    "default": "Pokaż odpowiedzi. Zadanie zostanie oznaczone jako poprawnie rozwiązane."
+                },
+                {
+                    "label": "Opis przycisku \"Ponów\" dla technologii wspomagających niewidomych",
+                    "default": "Ponów zadanie. Zresetuj wszystkie odpowiedzi i rozpocznij zadanie od nowa."
+                }
+            ]
+        }
+    ]
+}
