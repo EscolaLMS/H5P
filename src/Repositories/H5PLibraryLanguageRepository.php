@@ -55,9 +55,8 @@ class H5PLibraryLanguageRepository implements H5PLibraryLanguageRepositoryContra
 
         return H5PLibraryLanguage::firstOrCreate([
             'library_id' => $library->getKey(),
-            'language_code' => $languageCode,
-            'translation' => $translation,
-        ]);
+            'language_code' => $languageCode
+        ], ['translation' => $translation,]);
     }
 
     public function createDefaults(H5PLibrary $library, string $languageCode, string $translation): ?H5PLibraryLanguage
@@ -67,8 +66,7 @@ class H5PLibraryLanguageRepository implements H5PLibraryLanguageRepositoryContra
         return H5PLibraryLanguage::firstOrCreate([
             'library_id' => $library->getKey(),
             'language_code' => $languageCode,
-            'translation' => $localTranslation ?: $translation,
-        ]);
+        ], ['translation' => $localTranslation ?: $translation]);
     }
 
     private function getLibraryTranslation(string $langCode, string $libraryName): ?string
