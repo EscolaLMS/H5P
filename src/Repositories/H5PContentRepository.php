@@ -16,6 +16,7 @@ use EscolaLms\HeadlessH5P\Traits\QueryExtendable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 
 class H5PContentRepository implements H5PContentRepositoryContract
@@ -38,6 +39,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
             ['major_version', $libNames['majorVersion']],
             ['minor_version', $libNames['minorVersion']],
         ])->first();
+
         if ($libDb === null) {
             throw new H5PException(H5PException::LIBRARY_NOT_FOUND);
         }
@@ -52,14 +54,25 @@ class H5PContentRepository implements H5PContentRepositoryContract
             'library_id' => $libDb->id,
             'library' => $library,
             'parameters' => $params,
-            'nonce' => $nonce,
+            'nonce' => bin2hex(random_bytes(2)),
             'user_id' => $user->getKey(),
             'author' => $user->email,
         ]);
 
+        $this->filterParameters(H5PContent::findOrFail($content), $libDb);
         $this->moveTmpFilesToContentFolders($nonce, $content);
 
         return $content;
+    }
+
+    private function filterParameters(H5PContent $h5pContent, H5PLibrary $h5pLibrary): void
+    {
+        $content = $h5pContent->toArray();
+        $content['library'] = $h5pLibrary->toArray();
+        $content['params'] = json_encode($content['params']);
+        $content['slug'] = Str::slug($content['title']);
+
+        $this->hh5pService->getCore()->filterParameters($content);
     }
 
     public function edit(int $id, string $library, string $params, string $nonce): int
@@ -93,9 +106,10 @@ class H5PContentRepository implements H5PContentRepositoryContract
             'library_id' => $libDb->id,
             'library' => $library,
             'parameters' => $params,
-            //'nonce'=>$nonce
+            'filtered' => json_encode($json->params) // TODO check it
         ], $id);
 
+        $this->filterParameters($content, $libDb);
         $this->moveTmpFilesToContentFolders($nonce, $id);
 
         return $id;

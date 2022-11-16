@@ -47,7 +47,7 @@ class HeadlessH5PServiceProvider extends ServiceProvider
             $languageRepository = new H5PLibraryLanguageRepository();
             $repository = new H5PRepository($languageRepository);
             $fileStorage = new H5PFileStorageRepository(storage_path('app/h5p'));
-            $core = new H5PCore($repository, $fileStorage, url('h5p'), config('hh5p.language'), true);
+            $core = new H5PCore($repository, $fileStorage, url('h5p'), config('hh5p.language'), config('hh5p.h5p_export'));
             $core->aggregateAssets = true;
             $validator = new H5PValidator($repository, $core);
             $storage = new H5PStorage($repository, $core);

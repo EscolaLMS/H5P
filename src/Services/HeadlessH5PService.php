@@ -424,8 +424,6 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $content = $this->getCore()->loadContent($id);
         $content['metadata']['title'] = $content['title'];
 
-        $safe_parameters = $this->getCore()->filterParameters($content); // TODO: actually this is inserting stuff in Database, it shouldn'e instert anything since this is a GET
-
         $library = $content['library'];
 
         $uberName = $library['name'] . ' ' . $library['majorVersion'] . '.' . $library['minorVersion'];
@@ -433,7 +431,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $settings['contents']["cid-$id"] = [
             'library' => $uberName,
             'content' => $content,
-            'jsonContent' => $safe_parameters,
+            'jsonContent' => $content['filtered'],
             'fullScreen' => $content['library']['fullscreen'],
             // TODO check all of those endpointis are working fine
             'exportUrl' => config('hh5p.h5p_export') && $token ? route('hh5p.content.export', [$content['id'], '_token' => $token]) : '',
@@ -502,8 +500,6 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $content = $this->getCore()->loadContent($id);
         $content['metadata']['title'] = $content['title'];
 
-        $safe_parameters = $this->getCore()->filterParameters($content); // TODO: actually this is inserting stuff in Database, it shouldn'e instert anything since this is a GET
-
         $library = $content['library'];
 
         $uberName = $library['name'] . ' ' . $library['majorVersion'] . '.' . $library['minorVersion'];
@@ -512,9 +508,9 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'library' => $uberName,
             'content' => $content,
             'jsonContent' => json_encode([
-                'params' => json_decode($safe_parameters),
+                'params' => $content['filtered'],
                 'metadata' => $content['metadata'],
-            ]),
+            ], JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE),
             'fullScreen' => $content['library']['fullscreen'],
             'exportUrl' => config('hh5p.h5p_export') ? route('hh5p.content.export', [$content['id']]) : '',
             //'embedCode'       => '<iframe src="'.route('h5p.embed', ['id' => $content['id']]).'" width=":w" height=":h" frameborder="0" allowfullscreen="allowfullscreen"></iframe>',
@@ -533,6 +529,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             ],
             'nonce' => $content['nonce'],
         ];
+
 
         return $settings;
     }
