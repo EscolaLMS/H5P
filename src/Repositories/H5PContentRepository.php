@@ -2,7 +2,6 @@
 
 namespace EscolaLms\HeadlessH5P\Repositories;
 
-use EscolaLms\Auth\Events\Auth;
 use EscolaLms\Core\Repositories\Criteria\Criterion;
 use EscolaLms\HeadlessH5P\Dtos\ContentFilterCriteriaDto;
 use EscolaLms\HeadlessH5P\Exceptions\H5PException;
@@ -13,9 +12,11 @@ use EscolaLms\HeadlessH5P\Models\H5PTempFile;
 use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 use EscolaLms\HeadlessH5P\Traits\QueryExtendable;
+use H5PCore;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 
 class H5PContentRepository implements H5PContentRepositoryContract
@@ -38,6 +39,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
             ['major_version', $libNames['majorVersion']],
             ['minor_version', $libNames['minorVersion']],
         ])->first();
+
         if ($libDb === null) {
             throw new H5PException(H5PException::LIBRARY_NOT_FOUND);
         }
@@ -57,6 +59,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
             'author' => $user->email,
         ]);
 
+        $this->filterParameters(H5PContent::findOrFail($content), $libDb);
         $this->moveTmpFilesToContentFolders($nonce, $content);
 
         return $content;
@@ -93,7 +96,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
             'library_id' => $libDb->id,
             'library' => $library,
             'parameters' => $params,
-            //'nonce'=>$nonce
+            'filtered' => isset($json->params) ? json_encode($json->params) : $content['filtered']
         ], $id);
 
         $this->moveTmpFilesToContentFolders($nonce, $id);
@@ -266,5 +269,17 @@ class H5PContentRepository implements H5PContentRepositoryContract
         return H5PContent::query()
             ->whereRaw('(SELECT COUNT(*) FROM topic_h5ps WHERE hh5p_contents.id = topic_h5ps.value) <= 0')
             ->get();
+    }
+
+    private function filterParameters(H5PContent $h5pContent, H5PLibrary $h5pLibrary): void
+    {
+        $content = $h5pContent->toArray();
+        $content['library'] = $h5pLibrary->toArray();
+        $content['params'] = json_encode($content['params']);
+        $content['metadata'] = json_decode(json_encode($content['metadata']), true);
+        $content['slug'] = Str::slug($content['title']);
+        $content['embedType'] = H5PCore::determineEmbedType($h5pContent->embededType ?? 'div', $h5pLibrary->embedTypes);
+
+        $this->hh5pService->getCore()->filterParameters($content);
     }
 }

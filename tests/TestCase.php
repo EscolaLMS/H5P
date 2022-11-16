@@ -51,6 +51,7 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
         $app['config']->set('auth.providers.users.model', User::class);
         $app['config']->set('passport.client_uuids', true);
         $app['config']->set('hh5p.guzzle', ['handler' => $handlerStack]);
+        $app['config']->set('hh5p.h5p_export', true);
     }
 
     protected function authenticateAsAdmin(): void
