@@ -508,7 +508,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'library' => $uberName,
             'content' => $content,
             'jsonContent' => json_encode([
-                'params' => $content['filtered'],
+                'params' => json_decode($content['filtered']),
                 'metadata' => $content['metadata'],
             ], JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE),
             'fullScreen' => $content['library']['fullscreen'],
