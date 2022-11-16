@@ -122,7 +122,8 @@ class H5PEditorStorageRepository implements H5peditorStorage
                     ['minor_version', $library->minorVersion]
                 ])->first())
                 ->reject(fn($library) => !$library)
-                ->values();
+                ->values()
+                ->all();
         }
 
         $libraries_result = H5PLibrary::where('runnable', 1)

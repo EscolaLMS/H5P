@@ -20,11 +20,11 @@ class H5PLibraryFactory extends Factory
             'runnable' => 1,
             'restricted' => 0,
             'fullscreen' => 1,
-            'embed_types' => '',
+            'embed_types' => 'div',
             'preloaded_js' => '',
             'preloaded_css' => '',
             'drop_library_css' => '',
-            'semantics' => '',
+            'semantics' => '[]',
             'tutorial_url' => '',
             'has_icon' => 0,
             'add_to' => ''
