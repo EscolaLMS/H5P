@@ -4,6 +4,7 @@ namespace EscolaLms\HeadlessH5P\Repositories;
 
 use EscolaLms\HeadlessH5P\Exceptions\H5PException;
 use EscolaLms\HeadlessH5P\Helpers\Helpers;
+use EscolaLms\HeadlessH5P\Helpers\JSONHelper;
 use EscolaLms\HeadlessH5P\Models\H5PContent;
 use EscolaLms\HeadlessH5P\Models\H5PContentLibrary;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
@@ -17,6 +18,7 @@ use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\DB;
 use DateTime;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\File;
 
 
 class H5PRepository implements H5PFrameworkInterface
@@ -899,6 +901,13 @@ class H5PRepository implements H5PFrameworkInterface
             ->where('minor_version', $minorVersion)
             ->first();
 
+        $semanticsFile = $this->getSemanticsFromFile($machineName, $majorVersion, $minorVersion);
+
+        if ($semanticsFile && !JSONHelper::compareArr(json_decode($semanticsFile), $library->semantics)) {
+            $library->semantics = $semanticsFile;
+            $library->save();
+        }
+
         return $library === false ? null : json_encode($library->semantics);
     }
 
@@ -1375,5 +1384,19 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function setContentHubMetadataChecked($time, $lang = 'en')
     {
+    }
+
+    private function getSemanticsFromFile($machineName, $majorVersion, $minorVersion): ?string
+    {
+        $semanticsFile = null;
+        $storagePath = config('hh5p.h5p_storage_path');
+        $libraryDirectory = $machineName . '-' . $majorVersion . '.' . $minorVersion;
+        $semanticsPath = storage_path($storagePath . '/libraries/' . $libraryDirectory . '/semantics.json');
+
+        if (File::exists($semanticsPath)) {
+            $semanticsFile = File::get($semanticsPath);
+        }
+
+        return $semanticsFile;
     }
 }

@@ -44,6 +44,11 @@ class ContentLibrarySeeder extends Seeder
         if ($this->hh5pService->getValidator()->isValidPackage($skipContent, $h5p_upgrade_only)) {
             $this->hh5pService->getRepository()->setMainData($this->hh5pService->getCore()->mainJsonData);
             $this->hh5pService->getStorage()->savePackage($content, null, $skipContent);
+
+            $id = $this->hh5pService->getStorage()->contentId;
+            $content = $this->hh5pService->getCore()->loadContent($id);
+            $this->hh5pService->getCore()->filterParameters($content);
+
         } else {
             echo "Invalid package $filename \n";
         }

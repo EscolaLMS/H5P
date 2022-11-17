@@ -552,7 +552,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         }
 
         $result = json_decode($file->getResult());
-        $result->path = $file->getType() . 's/' . $file->getName() . '#tmp';
+        $result->path = $file->getType() . 's/' . $file->getName();
 
         return $result;
     }
