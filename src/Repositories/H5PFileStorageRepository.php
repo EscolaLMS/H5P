@@ -22,7 +22,7 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
     {
         $dest = $this->path . '/libraries/' . $this->libraryToFolderName($library);
 
-        $this->copyFileTree($library['uploadDirectory'], $dest);
+        $this->copyFiles($library['uploadDirectory'], $dest);
     }
 
     private static function libraryToFolderName($library) {
@@ -35,12 +35,12 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
     /**
      * @throws Exception
      */
-    private function copyFileTree($source, $destination) {
-        if (!$this->dirReady($destination)) {
+    private function copyFiles($source, $destination) {
+        if (!$this->isDirReady($destination)) {
             throw new Exception('unabletocopy');
         }
 
-        $ignoredFiles = $this->getIgnoredFiles("{$source}/.h5pignore");
+        $ignoredFiles = $this->ignoredFilesProvider("{$source}/.h5pignore");
 
         $dir = opendir($source);
         if ($dir === false) {
@@ -48,10 +48,10 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
             throw new Exception('unabletocopy');
         }
 
-        while (false !== ($file = readdir($dir))) {
+        while (($file = readdir($dir)) !== false) {
             if (($file != '.') && ($file != '..') && $file != '.git' && $file != '.gitignore' && !in_array($file, $ignoredFiles)) {
                 if (is_dir("{$source}/{$file}")) {
-                    $this->copyFileTree("{$source}/{$file}", "{$destination}/{$file}");
+                    $this->copyFiles("{$source}/{$file}", "{$destination}/{$file}");
                 }
                 else {
                     copy("{$source}/{$file}", "{$destination}/{$file}");
@@ -62,7 +62,7 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
         closedir($dir);
     }
 
-    private function getIgnoredFiles($file)
+    private function ignoredFilesProvider($file)
     {
         if (file_exists($file) === false) {
             return [];
@@ -76,11 +76,11 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
         return preg_split('/\s+/', $contents);
     }
 
-    private function dirReady($path): bool
+    private function isDirReady($path): bool
     {
         if (!file_exists($path)) {
             $parent = preg_replace("/\/[^\/]+\/?$/", '', $path);
-            if (!$this->dirReady($parent)) {
+            if (!$this->isDirReady($parent)) {
                 return false;
             }
 
