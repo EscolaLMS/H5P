@@ -62,7 +62,7 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
         closedir($dir);
     }
 
-    private function getIgnoredFiles($file): array|bool
+    private function getIgnoredFiles($file)
     {
         if (file_exists($file) === false) {
             return [];
