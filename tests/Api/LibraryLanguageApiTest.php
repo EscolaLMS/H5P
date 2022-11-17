@@ -66,7 +66,7 @@ class LibraryLanguageApiTest extends TestCase
             'preloaded_js' => 'dist/h5p-image-juxtaposition.js',
             'preloaded_css' => 'dist/h5p-image-juxtaposition.css',
             'drop_library_css' => '',
-            'semantics' => '',
+            'semantics' => '[]',
             'tutorial_url' => '',
             'has_icon' => 1,
             'add_to' => null
