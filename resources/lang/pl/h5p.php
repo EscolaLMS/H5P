@@ -82,7 +82,7 @@ return [
     ],
     'h5p' => [
         "fullscreen" => "Pełny ekran",
-        "disableFullscreen" => "Wyłącz pełny ekranu",
+        "disableFullscreen" => "Wyłącz pełny ekran",
         "download" => "Pobierz",
         "copyrights" => "Licencje",
         "embed" => "Osadź",

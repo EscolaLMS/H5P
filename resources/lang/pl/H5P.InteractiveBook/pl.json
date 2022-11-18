@@ -1,0 +1,202 @@
+{
+  "semantics": [
+    {
+      "label": "Włącz okładkę książki",
+      "description": "Okładka pokazuje informacje dotyczące książki"
+    },
+    {
+      "label": "Okładka",
+      "fields": [
+        {
+          "label": "Opis okładki",
+          "description": "Tekst będzie opisem Twojej książki."
+        },
+        {
+          "label": "Okładka opcjonalne",
+          "description": "Pole opcjonalne"
+        }
+      ]
+    },
+    {
+      "label": "Strony",
+      "entity": "Strona",
+      "widgets": [
+        {
+          "label": "Domyślna"
+        }
+      ],
+      "field": {
+        "label": "Element",
+        "fields": [
+          {
+            "label": "Strona"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Ustawienia zachowania.",
+      "fields": [
+        {
+          "label": "Kolor podstawowy",
+          "description": "Ustaw kolor bazowy, który określi ogólną kolorystykę książki. Zapewnij odpowiednio wysoki kontrast.",
+          "default": "#1768c4"
+        },
+        {
+          "label": "Domyślnie wyświetl spis treści",
+          "description": "Po włączeniu spis treści jest pokazywany podczas otwierania książki"
+        },
+        {
+          "label": "Postępy użytkownika",
+          "description": "Włączenie tej opcji spowoduję wyświetlenie postępów użytkownikowi"
+        },
+        {
+          "label": "Automatyczne postępy użytkownika",
+          "description": "Jeśli ta opcja jest włączona, strona bez zadań jest uznawana za wykonaną. Jeśli ta opcja jest wyłączona, na dole każdej strony umieszczony będzie przycisk, dzięki któremu użytkownik może zakończyć zadanie"
+        },
+        {
+          "label": "Wyświetl podsumowanie",
+          "description": "Kiedy opcja jest włączona użytkownik może zobaczyć podsumowanie oraz zapisać postępy/odpowiedzi"
+        }
+      ]
+    },
+    {
+      "label": "Tłumaczenie \"Czytaj\"",
+      "default": "Czytaj"
+    },
+    {
+      "label": "Tłumaczenie \"Wyświetl \"Spis treści\"\"",
+      "default": "Wyświetl \"Spis treści\""
+    },
+    {
+      "label": "Tłumaczenie \"Ukryj \"Spis treści\"\"",
+      "default": "Ukryj \"Spis treści\""
+    },
+    {
+      "label": "Tłumaczenie \"Następna strona\"",
+      "default": "Następna strona"
+    },
+    {
+      "label": "Tłumaczenie \"Poprzednia strona\"",
+      "default": "Poprzednia strona"
+    },
+    {
+      "label": "Tłumaczenie \"Strona ukończona!\"",
+      "default": "Strona ukończona!"
+    },
+    {
+      "label": "Tłumaczenie \"Ukończono @pages z @total\" (@pages i @total zostaną zastąpione aktualnymi wartościami)",
+      "default": "Ukończono @pages z @total"
+    },
+    {
+      "label": "Tłumaczenie \"Nieukończona strona\"",
+      "default": "Nieukończona strona"
+    },
+    {
+      "label": "Tłumaczenie \"Przejdź do góry\"",
+      "default": "Przejdź do góry"
+    },
+    {
+      "label": "Tłumaczenie \"Ukończono stronę\"",
+      "default": "Ukończono stronę"
+    },
+    {
+      "label": "Etykieta przycisku \"Pełny ekran\"",
+      "default": "Pełny ekran"
+    },
+    {
+      "label": "Etykieta przycisku \"Wyłącz pełny ekran\"",
+      "default": "Wyłącz pełny ekran"
+    },
+    {
+      "label": "Postęp w książce",
+      "description": "\"@count\" zostanie zastąpione przez liczbę stron, a \"@total\" zostanie zastąpione przez całkowitą liczbę stron.",
+      "default": "@count z @total stron"
+    },
+    {
+      "label": "Postęp interakcji",
+      "description": "\"@count\" zostanie zastąpione przez liczbę interakcji, a \"@total\" zostanie zastąpione przez całkowitą liczbę interakcji.",
+      "default": "@count z @total interakcji"
+    },
+    {
+      "label": "Tłumaczenie \"Zapisz postępy\"",
+      "default": "Zapisz postępny"
+    },
+    {
+      "label": "Etykieta dla przycisku \"Uruchom ponowne\"",
+      "default": "Uruchom ponowne"
+    },
+    {
+      "label": "Nagłówek podsumowania",
+      "default": "Podsumowanie"
+    },
+    {
+      "label": "Tłumaczenie \"Interakcje\"",
+      "default": "Interakcje"
+    },
+    {
+      "label": "Tłumaczenie \"Interakcję bez odpowiedzi\"",
+      "default": "Interakcję bez odpowiedzi"
+    },
+    {
+      "label": "Wynik",
+      "description": "\"@score\" zostanie zastąpione aktualnym wynikiem, a \"@maxscore\" zostanie zastąpione maksymalnym możliwym wynikiem",
+      "default": "@score / @maxscore"
+    },
+    {
+      "label": "Interakcji na stronę",
+      "description": "\"@left\" zostanie zastąpione pozostałymi interakcjami, a \"@max\" całkowitą liczbą interakcji na stronie",
+      "default": "Ukończono @left z @max interakcji"
+    },
+    {
+      "label": "Tłumaczenie \"Brak interakcji\"",
+      "default": "Brak interakcji"
+    },
+    {
+      "label": "Tłumaczenie \"Wynik\"",
+      "default": "Wynik"
+    },
+    {
+      "label": "Etykieta przycisku \"Podsumuj i prześlij\".",
+      "default": "Podsumuj &amp; prześlij"
+    },
+    {
+      "label": "Tłumaczenie \"Nie wchodziłeś w interakcję z żadną stroną.\"",
+      "default": "Nie wchodziłeś w interakcję z żadną stroną."
+    },
+    {
+      "label": "Tłumaczenie \"Aby wyświetlić podsumowanie, musisz wejść w interakcję z co najmniej jedną stroną.\"",
+      "default": "Aby wyświetlić podsumowanie, musisz wejść w interakcję z co najmniej jedną stroną."
+    },
+    {
+      "label": "Tłumaczenie \"Twoje odpowiedzi zostały przesłane do sprawdzenia!\"",
+      "default": "Twoje odpowiedzi zostały przesłane do sprawdzenia!"
+    },
+    {
+      "label": "Etykieta podsumowania postępów",
+      "default": "Podsumowanie postępów"
+    },
+    {
+      "label": "Etykieta postępu interakcji",
+      "default": "Postęp interakcji"
+    },
+    {
+      "label": "Etykieta wyniku całkowitego",
+      "default": "Wynik całkowity"
+    },
+    {
+      "label": "Teksty dotyczące dostępności",
+      "fields": [
+        {
+          "label": "Postęp strony - tekst alternatywny",
+          "description": "Alternatywny tekst postępu strony. Dostępne zmienne to: @page i @total.",
+          "default": "Strona @page z @total."
+        },
+        {
+          "label": "Etykieta menu nawigacyjnego (rozwijanego/zwijanego)",
+          "default": "Włącz menu nawigacji"
+        }
+      ]
+    }
+  ]
+}
