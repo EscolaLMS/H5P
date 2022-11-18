@@ -1003,7 +1003,9 @@ class H5PRepository implements H5PFrameworkInterface
         }
         $content = $content->toArray();
         $content['contentId'] = $content['id']; // : Identifier for the content
-        $content['params'] = json_encode($content['params']); // : json content as string
+        $content['parameters'] = JSONHelper::clearStr(['\"', '&quot;'], '\'', $content['parameters']); //str_replace(['\"', '&quot;'], '\'', json_encode($content['parameters'])); // : json content as string
+        $content['params'] = JSONHelper::clearObj(['\"', '&quot;'], '\'', $content['params']); // : json content as string
+        $content['filtered'] = isset($content['filtered']) ? JSONHelper::clearStr(['\"', '&quot;'], '\'', $content['filtered']) : ''; // : json content as string
         $content['embedType'] = \H5PCore::determineEmbedType($content['embed_type'] ?? 'div', $content['library']['embed_types']); // : csv of embed types
         //$content ['language'] // : Language code for the content
         $content['libraryId'] = $content['library_id']; // : Id for the main library
