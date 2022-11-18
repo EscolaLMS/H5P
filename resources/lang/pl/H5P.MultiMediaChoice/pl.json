@@ -23,7 +23,7 @@
         "fields": [
           {
             "label": "Medium",
-            "description": "<h3> Obraz, który ma być wyświetlany do wyboru. Tekst alternatywny jest używany w wynikach.</h3>"
+            "description": "<h3>Obraz, który ma być wyświetlany do wyboru. Tekst alternatywny jest używany w wynikach.</h3>"
           },
           {
             "label": "Prawidłowy"
@@ -165,11 +165,11 @@
           "default": "Pokaż rozwiązanie. Właściwe opcje są podświetlone."
         },
         {
-          "label": "Prawidłowa odpowiedź (nie wyświetlono)",
+          "label": "Prawidłowa odpowiedź (nie wyświetlona)",
           "default": "Prawidłowa odpowiedź"
         },
         {
-          "label": "Zła odpowiedź (nie wyświetlono)",
+          "label": "Zła odpowiedź (nie wyświetlona)",
           "default": "Zła odpowiedź"
         },
         {
@@ -178,7 +178,7 @@
         },
         {
           "label": "Opcja nie powinna była zostać wybrana",
-          "default": "Hätte nicht Opcja nie powinna była zostać wybrana"
+          "default": "Opcja nie powinna była zostać wybrana"
         },
         {
           "label": "Tekst alertu \"Odpowiedź wymagaana\"",
@@ -227,7 +227,7 @@
             },
             {
               "label": "Treść",
-              "default": "Czy na pewno chcesz powtórzyć??"
+              "default": "Czy na pewno chcesz powtórzyć?"
             },
             {
               "label": "Etykieta przycisku \"Anuluj\".",
