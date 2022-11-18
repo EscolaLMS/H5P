@@ -350,7 +350,6 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
             //$settings = self::get_content_files($settings, $content);
         }
-
         return $settings;
     }
 
@@ -446,6 +445,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
                 ],
             ],
             'nonce' => $content['nonce'],
+            'metadata' => $content['metadata']
         ];
 
         // get settings stop
@@ -508,7 +508,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'library' => $uberName,
             'content' => $content,
             'jsonContent' => json_encode([
-                'params' => json_decode(str_replace('\"', '\'', str_replace(['\n', '\t'], '', $content['filtered']))),
+                'params' => json_decode(str_replace(['\"', '&quot;'], '\'', str_replace(['\n', '\t'], '', $content['filtered']))),
                 'metadata' => $content['metadata'],
             ], JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE),
             'fullScreen' => $content['library']['fullscreen'],
