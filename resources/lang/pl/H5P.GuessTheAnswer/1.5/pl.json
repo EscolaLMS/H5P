@@ -1,0 +1,26 @@
+{
+  "semantics": [
+    {
+      "label": "Opis zadania",
+      "description": "Opisz, jak użytkownik powinien rozwiązać zadanie."
+    },
+    {
+      "label": "Media",
+      "fields": [
+        {
+          "label": "Typ",
+          "description": "Opcjonalne multimedia do wyświetlenia nad pytaniem."
+        }
+      ]
+    },
+    {
+      "label": "Opis etykiety rozwiązania",
+      "default": "Kliknij, aby zobaczyć odpowiedź.",
+      "description": "Klikalny obszar tekstowy, w którym zostanie wyświetlone rozwiązanie."
+    },
+    {
+      "label": "Tekst rozwiązania",
+      "description": "Rozwiązanie do zdjęcia."
+    }
+  ]
+}

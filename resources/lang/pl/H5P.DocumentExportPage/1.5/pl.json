@@ -1,0 +1,47 @@
+{
+  "semantics": [
+    {
+      "label": "Opis",
+      "description": "Opis strony eksportu.",
+      "default": "Na tej stronie możesz wyeksportować zawartość."
+    },
+    {
+      "label": "Etykieta przycisku tworzenia",
+      "description": "Tekst wyświetlany na przycisku \"Utwórz dokument\".",
+      "default": "Utwórz dokument"
+    },
+    {
+      "label": "Etykieta przycisku wysyłania",
+      "description": "Tekst wyświetlany na przycisku \"Wyślij\".",
+      "default": "Wyślij"
+    },
+    {
+      "label": "Etykieta pomyślnego wysłania",
+      "default": "Twój raport został przesłany pomyślnie!"
+    },
+    {
+      "label": "Etykieta wyboru wszystkich elementów",
+      "description": "Tekst wyświetlany na przycisku \"Wybierz wszystkie\".",
+      "default": "Wybierz wszystkie"
+    },
+    {
+      "label": "Etykieta przycisku eksportuj",
+      "description": "Tekst wyświetlany na przycisku \"Eksportuj\".",
+      "default": "Eksportuj"
+    },
+    {
+      "label": "Etykieta tekstu pomocy",
+      "description": "Etykieta służąca do wyświetlania użytkownikowi dodatkowych przydatnych informacji.",
+      "default": "Więcej informacji"
+    },
+    {
+      "label": "Podaj dodatkowe informacje pomocy",
+      "description": "Tutaj możesz podać dodatkowe informacje pomocne dla użytkownika."
+    },
+    {
+      "label": "Tekst błędu dla wymaganych pól",
+      "description": "Komunikat o błędzie, wyświetlany jeśli jedno lub więcej wymaganych pól nie zostało wypełnione. @pages zostaną zastąpione tytułami stron, których to dotyczy.",
+      "default": "Na stronach znajdują się wymagane pola, które należy uzupełnić, aby zapisać ten dokument: @pages"
+    }
+  ]
+}

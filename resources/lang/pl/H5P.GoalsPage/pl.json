@@ -1,0 +1,67 @@
+{
+  "semantics": [
+    {
+      "label": "Opis",
+      "description": "Opis strony",
+      "default": "Wpisz cele, z którymi chcesz pracować."
+    },
+    {
+      "label": "Zdefiniuj teks linku",
+      "description": "Tekst będzie wyświetlany na przycisku tworzenia nowego celu.",
+      "default": "Utwórz cel"
+    },
+    {
+      "label": "Etykieta celu zdefiniowanego przez użytkownika",
+      "description": "Tekst będzie wyświetlany jako etykieta celu utworzonego przez użytkownika.",
+      "default": "Cel zdefiniowany przez użytkownika"
+    },
+    {
+      "label": "Zdefiniuj tekst zastępczy",
+      "description": "Tekst będzie wyświetlany jako tekst zastępczy podczas tworzenia nowego celu.",
+      "default": "Napisz tutaj..."
+    },
+    {
+      "label": "Teskt wskazujący ile celów zostało zdefiniowanych",
+      "default": "Zdefiniowano celów:",
+      "description": "Tekst wyświetli aktualną liczbę dodanych celów, np. 'Zdefiniowano celów: 5'."
+    },
+    {
+      "label": "Etykieta przycisku \"Zdefiniuj cel\"",
+      "default": "Zdefiniuj cel"
+    },
+    {
+      "label": "Etykieta przycisku \"Usuń cel\"",
+      "default": "Usuń cel"
+    },
+    {
+      "label": "Etykieta zakładki Pomoc",
+      "description": "Etykieta służąca do wyświetlania użytkownikowi dodatkowych przydatnych informacji.",
+      "default": "więcej informacji"
+    },
+    {
+      "label": "Podaj dodatkowe informacje zakładki Pomoc",
+      "description": "Tutaj możesz podać dodatkowe informacje pomocne dla użytkownika."
+    },
+    {
+      "label": "Tłumaczenia potwierdzenia usuwania",
+      "fields": [
+        {
+          "label": "Nagłówek",
+          "default": "Potwierdź usunięcie"
+        },
+        {
+          "label": "Wiadomość",
+          "default": "Czy na pewno chcesz usunąć ten cel?"
+        },
+        {
+          "label": "Etykieta przycisku \"Anuluj\"",
+          "default": "Anuluj"
+        },
+        {
+          "label": "Etykieta przycisku \"Potwierdź\"",
+          "default": "Potwierdź"
+        }
+      ]
+    }
+  ]
+}

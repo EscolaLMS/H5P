@@ -1,0 +1,29 @@
+{
+  "semantics":[
+    {
+      "label":"Lista",
+      "entity":"zawartość",
+      "field":{
+        "fields":[
+          {
+            "label":"Zawartość"
+          },
+          {
+            "label":"Oddziel zawartość poziomą linią",
+            "options":[
+              {
+                "label":"Automatyczne (domyślne)"
+              },
+              {
+                "label":"Nigdy nie dodawaj linii powyżej"
+              },
+              {
+                "label":"Zawsze dodawaj linie powyżej"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,249 @@
+{
+  "semantics": [
+    {
+      "label": "Medium",
+      "fields": [
+        {
+          "label": "Typ",
+          "description": "Medium, które jest opcjonalnie wyświetlane."
+        },
+        {
+          "label": "Wyłączanie zoomu obrazu"
+        }
+      ]
+    },
+    {
+      "label": "Pytanie"
+    },
+    {
+      "label": "Dostępne elementy",
+      "entity": "element",
+      "field": {
+        "label": "Element",
+        "fields": [
+          {
+            "label": "Medium",
+            "description": "<h3> Obraz, który ma być wyświetlany do wyboru. Tekst alternatywny jest używany w wynikach.</h3>"
+          },
+          {
+            "label": "Prawidłowy"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Ogólne uwagi",
+      "fields": [
+        {
+          "widgets": [
+            {
+              "label": "Domyślnie"
+            }
+          ],
+          "label": "Ustawienie informacji zwrotnej dla poszczególnych obszarów punktowych",
+          "description": "Kliknij przycisk \"Dodaj zakres\", aby dodać odpowiedni zakres. Przykład: 0-20% Słaba ocena, 21-91% Średnia ocena, 91-100% Świetna ocena!",
+          "entity": "Obszar",
+          "field": {
+            "fields": [
+              {
+                "label": "Zakres punktów"
+              },
+              {},
+              {
+                "label": "Informacja zwrotna dla danego zakresu punktów",
+                "placeholder": "Wprowadź informacje zwrotne"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "label": "Ustawienia zachowania",
+      "description": "Opcje te określają szczegółowo sposób działania zadania.",
+      "fields": [
+        {
+          "label": "Przycisk \"Powtórz\""
+        },
+        {
+          "label": "Przycisk \"Pokaż rozwiązanie\""
+        },
+        {
+          "label": "Okno dialogowe potwierdzenia opcji \"Pokaż rozwiązanie\""
+        },
+        {
+          "label": "Okno dialogowe potwierdzenia opcji \"Powtórz\""
+        },
+        {
+          "label": "Daj jeden punkt za całe zadanie",
+          "description": "Przyznaje punkt za zadanie, jeśli procent punktów jest większy niż wymagany do zaliczenia"
+        },
+        {
+          "label": "Rozwiązanie nie pojawi się, dopóki nie zostanie wprowadzona odpowiedź"
+        },
+        {
+          "label": "Typ zadania",
+          "description": "Wybierz wygląd i styl pytania.",
+          "options": [
+            {
+              "label": "Automatycznie"
+            },
+            {
+              "label": "Wiele możliwości wyboru (pola wyboru)"
+            },
+            {
+              "label": "Pojedynczy wybór (pola jednego wyboru)"
+            }
+          ]
+        },
+        {
+          "label": "Współczynnik proporcji",
+          "description": "Wybierz proporcje",
+          "options": [
+            {
+              "label": "Automatycznie"
+            },
+            {
+              "label": "16:9"
+            },
+            {
+              "label": "4:3"
+            },
+            {
+              "label": "3:2"
+            },
+            {
+              "label": "1:1"
+            }
+          ]
+        },
+        {
+          "label": "Maksymalna liczba linii",
+          "description": "Ustaw maksymalną liczbę linii, aby zapewnić dobry wygląd.",
+          "options": [
+            {
+              "label": "1"
+            },
+            {
+              "label": "2"
+            },
+            {
+              "label": "3"
+            },
+            {
+              "label": "4"
+            }
+          ]
+        },
+        {
+          "label": "Procent do zaliczenia",
+          "description": "To ustawienie często nie daje żadnego efektu. Jeśli za zadanie uczeń otrzymuję tylko jeden punkt, to ustawienie opisuje procent całkowitej liczby punktów potrzebnych do zdobycia punktu oraz dla „result.success” w xAPI Statements."
+        }
+      ]
+    },
+    {
+      "label": "Oznaczenia i etykiety",
+      "fields": [
+        {
+          "label": "Etykieta przycisku \"Sprawdź\".",
+          "default": "Sprawdź"
+        },
+        {
+          "label": "Etykieta przycisku \"Prześlij\".",
+          "default": "Prześlij"
+        },
+        {
+          "label": "Opis przycisku  \"Sprawdź\" (dostępność)",
+          "default": "Sprawdź odpowiedzi. Odpowiedzi są oznaczane jako poprawne, błędne lub brak odpowiedzi."
+        },
+        {
+          "label": "Etykieta przycisku \"Pokaż rozwiązanie\".",
+          "default": "Pokaż rozwiązanie"
+        },
+        {
+          "label": "Opis przycisku \"Wyświetl rozwiązanie\" (dostępność)",
+          "default": "Pokaż rozwiązanie. Właściwe opcje są podświetlone."
+        },
+        {
+          "label": "Prawidłowa odpowiedź (nie wyświetlona)",
+          "default": "Prawidłowa odpowiedź"
+        },
+        {
+          "label": "Zła odpowiedź (nie wyświetlona)",
+          "default": "Zła odpowiedź"
+        },
+        {
+          "label": "Opcja powinna była zostać wybrana",
+          "default": "Opcja powinna była zostać wybrana"
+        },
+        {
+          "label": "Opcja nie powinna była zostać wybrana",
+          "default": "Opcja nie powinna była zostać wybrana"
+        },
+        {
+          "label": "Tekst alertu \"Odpowiedź wymagaana\"",
+          "default": "Odpowiedź przed przesłaniem odpowiedzi"
+        },
+        {
+          "label": "Etykieta przycisku \"Powtórz\"",
+          "default": "Powtórz"
+        },
+        {
+          "label": "Opis przycisku \"Powtórz\" (dostępność)",
+          "default": "Powtórz zadanie. Wszystkie postępy zostaną zresetowane, a zadanie rozpocznie się od nowa."
+        },
+        {
+          "label": "Twój wynik",
+          "description": ":num i :total są zastępowane odpowiednimi wartościami.",
+          "default": "Osiągnąłeś :num z :total liczby punktów"
+        },
+        {
+          "label": "Okno potwierdzenia akcji \"Sprawdź\"",
+          "fields": [
+            {
+              "label": "Nagłówek",
+              "default": "Ukończono?"
+            },
+            {
+              "label": "Treść",
+              "default": "Czy na pewno chcesz zakończyć zadanie?"
+            },
+            {
+              "label": "Etykieta przycisku \"Anuluj\".",
+              "default": "Anuluj"
+            },
+            {
+              "label": "Etykieta przycisku \"Potwierdź\".",
+              "default": "Potwierdź"
+            }
+          ]
+        },
+        {
+          "label": "Okno potwierdzające akcji \"Powtórz\"",
+          "fields": [
+            {
+              "label": "Nagłówek",
+              "default": "Powtórzyć?"
+            },
+            {
+              "label": "Treść",
+              "default": "Czy na pewno chcesz powtórzyć?"
+            },
+            {
+              "label": "Etykieta przycisku \"Anuluj\".",
+              "default": "Anuluj"
+            },
+            {
+              "label": "Etykieta przycisku \"Potwierdź\".",
+              "default": "Potwierdź"
+            }
+          ]
+        },
+        {
+          "label": "Tekst, używany, jeśli dla obrazu nie określono tekstu alternatywnego.",
+          "default": "Nie określono tekstu alternatywnego"
+        }
+      ]
+    }
+  ]
+}

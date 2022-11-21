@@ -1,0 +1,40 @@
+{
+  "semantics": [
+    {
+      "label": "Rodzaj wykresu",
+      "options": [
+        {
+          "label": "Wykres kołowy"
+        },
+        {
+          "label": "Wykres słupkowy"
+        }
+      ]
+    },
+    {
+      "label": "Dane",
+      "entity": "Element",
+      "field": {
+        "label": "Dane",
+        "fields": [
+          {
+            "label": "Nazwa"
+          },
+          {
+            "label": "Wartość"
+          },
+          {
+            "label": "Kolor"
+          },
+          {
+            "label": "Kolor czcionki"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Tekstowa reprezentacja dla osób korzystających z technologii dla niesłyszących",
+      "default": "Wykres"
+    }
+  ]
+}

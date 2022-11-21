@@ -1,0 +1,21 @@
+{
+  "semantics": [
+    {
+      "label": "Elementy",
+      "entity": "element",
+      "field": {
+        "label": "Typ elementu",
+        "description": "Biblioteka dla tej strony."
+      }
+    },
+    {
+      "label": "Etykieta tekstu pomocy",
+      "description": "Etykieta służąca do wyświetlania użytkownikowi dodatkowych przydatnych informacji.",
+      "default": "Więcej informacji"
+    },
+    {
+      "label": "Podaj dodatkowe informacje pomocy",
+      "description": "Tutaj możesz podać dodatkowe informacje dla użytkownika, które będą dostępne po kliknięciu."
+    }
+  ]
+}

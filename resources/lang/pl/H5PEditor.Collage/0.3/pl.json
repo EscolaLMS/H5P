@@ -1,0 +1,18 @@
+{
+  "libraryStrings": {
+    "confirmReset": "Czy na pewno chcesz zmienić układ? Spowoduje to zresetowanie podglądu.",
+    "sameAsSpacing": "Taki sam jak odstęp",
+    "noFrame": "Bez ramki",
+    "uploadError": "Nie można przesłać obrazu. Plik jest prawdopodobnie za duży.",
+    "zoomIn": "Przybliż",
+    "zoomOut": "Oddal",
+    "noMoreZoom": "Maksymalny poziom",
+    "addImage": "Dodaj zdjęcie",
+    "changeImage": "Zmień zdjęcie",
+    "imageSettings": "Ustawienia zdjęcia",
+    "close": "Zamknij",
+    "imageAltLabel": "Tekst alternatywny",
+    "imageTitleLabel": "Tekst po najechaniu kursorem",
+    "pleaseConfirm": "Potwierdź"
+  }
+}
