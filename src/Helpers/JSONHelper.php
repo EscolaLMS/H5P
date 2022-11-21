@@ -4,24 +4,24 @@ namespace EscolaLms\HeadlessH5P\Helpers;
 
 class JSONHelper
 {
-    public static function clearStr(array $chars, string $to, string $jsonString): string
+    public static function clearJson(mixed $json): string
     {
-        return str_replace($chars, $to, $jsonString);
-    }
+        if (empty($json)) {
+            return '';
+        }
 
-    public static function clearObj(array $chars, string $to, object $json): string
-    {
-        return str_replace($chars, $to, json_encode($json));
+        if (is_object($json) || is_array($json)) {
+            $json = json_encode($json);
+        }
+
+        $json = str_replace(['\n', '\t'], '', $json);
+        $json = str_replace(['\"', '&quot;'], '\'', $json);
+        return str_replace(['\/'], '/', $json);
     }
 
     public static function compareStr(string $jsonString1, string $jsonString2): bool
     {
         return json_encode(json_decode($jsonString1)) === json_encode(json_decode($jsonString2));
-    }
-
-    public static function compareObj(object $json1, object $json2): bool
-    {
-        return json_encode($json1) === json_encode($json2);
     }
 
     public static function compareArr(array $json1, array $json2): bool
