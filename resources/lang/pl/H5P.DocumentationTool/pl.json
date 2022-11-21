@@ -1,0 +1,39 @@
+{
+  "semantics": [
+    {
+      "label": "Nagłówek",
+      "default": "Narzędzie do dokumentacji",
+      "description": "Tytuł"
+    },
+    {
+      "label": "Elementy",
+      "widgets": [
+        {
+          "label": "Domyślne"
+        }
+      ],
+      "entity": "stronę",
+      "field": {
+        "label": "Typ strony",
+        "description": "Biblioteka dla tego slajdu."
+      }
+    },
+    {
+      "label": "Tłumaczenia",
+      "fields": [
+        {
+          "label": "Etykieta przycisku \"Poprzedni\"",
+          "default": "Poprzedni"
+        },
+        {
+          "label": "Etykieta przycisku \"Następny\"",
+          "default": "Następny"
+        },
+        {
+          "label": "Etykieta przycisku \"Zamknij\"",
+          "default": "Zamknij"
+        }
+      ]
+    }
+  ]
+}

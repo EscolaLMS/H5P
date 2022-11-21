@@ -1,0 +1,8 @@
+{
+    "semantics": [
+        {
+            "label": "Tabela",
+            "default": "<table class=\"h5p-table\"><thead><tr><th scope=\"col\">Nagłówek Kolumny 1</th><th scope=\"col\">Nagłówek Kolumny 2</th></tr></thead><tbody><tr><td>Wiersz 1 Kolumna 1</td><td>Wiersz 1 Kolumna 2</td></tr><tr><td>Wiersz 2 Kolumna 1</td><td>Wiersz 2 Kolumna 2</td></tr></tbody></table>"
+        }
+    ]
+}

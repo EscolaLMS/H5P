@@ -16,10 +16,10 @@
       "label": "Pytanie"
     },
     {
-      "label": "Dostępne opcje",
-      "entity": "Opcja",
+      "label": "Dostępne elementy",
+      "entity": "element",
       "field": {
-        "label": "Opcja",
+        "label": "Element",
         "fields": [
           {
             "label": "Medium",

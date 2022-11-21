@@ -1,0 +1,50 @@
+{
+  "semantics": [
+    {
+      "label": "Opis",
+      "description": "Opis strony.",
+      "default": "Oceń cele, które wybrałeś na stronie."
+    },
+    {
+      "label": "Tekst niskiej oceny",
+      "description": "Tekst wyświetlany dla niskiej oceny",
+      "default": "Niewiele się nauczyłem"
+    },
+    {
+      "label": "Tekst średniej oceny",
+      "description": "Tekst wyświetlany dla średniej oceny",
+      "default": "Nauczyłem się czegoś"
+    },
+    {
+      "label": "Tekst wysokiej oceny",
+      "description": "Tekst wyświetlany dla wysokiej oceny",
+      "default": "Dużo się nauczyłem"
+    },
+    {
+      "label": "Tekst dla braku celów",
+      "description": "Tekst, gdy nie utworzono żadnych celów.",
+      "default": "Nie wybrałeś jeszcze żadnych celów."
+    },
+    {
+      "label": "Etykieta tekstu pomocy",
+      "description": "Etykieta służąca do wyświetlania użytkownikowi dodatkowych przydatnych informacji.",
+      "default": "Więcej informacji"
+    },
+    {
+      "label": "Podaj dodatkowe informacje pomocy",
+      "description": "Tutaj możesz podać dodatkowe informacje pomocne dla użytkownika."
+    },
+    {
+      "label": "Nagłówek legendy",
+      "default": "Możliwe oceny"
+    },
+    {
+      "label": "Nagłówek celu",
+      "default": "Cel"
+    },
+    {
+      "label": "Nagłówek oceny",
+      "default": "Ocena"
+    }
+  ]
+}
