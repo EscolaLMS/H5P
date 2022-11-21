@@ -3,6 +3,7 @@
 namespace EscolaLms\HeadlessH5P\Services;
 
 use EscolaLms\HeadlessH5P\Exceptions\H5PException;
+use EscolaLms\HeadlessH5P\Helpers\JSONHelper;
 use EscolaLms\HeadlessH5P\Helpers\MargeFiles;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PFrameworkInterface;
@@ -427,10 +428,14 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
         $uberName = $library['name'] . ' ' . $library['majorVersion'] . '.' . $library['minorVersion'];
 
+        $jsonContent = empty($content['filtered'])
+            ? JSONHelper::clearJson($this->getCore()->filterParameters($content))
+            : JSONHelper::clearJson($content['filtered']);
+
         $settings['contents']["cid-$id"] = [
             'library' => $uberName,
             'content' => $content,
-            'jsonContent' => $content['filtered'],
+            'jsonContent' => $jsonContent,
             'fullScreen' => $content['library']['fullscreen'],
             // TODO check all of those endpointis are working fine
             'exportUrl' => config('hh5p.h5p_export') && $token ? route('hh5p.content.export', [$content['id'], '_token' => $token]) : '',
@@ -504,13 +509,17 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
         $uberName = $library['name'] . ' ' . $library['majorVersion'] . '.' . $library['minorVersion'];
 
+        $jsonContent = empty($content['filtered'])
+            ? JSONHelper::clearJson($this->getCore()->filterParameters($content))
+            : JSONHelper::clearJson($content['filtered']);
+
         $settings = [
             'library' => $uberName,
             'content' => $content,
             'jsonContent' => json_encode([
-                'params' => json_decode(str_replace(['\"', '&quot;'], '\'', str_replace(['\n', '\t'], '', $content['filtered']))),
+                'params' => json_decode($jsonContent),
                 'metadata' => $content['metadata'],
-            ], JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE),
+            ]),
             'fullScreen' => $content['library']['fullscreen'],
             'exportUrl' => config('hh5p.h5p_export') ? route('hh5p.content.export', [$content['id']]) : '',
             //'embedCode'       => '<iframe src="'.route('h5p.embed', ['id' => $content['id']]).'" width=":w" height=":h" frameborder="0" allowfullscreen="allowfullscreen"></iframe>',
@@ -529,7 +538,6 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             ],
             'nonce' => $content['nonce'],
         ];
-
 
         return $settings;
     }
