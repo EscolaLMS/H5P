@@ -4,7 +4,7 @@ namespace EscolaLms\HeadlessH5P\Helpers;
 
 class JSONHelper
 {
-    public static function clearJson(mixed $json): string
+    public static function clearJson($json): string
     {
         if (empty($json)) {
             return '';
