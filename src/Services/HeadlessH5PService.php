@@ -15,6 +15,7 @@ use H5PEditorAjaxInterface;
 use H5peditorFile;
 use H5peditorStorage;
 use H5PFileStorage;
+use H5PMetadata;
 use H5PStorage;
 use H5PValidator;
 use H5PPermission;
@@ -720,6 +721,34 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             'content' => $this->core->contentJsonData,
             'contentTypes' => $this->getContentTypeCache()
         ];
+    }
+
+    /**
+     * @throws H5PException
+     */
+    public function reinstallLibraryDependencies(string $machineName): void
+    {
+        if (!$this->editor->ajaxInterface->getContentTypeCache($machineName) ||
+            !$this->callHubEndpoint(H5PHubEndpoints::CONTENT_TYPES . $machineName) ||
+            !$this->core->librariesJsonData
+        ) {
+            throw new H5PException(H5PException::INVALID_CONTENT_TYPE);
+        }
+
+        foreach ($this->core->librariesJsonData as $libString => &$library) {
+            $existingLibrary = $this->core->loadLibrary($library['machineName'], $library['majorVersion'], $library['minorVersion']);
+            if (!$existingLibrary) continue;
+
+            if (isset($library['preloadedDependencies'])) {
+                $this->repository->saveLibraryDependencies($existingLibrary['libraryId'], $library['preloadedDependencies'], 'preloaded');
+            }
+            if (isset($library['dynamicDependencies'])) {
+                $this->repository->saveLibraryDependencies($existingLibrary['libraryId'], $library['dynamicDependencies'], 'dynamic');
+            }
+            if (isset($library['editorDependencies'])) {
+                $this->repository->saveLibraryDependencies($existingLibrary['libraryId'], $library['editorDependencies'], 'editor');
+            }
+        }
     }
 
     /**

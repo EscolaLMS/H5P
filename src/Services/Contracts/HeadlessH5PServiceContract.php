@@ -57,6 +57,8 @@ interface HeadlessH5PServiceContract
 
     public function libraryInstall($machineName);
 
+    public function reinstallLibraryDependencies(string $machineName): void;
+
     public function filterLibraries($libraryParameters);
 
     public function getTranslations(array $libraries, ?string $language = null): array;

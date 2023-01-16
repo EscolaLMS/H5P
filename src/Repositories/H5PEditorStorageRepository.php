@@ -86,6 +86,7 @@ class H5PEditorStorageRepository implements H5peditorStorage
             ->map(fn($item) => $item->languages->map(fn($lang) => $lang->language_code))
             ->filter(fn($item) => $item !== config('hh5p.language'))
             ->flatten()
+            ->unique()
             ->prepend(config('hh5p.language'))
             ->toArray();
     }

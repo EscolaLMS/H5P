@@ -34,9 +34,9 @@ trait H5PTestingTrait
         return $response->json('data');
     }
 
-    protected function uploadH5PLibrary(): void
+    protected function uploadH5PLibrary(?UploadedFile $h5pFile = null): void
     {
-        $h5pFile = $this->getH5PFile();
+        $h5pFile = $h5pFile ?? $this->getH5PFile();
         $this->actingAs($this->user, 'api')->post('/api/admin/hh5p/library', [
             'h5p_file' => $h5pFile,
         ]);
