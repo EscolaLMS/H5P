@@ -86,6 +86,12 @@ class LibraryApiController extends EscolaLmsBaseController implements LibraryApi
         return response()->json(['success' => true, 'data' => $library]);
     }
 
+    public function libraryReinstallDependencies(LibraryInstallRequest $request): JsonResponse
+    {
+        $this->hh5pService->reinstallLibraryDependencies($request->getMachineName());
+        return response()->json(['success' => true]);
+    }
+
     public function libraryUpload(LibraryUploadRequest $request): JsonResponse
     {
         $library = $this->hh5pService->uploadLibrary($request->getId(), $request->getH5PFile(), $request->getContentId());

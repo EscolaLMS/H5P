@@ -239,4 +239,29 @@ class LibraryApiTest extends TestCase
         $this->assertEquals(3, current(array_filter($data, fn($item) => $item->id === $lib1->getKey()))->requiredLibrariesCount);
         $this->assertEquals(7, current(array_filter($data, fn($item) => $item->id === $lib2->getKey()))->requiredLibrariesCount);
     }
+
+    public function test_reinstall_library_dependencies()
+    {
+        $this->authenticateAsAdmin();
+
+        $h5pFile = $this->getH5PFile();
+        $this->uploadH5PLibrary($h5pFile);
+
+        $library = H5PLibrary::first();
+        $libraryDependencies = H5PLibraryDependency::where('library_id', $library->getKey());
+        $libraryDependenciesCount = $libraryDependencies->count();
+
+        $libraryDependencies->first()->delete();
+
+        $this->assertNotEquals($libraryDependenciesCount, $libraryDependencies->count());
+
+        $this->mock->append(new Response(200, ['Content-Type' => 'application/json']));
+
+        $this
+            ->actingAs($this->user, 'api')
+            ->postJson('api/hh5p/library-reinstall-dependencies?id=H5P.ArithmeticQuiz')
+            ->assertOk();
+
+        $this->assertEquals($libraryDependenciesCount, H5PLibraryDependency::where('library_id', $library->getKey())->count());
+    }
 }

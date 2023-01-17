@@ -47,6 +47,7 @@ Route::group(['middleware' => [QueryToken::class, H5PLangMiddleware::class], 'pr
     Route::get('content-hub-metadata-cache', [LibraryApiController::class, 'contentHubMetadata'])->name('hh5p.library.content-hub-metadata-cache');
 
     Route::post('library-install', [LibraryApiController::class, 'libraryInstall'])->name('hh5p.ajax.library-install');
+    Route::post('library-reinstall-dependencies', [LibraryApiController::class, 'libraryReinstallDependencies'])->name('hh5p.ajax.library-reinstall-dependencies');
     Route::post('library-upload', [LibraryApiController::class, 'libraryUpload'])->name('hh5p.ajax.library-upload');
 
     Route::post('filter', [LibraryApiController::class, 'filter'])->name('hh5p.ajax.filter');
