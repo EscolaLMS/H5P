@@ -1,0 +1,26 @@
+version: "3.5"
+networks:
+  escola_lms:
+    name: escola_lms
+    driver: bridge
+
+services:
+
+
+  escola_lms_app:
+    image: escolalms/php:8
+    command: bash -c "php-fpm -F"
+    volumes:
+      - ./:/shared/httpd
+    networks:
+      - escola_lms
+
+  postgres:
+    image: postgres:12
+    networks:
+      - escola_lms
+    environment:
+      - POSTGRES_DB=default
+      - POSTGRES_USER=default
+      - POSTGRES_PASSWORD=secret
+      - TZ=Europe/Warsaw

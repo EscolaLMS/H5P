@@ -1,10 +1,10 @@
 env:
-  - DB_CONNECTION=mysql
-  - DB_HOST=mysql
-  - DB_PORT=3306
-  - DB_DATABASE=database
-  - DB_USERNAME=username
-  - DB_PASSWORD=password
+  - DB_CONNECTION=pgsql
+  - DB_HOST=postgres
+  - DB_PORT=5432
+  - DB_DATABASE=default
+  - DB_USERNAME=default
+  - DB_PASSWORD=secret
 
 providers:
   - Spatie\Permission\PermissionServiceProvider

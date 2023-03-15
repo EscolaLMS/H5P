@@ -93,3 +93,7 @@ You can seed library and content with build-in seeders as command that are acces
 ## Road map
 
 - rewrite h5p core in a way like [luminare in typescript](https://github.com/lumieducation/lumi)
+
+## Running test locally
+
+run `./test.sh`
