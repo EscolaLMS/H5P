@@ -293,7 +293,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
     {
         if ($dto) {
             match ($dto->getOrderBy()) {
-                'library_name' => $query
+                'library_title' => $query
                     ->withAggregate('library', 'title')
                     ->orderBy('library_title', $dto->getOrder() ?? 'asc'),
                 'title' => $query->orderBy('parameters->metadata->title', $dto->getOrder() ?? 'asc'),
