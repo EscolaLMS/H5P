@@ -18,6 +18,8 @@ class ContentListRequest extends FormRequest
         return [
             'title' => ['sometimes', 'nullable', 'string'],
             'library_id' => ['sometimes', 'nullable', 'integer'],
+            'order_by' => ['sometimes', 'nullable', 'string', 'in:id,title,library_id,library_title'],
+            'order' => ['sometimes', 'nullable', 'string', 'in:ASC,DESC'],
         ];
     }
 }

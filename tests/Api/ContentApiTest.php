@@ -204,6 +204,112 @@ class ContentApiTest extends TestCase
         $this->assertEquals($h5pContents->first()->getKey(), $data[count($data) - 1]->id);
     }
 
+    public function testContentListWithSorts(): void
+    {
+        $libraryOne = H5PLibrary::factory()->create([
+            'name' => 'A Library',
+            'title' => 'A Library',
+            'runnable' => 1
+        ]);
+        $libraryTwo = H5PLibrary::factory()->create([
+            'name' => 'B Library',
+            'title' => 'B Library',
+            'runnable' => 1
+        ]);
+
+        $contentOne = H5PContent::factory()->create([
+            'parameters' => '{"params":{"taskDescription":"Documentation tool","pagesList":[{"params":{"elementList":[{"params":{},"library":"H5P.Text 1.1","metadata":{"contentType":"Text","license":"U","title":"Untitled Text","authors":[],"changes":[],"extraTitle":"Untitled Text"},"subContentId":"da3387da-355a-49fb-92bc-3a9a4e4646a9"}],"helpTextLabel":"More information","helpText":""},"library":"H5P.StandardPage 1.5","metadata":{"contentType":"Standard page","license":"U","title":"Untitled Standard page","authors":[],"changes":[],"extraTitle":"Untitled Standard page"},"subContentId":"ac6ffdac-be02-448c-861c-969e6a09dbd5"}],"i10n":{"previousLabel":"poprzedni","nextLabel":"Next","closeLabel":"Close"}},"metadata":{"license":"U","authors":[],"changes":[],"extraTitle":"A title","title":"A title"}}',
+            'library_id' => $libraryOne->getKey(),
+        ]);
+
+        $contentTwo = H5PContent::factory()->create([
+            'parameters' => '{"params":{"taskDescription":"Documentation tool","pagesList":[{"params":{"elementList":[{"params":{},"library":"H5P.Text 1.1","metadata":{"contentType":"Text","license":"U","title":"Untitled Text","authors":[],"changes":[],"extraTitle":"Untitled Text"},"subContentId":"da3387da-355a-49fb-92bc-3a9a4e4646a9"}],"helpTextLabel":"More information","helpText":""},"library":"H5P.StandardPage 1.5","metadata":{"contentType":"Standard page","license":"U","title":"Untitled Standard page","authors":[],"changes":[],"extraTitle":"Untitled Standard page"},"subContentId":"ac6ffdac-be02-448c-861c-969e6a09dbd5"}],"i10n":{"previousLabel":"poprzedni","nextLabel":"Next","closeLabel":"Close"}},"metadata":{"license":"U","authors":[],"changes":[],"extraTitle":"B title","title":"B title"}}',
+            'library_id' => $libraryTwo->getKey(),
+        ]);
+
+        $this->authenticateAsAdmin();
+
+        $response = $this
+            ->actingAs($this->user, 'api')
+            ->json('GET', '/api/admin/hh5p/content', [
+                'order_by' => 'library_title',
+                'order' => 'ASC'
+            ]);
+
+        $this->assertTrue($response->getData()->data[0]->library->name === $libraryOne->name);
+        $this->assertTrue($response->getData()->data[1]->library->name === $libraryTwo->name);
+
+        $response = $this
+            ->actingAs($this->user, 'api')
+            ->json('GET', '/api/admin/hh5p/content', [
+                'order_by' => 'library_title',
+                'order' => 'DESC'
+            ]);
+
+        $this->assertTrue($response->getData()->data[0]->library->name === $libraryTwo->name);
+        $this->assertTrue($response->getData()->data[1]->library->name === $libraryOne->name);
+
+        $response = $this
+            ->actingAs($this->user, 'api')
+            ->json('GET', '/api/admin/hh5p/content', [
+                'order_by' => 'title',
+                'order' => 'ASC'
+            ]);
+
+        $this->assertTrue($response->getData()->data[0]->title === 'A title');
+        $this->assertTrue($response->getData()->data[1]->title === 'B title');
+
+        $response = $this
+            ->actingAs($this->user, 'api')
+            ->json('GET', '/api/admin/hh5p/content', [
+                'order_by' => 'title',
+                'order' => 'DESC'
+            ]);
+
+        $this->assertTrue($response->getData()->data[0]->title === 'B title');
+        $this->assertTrue($response->getData()->data[1]->title === 'A title');
+
+        $response = $this
+            ->actingAs($this->user, 'api')
+            ->json('GET', '/api/admin/hh5p/content', [
+                'order_by' => 'id',
+                'order' => 'ASC'
+            ]);
+
+        $this->assertTrue($response->getData()->data[0]->id === $contentOne->getKey());
+        $this->assertTrue($response->getData()->data[1]->id === $contentTwo->getKey());
+
+        $response = $this
+            ->actingAs($this->user, 'api')
+            ->json('GET', '/api/admin/hh5p/content', [
+                'order_by' => 'id',
+                'order' => 'DESC'
+            ]);
+
+        $this->assertTrue($response->getData()->data[0]->id === $contentTwo->getKey());
+        $this->assertTrue($response->getData()->data[1]->id === $contentOne->getKey());
+
+        $response = $this
+            ->actingAs($this->user, 'api')
+            ->json('GET', '/api/admin/hh5p/content', [
+                'order_by' => 'library_id',
+                'order' => 'ASC'
+            ]);
+
+        $this->assertTrue($response->getData()->data[0]->library_id === $libraryOne->getKey());
+        $this->assertTrue($response->getData()->data[1]->library_id === $libraryTwo->getKey());
+
+        $response = $this
+            ->actingAs($this->user, 'api')
+            ->json('GET', '/api/admin/hh5p/content', [
+                'order_by' => 'library_id',
+                'order' => 'DESC'
+            ]);
+
+        $this->assertTrue($response->getData()->data[0]->library_id === $libraryTwo->getKey());
+        $this->assertTrue($response->getData()->data[1]->library_id === $libraryOne->getKey());
+    }
+
     public function testContentUnpaginatedList(): void
     {
         $h5pContents = H5PContent::factory()
@@ -530,7 +636,7 @@ class ContentApiTest extends TestCase
         $this->assertEquals('Arithmetic Quiz', $data->title);
         $this->assertNotEquals('New Content (from file)', $data->title);
 
-        $this->assertEquals($data->uuid,$result->uuid);
+        $this->assertEquals($data->uuid, $result->uuid);
         $this->assertEquals('Arithmetic Quiz', $result->title);
     }
 

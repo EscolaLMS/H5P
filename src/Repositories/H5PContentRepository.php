@@ -2,6 +2,7 @@
 
 namespace EscolaLms\HeadlessH5P\Repositories;
 
+use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Repositories\Criteria\Criterion;
 use EscolaLms\HeadlessH5P\Dtos\ContentFilterCriteriaDto;
 use EscolaLms\HeadlessH5P\Exceptions\H5PException;
@@ -129,10 +130,13 @@ class H5PContentRepository implements H5PContentRepositoryContract
 
     public function list(
         ContentFilterCriteriaDto $contentFilterDto,
-        $per_page = 15,
-        array $columns = ['hh5p_contents.*']
-    ): LengthAwarePaginator {
+                                 $per_page = 15,
+        array                    $columns = ['hh5p_contents.*'],
+        ?OrderDto                $orderDto = null,
+    ): LengthAwarePaginator
+    {
         $query = $this->getQueryContent($contentFilterDto, $columns);
+        $query = $this->orderBy($query, $orderDto);
         $paginator = $query->paginate(intval($per_page));
 
         $paginator->getCollection()->transform(function ($content) {
@@ -150,9 +154,12 @@ class H5PContentRepository implements H5PContentRepositoryContract
 
     public function unpaginatedList(
         ContentFilterCriteriaDto $contentFilterDto,
-        array $columns = ['hh5p_contents.*']
-    ): Collection {
+        array                    $columns = ['hh5p_contents.*'],
+        ?OrderDto                $orderDto = null,
+    ): Collection
+    {
         $query = $this->getQueryContent($contentFilterDto, $columns);
+        $query = $this->orderBy($query, $orderDto);
         $list = $query->get();
 
         $list->transform(function ($content) {
@@ -254,8 +261,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
     private function getQueryContent(ContentFilterCriteriaDto $contentFilterDto, array $columns = ['*']): Builder
     {
         $query = H5PContent::with(['library'])
-            ->select($columns)
-            ->orderBy('id', 'desc');
+            ->select($columns);
 
         $query = self::applyQueryJoin($query);
         $query = self::applyQuerySelect($query);
@@ -281,5 +287,19 @@ class H5PContentRepository implements H5PContentRepositoryContract
         $content['embedType'] = H5PCore::determineEmbedType($h5pContent->embededType ?? 'div', $h5pLibrary->embedTypes);
 
         $this->hh5pService->getCore()->filterParameters($content);
+    }
+
+    private function orderBy(Builder $query, ?OrderDto $dto): Builder
+    {
+        if ($dto) {
+            match ($dto->getOrderBy()) {
+                'library_name' => $query
+                    ->withAggregate('library', 'title')
+                    ->orderBy('library_title', $dto->getOrder() ?? 'asc'),
+                'title' => $query->orderBy('parameters->metadata->title', $dto->getOrder() ?? 'asc'),
+                default => $query->orderBy($dto->getOrderBy() ?? 'id', $dto->getOrder() ?? 'desc'),
+            };
+        }
+        return $query;
     }
 }

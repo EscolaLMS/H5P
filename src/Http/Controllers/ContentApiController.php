@@ -2,6 +2,7 @@
 
 namespace EscolaLms\HeadlessH5P\Http\Controllers;
 
+use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
 use EscolaLms\HeadlessH5P\Dtos\ContentFilterCriteriaDto;
 use EscolaLms\HeadlessH5P\Http\Controllers\Swagger\ContentApiSwagger;
@@ -34,6 +35,7 @@ class ContentApiController extends EscolaLmsBaseController implements ContentApi
     public function index(ContentListRequest $request): JsonResponse
     {
         $contentFilterDto = ContentFilterCriteriaDto::instantiateFromRequest($request);
+        $orderDto = OrderDto::instantiateFromRequest($request);
         $columns = [
             'hh5p_contents.id',
             'hh5p_contents.uuid',
@@ -43,8 +45,8 @@ class ContentApiController extends EscolaLmsBaseController implements ContentApi
             'hh5p_contents.parameters',
         ];
         $list = $request->get('per_page') !== null && $request->get('per_page') == 0 ?
-            $this->contentRepository->unpaginatedList($contentFilterDto, $columns) :
-            $this->contentRepository->list($contentFilterDto, $request->get('per_page'), $columns);
+            $this->contentRepository->unpaginatedList($contentFilterDto, $columns, $orderDto) :
+            $this->contentRepository->list($contentFilterDto, $request->get('per_page'), $columns, $orderDto);
 
         return $this->sendResponseForResource(ContentIndexResource::collection($list));
     }
