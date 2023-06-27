@@ -43,7 +43,7 @@ Demo [React source files](https://github.com/EscolaLMS/h5p-laravel-demo/blob/mai
 1. `composer require escolalms/headless-h5p`
 2. `php artisan migrate`
 3. `php artisan h5p:storage-link` see below
-4. `php db:seed --class="EscolaLms\HeadlessH5P\Database\Seeders\PermissionTableSeeder" see below
+4. `php artisan db:seed --class="EscolaLms\HeadlessH5P\Database\Seeders\PermissionTableSeeder"` see below
 
 ### Storage links
 
