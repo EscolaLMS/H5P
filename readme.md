@@ -1,4 +1,4 @@
-# Headless H5P Laravel API
+# Headless H5P Laravel API for Escola LMS ecosystem
 
 [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/H5P/)
 [![codecov](https://codecov.io/gh/EscolaLMS/H5P/branch/main/graph/badge.svg?token=ci4VPQbrOI)](https://codecov.io/gh/EscolaLMS/H5P)
@@ -7,6 +7,9 @@
 [![downloads](https://img.shields.io/packagist/v/escolalms/headless-h5p)](https://packagist.org/packages/escolalms/headless-h5p)
 [![downloads](https://img.shields.io/packagist/l/escolalms/headless-h5p)](https://packagist.org/packages/escolalms/headless-h5p)
 [![Maintainability](https://api.codeclimate.com/v1/badges/6316e8dc93a06d28c6a0/maintainability)](https://codeclimate.com/github/EscolaLMS/H5P/maintainability)
+
+## Before you begin
+This product is tightly coupled with the Escola LMS ecosystem and is not compatible with any other Laravel application.
 
 ## Working demo
 
