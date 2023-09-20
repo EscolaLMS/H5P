@@ -14,6 +14,7 @@ class H5PPermissionsEnum extends BasicEnum
 
     const H5P_AUTHOR_LIST = 'h5p_author_list';
     const H5P_AUTHOR_UPDATE = 'h5p_author_update';
+    const H5P_AUTHOR_DELETE = 'h5p_author_delete';
 
     const H5P_LIBRARY_LIST = 'h5p_library_list';
     const H5P_LIBRARY_READ = 'h5p_library_read';

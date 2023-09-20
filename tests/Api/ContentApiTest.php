@@ -568,6 +568,27 @@ class ContentApiTest extends TestCase
         $response->assertStatus(404);
     }
 
+    public function testContentDeleteByAuthor(): void
+    {
+        $this->authenticateAsUser();
+        $this->user->givePermissionTo(H5PPermissionsEnum::H5P_AUTHOR_DELETE);
+
+        $library = H5PLibrary::factory()->create(['runnable' => 1]);
+        $content = H5PContent::factory()->create([
+            'user_id' => $this->user->getKey(),
+            'library_id' => $library->getKey()
+        ]);
+
+        $this->actingAs($this->user, 'api')
+            ->delete('/api/admin/hh5p/content/' . $content->getKey())
+            ->assertStatus(200);
+
+        $otherContent = H5PContent::factory()->create(['library_id' => $library->getKey()]);
+        $this->actingAs($this->user, 'api')
+            ->delete('/api/admin/hh5p/content/' . $otherContent->getKey())
+            ->assertForbidden();
+    }
+
     public function testContentShow(): void
     {
         $this->authenticateAsAdmin();

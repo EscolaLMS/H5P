@@ -26,12 +26,14 @@ class H5PContentPolicy
         return $user && $user->can(H5PPermissionsEnum::H5P_CREATE);
     }
 
-    public function delete(?User $user): bool
+    public function delete(?User $user, H5PContent $h5PContent): bool
     {
-        return $user && $user->can(H5PPermissionsEnum::H5P_DELETE);
+        return $user &&
+            ($user->can(H5PPermissionsEnum::H5P_DELETE) ||
+            ($user->can(H5PPermissionsEnum::H5P_AUTHOR_DELETE) && $h5PContent->user_id == $user->getKey()));
     }
 
-    public function update(?User $user, H5PContent $h5PContent ): bool
+    public function update(?User $user, H5PContent $h5PContent): bool
     {
         if ($user && $user->can(H5PPermissionsEnum::H5P_AUTHOR_UPDATE) && !$user->can(H5PPermissionsEnum::H5P_UPDATE)) {
             return $h5PContent->user_id == $user->getKey();
