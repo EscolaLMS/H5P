@@ -177,14 +177,44 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
         if ($machineName) {
             $defaultLang = $this->getEditor()->getLibraryLanguage($machineName, $major_version, $minor_version, $lang);
-            return $this->getEditor()->getLibraryData($machineName, $major_version, $minor_version, $lang, '', $libraries_url, $defaultLang);
+            $data = $this->getEditor()->getLibraryData($machineName, $major_version, $minor_version, $lang, '', $libraries_url, $defaultLang);
+            $this->addMoreHtmlTags($data->semantics);
+
+            return $data;
         }
 
-        return collect($this->getEditor()->getLibraries())
-            ->each(fn($item) => $item
+        $libraries = collect($this->getEditor()->getLibraries());
+        foreach ($libraries as $library) {
+            $this->addMoreHtmlTags($library->semantics);
+            $library
                 ->append('contentsCount')
-                ->append('requiredLibrariesCount')
-            );
+                ->append('requiredLibrariesCount');
+         }
+
+         return $libraries;
+    }
+
+    private function addMoreHtmlTags($semantics) {
+        foreach ($semantics as $field) {
+            while ($field->type === 'list') {
+                $field = $field->field;
+            }
+
+            if ($field->type === 'group') {
+                $this->addMoreHtmlTags($field->fields);
+                continue;
+            }
+
+            if ($field->type === 'text' && isset($field->widget) && $field->widget === 'html') {
+                if (!isset($field->tags)) {
+                    $field->tags = [];
+                }
+                $field->tags = array_merge($field->tags, [
+                    'sup',
+                    'sub',
+                ]);
+            }
+        }
     }
 
     public function getEditorSettings($content = null): array
