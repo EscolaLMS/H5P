@@ -2,6 +2,7 @@
 
 namespace EscolaLms\HeadlessH5P\Models;
 
+use EscolaLms\Core\Models\Traits\QueryCacheable;
 use EscolaLms\HeadlessH5P\Database\Factories\H5PContentLibraryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class H5PContentLibrary extends Model
 {
-    use HasFactory;
+    use HasFactory, QueryCacheable;
 
     public $incrementing = false;
 
