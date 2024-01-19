@@ -126,7 +126,7 @@ class H5PRepositoryTest extends TestCase
 
         $this->repository->deleteLibraryUsage($h5pContent->getKey());
 
-        $this->assertCount(0, H5PContent::find($h5pContent->getKey())->libraries);
+        $this->assertCount(0, $h5pContent->refresh()->libraries);
     }
 
     public function testDeleteLibraryUsageShouldFailWhenContentNotExists(): void

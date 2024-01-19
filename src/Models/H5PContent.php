@@ -2,6 +2,7 @@
 
 namespace EscolaLms\HeadlessH5P\Models;
 
+use EscolaLms\Core\Models\Traits\QueryCacheable;
 use EscolaLms\Core\Models\User;
 use EscolaLms\HeadlessH5P\Database\Factories\H5PContentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -89,7 +90,7 @@ use Illuminate\Support\Str;
 
 class H5PContent extends Model
 {
-    use HasFactory;
+    use HasFactory, QueryCacheable;
 
     protected $table = 'hh5p_contents';
 
