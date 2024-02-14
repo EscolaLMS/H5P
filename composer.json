@@ -4,7 +4,7 @@
   "type": "package",
   "require": {
     "php": ">=7.4",
-    "laravel/framework": "^8|^9|^10",
+    "laravel/framework": ">=8.0",
     "h5p/h5p-core": "1.24.*|dev-master",
     "h5p/h5p-editor": "1.24.*|dev-master",
     "escolalms/core": "^1",
