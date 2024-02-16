@@ -428,6 +428,7 @@
                 ],
                 "summary": "Editor settings ",
                 "description": "Editor settings",
+                "operationId": "6a9a4810cf5f64ab3d86a35027116ee6",
                 "responses": {
                     "200": {
                         "description": "successful operation",
@@ -490,6 +491,7 @@
                 ],
                 "summary": "Store h5p files for h5p editor",
                 "description": "Store h5p files for h5p editor",
+                "operationId": "d4992a1180a5a9f1ad71b7ef70b9acae",
                 "requestBody": {
                     "required": true,
                     "content": {
