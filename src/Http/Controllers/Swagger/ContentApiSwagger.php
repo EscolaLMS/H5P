@@ -32,9 +32,7 @@ use EscolaLms\HeadlessH5P\Http\Requests\LibraryStoreRequest;
      *          type="string"
      *      ),
      * )
-    */
-
-    /**
+     *
      *
      * @OA\Schema(
      *      schema="H5PContentList",
@@ -86,9 +84,6 @@ use EscolaLms\HeadlessH5P\Http\Requests\LibraryStoreRequest;
      *      ),
      * )
      */
-
-
-
 interface ContentApiSwagger
 {
     /**
