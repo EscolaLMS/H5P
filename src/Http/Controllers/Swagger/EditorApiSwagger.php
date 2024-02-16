@@ -77,9 +77,7 @@ interface EditorApiSwagger
      *          type="object",
      *      )
      * )
-     */
-
-    /**
+     *
      *
      * @OA\Schema(
      *      schema="H5PEditorSettings",
@@ -251,9 +249,8 @@ interface EditorApiSwagger
      *          type="integer",
      *      )
      * )
-     */
-
-    /**
+     *
+     *
      * @OA\Get(
      *      path="/api/hh5p/editor",
      *      summary="Editor settings ",
@@ -268,9 +265,8 @@ interface EditorApiSwagger
      *         )
      *      )
      * )
-     */
-
-    /**
+     *
+     *
      * @OA\Get(
      *      path="/api/hh5p/editor/{id}",
      *      summary="Editor settings ",
