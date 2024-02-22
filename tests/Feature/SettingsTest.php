@@ -65,6 +65,7 @@ class SettingsTest extends TestCase
         $h5p_ext_communication = false;
         $h5p_save_content_state = false;
         $h5p_save_content_frequency = 3;
+        $h5p_url = 'h5p-test';
 
         return [
             [
@@ -106,6 +107,10 @@ class SettingsTest extends TestCase
             [
                 'key' => "$configKey.h5p_save_content_frequency",
                 'value' => $h5p_save_content_frequency,
+            ],
+            [
+                'key' => "$configKey.url",
+                'value' => $h5p_url,
             ]
         ];
     }
@@ -214,6 +219,16 @@ class SettingsTest extends TestCase
                 'public' => false,
                 'readonly' => false,
                 'value' => 3,
+            ],
+            'url' => [
+                'full_key' => "$configKey.url",
+                'key' => 'url',
+                'rules' => [
+                    'string'
+                ],
+                'public' => false,
+                'readonly' => false,
+                'value' => 'h5p-test',
             ],
         ];
     }
