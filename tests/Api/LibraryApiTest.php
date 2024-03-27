@@ -242,6 +242,7 @@ class LibraryApiTest extends TestCase
 
     public function testGetLibraryById(): void
     {
+        $this->authenticateAsAdmin();
         $libraryName = 'DragTheWord';
 
         $lib1 = H5PLibrary::factory()->create(['name' => $libraryName, 'patch_version' => 1]);
@@ -252,6 +253,7 @@ class LibraryApiTest extends TestCase
         H5PContent::factory()->count(5)->create(['library_id' => $lib2->getKey()]);
 
         $this
+            ->actingAs($this->user, 'api')
             ->json('GET', 'api/hh5p/libraries', ['machnieName' => $libraryName, 'majorVersion' => 1, 'minorVersion' => 1])
             ->assertOk()
             ->assertJsonFragment([
@@ -260,6 +262,7 @@ class LibraryApiTest extends TestCase
             ]);
 
         $this
+            ->actingAs($this->user, 'api')
             ->json('GET', 'api/hh5p/libraries', ['library_id' => $lib1->getKey()])
             ->assertOk()
             ->assertJsonFragment([
