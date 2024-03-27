@@ -252,21 +252,19 @@ class LibraryApiTest extends TestCase
         H5PContent::factory()->count(5)->create(['library_id' => $lib2->getKey()]);
 
         $this
-            ->actingAs($this->user, 'api')
             ->json('GET', 'api/hh5p/libraries', ['machnieName' => $libraryName, 'majorVersion' => 1, 'minorVersion' => 1])
             ->assertOk()
             ->assertJsonFragment([
                 'id' => $lib1->getKey(),
-                'patch_version' => 1,
+                'patchVersion' => 1,
             ]);
 
         $this
-            ->actingAs($this->user, 'api')
-            ->json('GET', 'api/hh5p/libraries', ['library_id' => $lib2->getKey()])
+            ->json('GET', 'api/hh5p/libraries', ['library_id' => $lib1->getKey()])
             ->assertOk()
             ->assertJsonFragment([
-                'id' => $lib2->getKey(),
-                'patch_version' => 2,
+                'id' => $lib1->getKey(),
+                'patchVersion' => 1,
             ]);
     }
 
@@ -288,17 +286,17 @@ class LibraryApiTest extends TestCase
             ->json('GET', 'api/admin/hh5p/libraries', ['machnieName' => $libraryName, 'majorVersion' => 1, 'minorVersion' => 1])
             ->assertOk()
             ->assertJsonFragment([
-                'id' => $lib1->getKey(),
-                'patch_version' => 1,
+                'id' => $lib2->getKey(),
+                'patchVersion' => 2,
             ]);
 
         $this
             ->actingAs($this->user, 'api')
-            ->json('GET', 'api/admin/hh5p/libraries', ['library_id' => $lib2->getKey()])
+            ->json('GET', 'api/admin/hh5p/libraries', ['library_id' => $lib1->getKey()])
             ->assertOk()
             ->assertJsonFragment([
-                'id' => $lib2->getKey(),
-                'patch_version' => 2,
+                'id' => $lib1->getKey(),
+                'patchVersion' => 1,
             ]);
     }
 
