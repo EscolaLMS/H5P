@@ -253,7 +253,7 @@ class LibraryApiTest extends TestCase
 
         $this
             ->actingAs($this->user, 'api')
-            ->json('GET', 'api/admin/hh5p/libraries', ['machnieName' => $libraryName, 'majorVersion' => 1, 'minorVersion' => 1])
+            ->json('GET', 'api/hh5p/libraries', ['machnieName' => $libraryName, 'majorVersion' => 1, 'minorVersion' => 1])
             ->assertOk()
             ->assertJsonFragment([
                 'id' => $lib1->getKey(),
@@ -262,7 +262,7 @@ class LibraryApiTest extends TestCase
 
         $this
             ->actingAs($this->user, 'api')
-            ->json('GET', 'api/admin/hh5p/libraries', ['library_id' => $lib2->getKey()])
+            ->json('GET', 'api/hh5p/libraries', ['library_id' => $lib2->getKey()])
             ->assertOk()
             ->assertJsonFragment([
                 'id' => $lib2->getKey(),
