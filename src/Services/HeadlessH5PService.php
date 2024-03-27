@@ -170,10 +170,25 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     /**
      * Calls editor ajax actions.
      */
-    public function getLibraries(string $machineName = null, string $major_version = null, string $minor_version = null)
+    public function getLibraries(string $machineName = null, string $major_version = null, string $minor_version = null, int $library_id = null)
     {
         $lang = config('hh5p.language');
         $libraries_url = url(config('hh5p.h5p_library_url'));
+
+        if ($library_id) {
+            $library = H5PLibrary::findOrFail($library_id);
+
+            if (in_array($library->name, array('H5P.Questionnaire', 'H5P.FreeTextQuestion')) &&
+                !$this->h5p->h5pF->getOption('enable_lrs_content_types')) {
+                $library->restricted = TRUE;
+            }
+            $this->addMoreHtmlTags($library->semantics);
+            $library
+                ->append('contentsCount')
+                ->append('requiredLibrariesCount');
+
+            return collect([$library]);
+        }
 
         if ($machineName) {
             $defaultLang = $this->getEditor()->getLibraryLanguage($machineName, $major_version, $minor_version, $lang);

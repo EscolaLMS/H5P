@@ -39,7 +39,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
             ['name', $libNames['machineName']],
             ['major_version', $libNames['majorVersion']],
             ['minor_version', $libNames['minorVersion']],
-        ])->first();
+        ])->latest()->first();
 
         if ($libDb === null) {
             throw new H5PException(H5PException::LIBRARY_NOT_FOUND);
@@ -74,7 +74,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
             ['name', $libNames['machineName']],
             ['major_version', $libNames['majorVersion']],
             ['minor_version', $libNames['minorVersion']],
-        ])->first();
+        ])->latest()->first();
 
         if ($libDb === null) {
             throw new H5PException(H5PException::LIBRARY_NOT_FOUND);
