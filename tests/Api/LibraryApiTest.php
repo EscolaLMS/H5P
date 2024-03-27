@@ -240,6 +240,69 @@ class LibraryApiTest extends TestCase
         $this->assertEquals(7, current(array_filter($data, fn($item) => $item->id === $lib2->getKey()))->requiredLibrariesCount);
     }
 
+    public function testGetLibraryById(): void
+    {
+        $this->authenticateAsAdmin();
+        $libraryName = 'DragTheWord';
+
+        $lib1 = H5PLibrary::factory()->create(['name' => $libraryName, 'patch_version' => 1]);
+        $lib2 = H5PLibrary::factory()->create(['name' => $libraryName, 'patch_version' => 2]);
+        H5PLibraryDependency::factory()->count(3)->create(['required_library_id' => $lib1->getKey()]);
+        H5PLibraryDependency::factory()->count(7)->create(['required_library_id' => $lib2->getKey()]);
+        H5PContent::factory()->count(2)->create(['library_id' => $lib1->getKey()]);
+        H5PContent::factory()->count(5)->create(['library_id' => $lib2->getKey()]);
+
+        $this
+            ->actingAs($this->user, 'api')
+            ->json('GET', 'api/hh5p/libraries', ['machnieName' => $libraryName, 'majorVersion' => 1, 'minorVersion' => 1])
+            ->assertOk()
+            ->assertJsonFragment([
+                'id' => $lib1->getKey(),
+                'patchVersion' => 1,
+            ]);
+
+        $this
+            ->actingAs($this->user, 'api')
+            ->json('GET', 'api/hh5p/libraries', ['library_id' => $lib1->getKey()])
+            ->assertOk()
+            ->assertJsonFragment([
+                'id' => $lib1->getKey(),
+                'patchVersion' => 1,
+            ]);
+    }
+
+    public function testGetLibraryByIdAdmin(): void
+    {
+        $this->authenticateAsAdmin();
+
+        $libraryName = 'DragTheWord';
+
+        $lib1 = H5PLibrary::factory()->create(['name' => $libraryName, 'patch_version' => 1]);
+        $lib2 = H5PLibrary::factory()->create(['name' => $libraryName, 'patch_version' => 2]);
+        H5PLibraryDependency::factory()->count(3)->create(['required_library_id' => $lib1->getKey()]);
+        H5PLibraryDependency::factory()->count(7)->create(['required_library_id' => $lib2->getKey()]);
+        H5PContent::factory()->count(2)->create(['library_id' => $lib1->getKey()]);
+        H5PContent::factory()->count(5)->create(['library_id' => $lib2->getKey()]);
+
+        $this
+            ->actingAs($this->user, 'api')
+            ->json('GET', 'api/admin/hh5p/libraries', ['machnieName' => $libraryName, 'majorVersion' => 1, 'minorVersion' => 1])
+            ->assertOk()
+            ->assertJsonFragment([
+                'id' => $lib2->getKey(),
+                'patchVersion' => 2,
+            ]);
+
+        $this
+            ->actingAs($this->user, 'api')
+            ->json('GET', 'api/admin/hh5p/libraries', ['library_id' => $lib1->getKey()])
+            ->assertOk()
+            ->assertJsonFragment([
+                'id' => $lib1->getKey(),
+                'patchVersion' => 1,
+            ]);
+    }
+
     public function test_reinstall_library_dependencies()
     {
         $this->authenticateAsAdmin();

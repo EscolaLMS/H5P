@@ -49,7 +49,8 @@ class LibraryApiController extends EscolaLmsBaseController implements LibraryApi
         $libraries = $this->hh5pService->getLibraries(
             $request->get('machineName'),
             $request->get('majorVersion'),
-            $request->get('minorVersion')
+            $request->get('minorVersion'),
+            $request->get('library_id')
         );
 
         return response()->json($libraries);
