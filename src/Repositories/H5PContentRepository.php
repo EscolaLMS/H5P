@@ -69,10 +69,24 @@ class H5PContentRepository implements H5PContentRepositoryContract
     public function edit(int $id, string $library, string $params, string $nonce): int
     {
         $content = H5PContent::where('id', $id)->first();
-        $libDb = H5PLibrary::where('id', $content->library_id)->first();
+        $previousLib = H5PLibrary::where('id', $content->library_id)->first();
+
+        $libNames = $this->hh5pService->getCore()->libraryFromString($library);
+
+        $libDb = H5PLibrary::where([
+            ['name', $libNames['machineName']],
+            ['major_version', $libNames['majorVersion']],
+            ['minor_version', $libNames['minorVersion']],
+        ])->latest()->first();
 
         if ($libDb === null) {
             throw new H5PException(H5PException::LIBRARY_NOT_FOUND);
+        }
+
+        // don't update library version if there is new
+        if ($previousLib->name === $libDb->name) {
+            $libDb = $previousLib;
+            $library = $previousLib->uberName;
         }
 
         $json = json_decode($params);
