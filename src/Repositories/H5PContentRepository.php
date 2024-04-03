@@ -17,6 +17,7 @@ use H5PCore;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 
@@ -107,7 +108,8 @@ class H5PContentRepository implements H5PContentRepositoryContract
 
     private function moveTmpFilesToContentFolders($nonce, $contentId): bool
     {
-        $storage_path = storage_path(config('hh5p.h5p_storage_path'));
+//        $storage_path = storage_path(config('hh5p.h5p_storage_path'));
+        $storage_path = Storage::path(config('hh5p.h5p_storage_path'));
 
         $files = H5PTempFile::where(['nonce' => $nonce])->get();
 
@@ -119,10 +121,13 @@ class H5PContentRepository implements H5PContentRepositoryContract
                 if (!is_dir($dir_path)) {
                     mkdir($dir_path, 0777, true);
                 }
-                rename($old_path, $new_path);
+                // TODO tutej
+//                dd('test', $old_path, $new_path, $storage_path);
+//                rename($old_path, $new_path);
+                Storage::move($old_path, $new_path);
             }
 
-            $file->delete();
+//            $file->delete();
         }
 
         return true;

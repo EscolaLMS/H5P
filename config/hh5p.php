@@ -38,7 +38,7 @@ return [
 
     'guzzle'                            => [],
 
-    'h5p_storage_path'                  => 'app/h5p',
-    'h5p_content_storage_path'          => 'app/h5p/content/',
+    'h5p_storage_path'                  => 'h5p',
+    'h5p_content_storage_path'          => 'h5p/content/',
     'h5p_library_url'                   => 'h5p/libraries'
 ];
