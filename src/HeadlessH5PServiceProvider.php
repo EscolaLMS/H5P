@@ -21,7 +21,6 @@ use H5PCore;
 use H5peditor;
 use H5PStorage;
 use H5PValidator;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 
@@ -49,7 +48,6 @@ class HeadlessH5PServiceProvider extends ServiceProvider
             $languageRepository = new H5PLibraryLanguageRepository();
             $repository = new H5PRepository($languageRepository);
             $fileStorage = new H5PFileStorageRepository(config('filesystems.default') === 's3' ? env('AWS_URL') . '/h5p' : storage_path('app/h5p'));
-//            $fileStorage = new H5PFileStorageRepository(config('filesystems.default') === 's3' ? Storage::path('/h5p') : Storage::path('app/h5p'));
             $core = new H5PCore($repository, $fileStorage, Storage::url('h5p'), config('hh5p.language'), config('hh5p.h5p_export'));
             $core->aggregateAssets = true;
             $validator = new H5PValidator($repository, $core);

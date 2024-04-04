@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use JsonSerializable;
 
 class HeadlessH5PService implements HeadlessH5PServiceContract
@@ -107,9 +108,6 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     /** Copy file to `getUploadedH5pPath` and validates its contents */
     public function validatePackage(UploadedFile $file, $skipContent = true, $h5p_upgrade_only = false): bool
     {
-        Log::info('validatePackage');
-        Log::info('$file->getPathName(): ' . $file->getPathName());
-        Log::info('$this->getRepository()->getUploadedH5pPath(): ' . $this->getRepository()->getUploadedH5pPath());
         rename($file->getPathName(), $this->getRepository()->getUploadedH5pPath());
         try {
             $isValid = $this->getValidator()->isValidPackage($skipContent, $h5p_upgrade_only);
