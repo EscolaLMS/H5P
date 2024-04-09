@@ -57,7 +57,7 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
                     $this->copyFiles("{$source}/{$file}", "{$destination}/{$file}");
                 }
                 else {
-                    $folder = Str::after($destination, env('AWS_URL'));
+                    $folder = config('filesystems.default') === 's3' ? Str::after($destination, env('AWS_URL', '/')) : $destination;
                     Storage::putFileAs($folder, new File("{$source}/{$file}"), $file);
                 }
             }
@@ -83,10 +83,11 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
     private function isDirReady($path): bool
     {
         if (!Storage::exists($path)) {
-            Storage::makeDirectory(Str::after($path, env('AWS_URL')));
+            $path = config('filesystems.default') === 's3' ? Str::after($path, env('AWS_URL', '/')) : $path;
+            Storage::makeDirectory($path);
         }
 
-        if (Storage::directoryExists($path)) {
+        if (!Storage::directoryExists($path)) {
             trigger_error('Path is not a directory ' . $path, E_USER_WARNING);
             return false;
         }

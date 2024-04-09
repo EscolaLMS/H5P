@@ -15,7 +15,6 @@ use H5PEditorAjaxInterface;
 use H5peditorFile;
 use H5peditorStorage;
 use H5PFileStorage;
-use H5PMetadata;
 use H5PStorage;
 use H5PValidator;
 use H5PPermission;
@@ -23,11 +22,9 @@ use H5PHubEndpoints;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use JsonSerializable;
 
 class HeadlessH5PService implements HeadlessH5PServiceContract
@@ -157,7 +154,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             $config = (array)config('hh5p');
             $config['url'] = Storage::url($config['url']);
             $config['ajaxPath'] = route($config['ajaxPath']) . '/';
-            $config['libraryUrl'] = Storage::url($config['libraryUrl']) . '/';
+            $config['libraryUrl'] = Storage::url($config['libraryUrl']);
             $config['get_laravelh5p_url'] = Storage::url($config['get_laravelh5p_url']);
             $config['get_h5peditor_url'] = Storage::url($config['get_h5peditor_url']) . '/';
             $config['get_h5pcore_url'] = Storage::url($config['get_h5pcore_url']);
@@ -835,10 +832,10 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     private function getH5pEditorDir(): array {
         $h5pEditorDir = file_exists(__DIR__ . '/../../vendor/h5p/h5p-editor')
             ? __DIR__ . '/../../vendor/h5p/h5p-editor'
-            : __DIR__ . '/../../../../../vendor/h5p/h5p-editor';
+            : __DIR__ . '/../../../../vendor/h5p/h5p-editor';
         $h5pCoreDir = file_exists(__DIR__ . '/../../vendor/h5p/h5p-core')
             ? __DIR__ . '/../../vendor/h5p/h5p-core'
-            : __DIR__ . '/../../../../../vendor/h5p/h5p-core';
+            : __DIR__ . '/../../../../vendor/h5p/h5p-core';
 
         return [$h5pEditorDir, $h5pCoreDir];
     }
