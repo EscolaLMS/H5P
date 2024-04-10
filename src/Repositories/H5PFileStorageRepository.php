@@ -3,11 +3,15 @@
 namespace EscolaLms\HeadlessH5P\Repositories;
 
 use Exception;
+use H5PCore;
+use H5peditorFile;
 use H5PFileStorage;
 use H5PDefaultStorage;
 use Illuminate\Http\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use function PHPUnit\Framework\assertTrue;
 
 class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStorage
 {
@@ -57,8 +61,13 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
                     $this->copyFiles("{$source}/{$file}", "{$destination}/{$file}");
                 }
                 else {
-                    $folder = config('filesystems.default') === 's3' ? Str::after($destination, env('AWS_URL', '/')) : $destination;
-                    Storage::putFileAs($folder, new File("{$source}/{$file}"), $file);
+                    if (config('filesystems.default') === 's3') {
+                        $folder = Str::after($destination, env('AWS_URL', '/'));
+                        Log::info('folder: ' . $folder);
+                        Storage::putFileAs($folder, new File("{$source}/{$file}"), $file);
+                    } else {
+                        copy("{$source}/{$file}", "{$destination}/{$file}");
+                    }
                 }
             }
         }
@@ -82,16 +91,35 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
 
     private function isDirReady($path): bool
     {
-        if (!Storage::exists($path)) {
-            $path = config('filesystems.default') === 's3' ? Str::after($path, env('AWS_URL', '/')) : $path;
-            Storage::makeDirectory($path);
-        }
+        if (config('filesystems.default') === 's3') {
+            if (!Storage::exists($path)) {
+                $path = config('filesystems.default') === 's3' ? Str::after($path, env('AWS_URL', '/')) : $path;
+                Storage::makeDirectory($path);
+            }
+            if (!Storage::directoryExists($path)) {
+                trigger_error('Path is not a directory ' . $path, E_USER_WARNING);
+                return false;
+            }
+        } else {
+            if (!file_exists($path)) {
+                $parent = preg_replace("/\/[^\/]+\/?$/", '', $path);
+                if (!$this->isDirReady($parent)) {
+                    return false;
+                }
 
-        if (!Storage::directoryExists($path)) {
-            trigger_error('Path is not a directory ' . $path, E_USER_WARNING);
-            return false;
-        }
+                mkdir($path, 0777, true);
 
+                if (!is_dir($path)) {
+                    trigger_error('Path is not a directory ' . $path, E_USER_WARNING);
+                    return false;
+                }
+
+                if (!is_writable($path)) {
+                    trigger_error('Unable to write to ' . $path . ' – check directory permissions –', E_USER_WARNING);
+                    return false;
+                }
+            }
+        }
         return true;
     }
 
@@ -139,7 +167,8 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
         }
     }
 
-    public function saveFile($file, $contentId) {
+    public function saveFile($file, $contentId): H5peditorFile
+    {
         // Prepare directory
         if (empty($contentId)) {
             // Should be in editor tmp folder
@@ -162,11 +191,12 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
         return ($this->altEditorPath !== NULL ? $this->altEditorPath : "{$this->path}/editor");
     }
 
-    public function saveContent($source, $content) {
+    public function saveContent($source, $content): void
+    {
         $dest = "{$this->path}/content/{$content['id']}";
 
         // Remove any old content
-        \H5PCore::deleteFileTree($dest);
+        H5PCore::deleteFileTree($dest);
 
         $this->copyFiles($source, $dest);
     }
