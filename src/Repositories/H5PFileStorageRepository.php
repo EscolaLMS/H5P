@@ -7,11 +7,8 @@ use H5PCore;
 use H5peditorFile;
 use H5PFileStorage;
 use H5PDefaultStorage;
-use Illuminate\Http\File;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use function PHPUnit\Framework\assertTrue;
 
 class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStorage
 {
