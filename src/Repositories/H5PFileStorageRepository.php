@@ -49,30 +49,18 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
 
         $ignoredFiles = $this->ignoredFilesProvider("{$source}/.h5pignore");
 
-        $dir = opendir($source);
-        if ($dir === false) {
-            trigger_error('Unable to open directory ' . $source, E_USER_WARNING);
-            throw new Exception('unabletocopy');
-        }
-
-        while (($file = readdir($dir)) !== false) {
-            if (($file != '.') && ($file != '..') && $file != '.git' && $file != '.gitignore' && !in_array($file, $ignoredFiles)) {
-                if (is_dir("{$source}/{$file}")) {
-                    $this->copyFiles("{$source}/{$file}", "{$destination}/{$file}");
-                }
-                else {
-                    if (config('filesystems.default') === 's3') {
-                        $folder = Str::after($destination, env('AWS_URL', '/'));
-                        Log::info('folder: ' . $folder);
-                        Storage::putFileAs($folder, new File("{$source}/{$file}"), $file);
-                    } else {
-                        copy("{$source}/{$file}", "{$destination}/{$file}");
-                    }
+        if (Storage::directoryExists($source)) {
+            foreach (Storage::allDirectories($source) as $directory) {
+                $dir = Str::afterLast($directory, '/');
+                $this->copyFiles("{$source}/{$dir}", "{$destination}/{$dir}");
+            }
+            foreach (Storage::files($source) as $file) {
+                if (($file != '.') && ($file != '..') && $file != '.git' && $file != '.gitignore' && !in_array($file, $ignoredFiles)) {
+                    $folder = Str::after($destination, env('AWS_URL', '/'));
+                    Storage::copy($file, $folder . '/' . Str::afterLast($file, '/'));
                 }
             }
         }
-
-        closedir($dir);
     }
 
     private function ignoredFilesProvider($file)
@@ -91,35 +79,17 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
 
     private function isDirReady($path): bool
     {
-        if (config('filesystems.default') === 's3') {
-            if (!Storage::exists($path)) {
-                $path = config('filesystems.default') === 's3' ? Str::after($path, env('AWS_URL', '/')) : $path;
-                Storage::makeDirectory($path);
-            }
-            if (!Storage::directoryExists($path)) {
-                trigger_error('Path is not a directory ' . $path, E_USER_WARNING);
-                return false;
-            }
-        } else {
-            if (!file_exists($path)) {
-                $parent = preg_replace("/\/[^\/]+\/?$/", '', $path);
-                if (!$this->isDirReady($parent)) {
-                    return false;
-                }
-
-                mkdir($path, 0777, true);
-
-                if (!is_dir($path)) {
-                    trigger_error('Path is not a directory ' . $path, E_USER_WARNING);
-                    return false;
-                }
-
-                if (!is_writable($path)) {
-                    trigger_error('Unable to write to ' . $path . ' – check directory permissions –', E_USER_WARNING);
-                    return false;
-                }
-            }
+        if (!Storage::exists($path)) {
+            $path = config('filesystems.default') === 's3' ? Str::after($path, env('AWS_URL', '/')) : $path;
+            Storage::makeDirectory($path);
         }
+
+        if (!Storage::directoryExists($path)) {
+            trigger_error('Path is not a directory ' . $path, E_USER_WARNING);
+
+            return false;
+        }
+
         return true;
     }
 
@@ -199,5 +169,52 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
         H5PCore::deleteFileTree($dest);
 
         $this->copyFiles($source, $dest);
+    }
+
+    public function getTmpPath()
+    {
+        $temp = "{$this->path}/temp";
+        $this->isDirReady($temp);
+        return "{$temp}/" . uniqid('h5p-');
+    }
+
+    public function exportContent($id, $target)
+    {
+        $source = "{$this->path}/content/{$id}";
+        if (file_exists($source)) {
+            // Copy content folder if it exists
+            $this->copyFiles($source, $target);
+        }
+        else {
+            // No contnet folder, create emty dir for content.json
+            $this->isDirReady($target);
+        }
+    }
+
+    public function exportLibrary($library, $target, $developmentPath = NULL)
+    {
+        $folder = \H5PCore::libraryToString($library, TRUE);
+        $srcPath = ($developmentPath === NULL ? "/libraries/{$folder}" : $developmentPath);
+        $this->copyFiles("{$this->path}{$srcPath}", "{$target}/{$folder}");
+    }
+
+    public function saveExport($source, $filename)
+    {
+        $this->deleteExport($filename);
+
+        if (!$this->isDirReady("{$this->path}/exports")) {
+            throw new Exception("Unable to create directory for H5P export file.");
+        }
+
+        if (!Storage::copy($source, "{$this->path}/exports/{$filename}")) {
+            throw new Exception("Unable to save H5P export file.");
+        }
+    }
+
+    public function deleteExport($filename) {
+        $target = "{$this->path}/exports/{$filename}";
+        if (Storage::exists($target)) {
+            Storage::delete($target);
+        }
     }
 }
