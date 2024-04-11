@@ -206,7 +206,7 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
             throw new Exception("Unable to create directory for H5P export file.");
         }
 
-        if (!Storage::copy($source, "{$this->path}/exports/{$filename}")) {
+        if (!Storage::copy('/h5p/temp/' . Str::afterLast($source, '/'), "/h5p/exports/{$filename}")) {
             throw new Exception("Unable to save H5P export file.");
         }
     }

@@ -18,7 +18,6 @@ use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 use EscolaLms\HeadlessH5P\Services\H5PCoreService;
 use EscolaLms\HeadlessH5P\Services\HeadlessH5PService;
 use H5PContentValidator;
-use H5PCore;
 use H5peditor;
 use H5PStorage;
 use H5PValidator;
