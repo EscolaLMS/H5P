@@ -214,12 +214,8 @@ class H5PRepository implements H5PFrameworkInterface
     {
         static $dir; // such a stupid way to have singleton ....
         if (is_null($dir)) {
-            // TODO na to trzeba spojrzeć
-            $dir = storage_path('h5p/temp/') . uniqid('h5p-');
+            $dir = storage_path('app/h5p/temp/') . uniqid('h5p-');
             @mkdir(dirname($dir), 0777, true);
-
-//            $dir = Storage::path('h5p/temp/') . uniqid('h5p-');
-//            Storage::createDirectory($dir);
         }
 
         return $dir;
@@ -235,11 +231,8 @@ class H5PRepository implements H5PFrameworkInterface
     {
         static $path; // such a stupid way to have singleton ....
         if (is_null($path)) {
-            $path = storage_path('h5p/temp/') . uniqid('h5p-') . '.h5p';
+            $path = storage_path('app/h5p/temp/') . uniqid('h5p-') . '.h5p';
             @mkdir(dirname($path), 0777, true);
-
-//            $path = Storage::path('/h5p/temp/') . uniqid('h5p-') . '.h5p';
-//            Storage::createDirectory($path);
         }
 
         return $path;

@@ -7,6 +7,7 @@ use H5PCore;
 use H5peditorFile;
 use H5PFileStorage;
 use H5PDefaultStorage;
+use Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -26,7 +27,9 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
     {
         $dest = $this->path . '/libraries/' . $this->libraryToFolderName($library);
 
-        $this->copyFiles($library['uploadDirectory'], $dest);
+        Str::startsWith($library['uploadDirectory'], storage_path())
+            ? $this->copyVendorFiles($library['uploadDirectory'], $dest)
+            : $this->copyFiles($library['uploadDirectory'], $dest);
     }
 
     private static function libraryToFolderName($library) {
@@ -60,6 +63,33 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
         }
     }
 
+    public function copyVendorFiles($source, $destination) {
+        if (!$this->isDirReady($destination)) {
+            throw new Exception('unabletocopy');
+        }
+
+        $dir = opendir($source);
+        if ($dir === false) {
+            trigger_error('Unable to open directory ' . $source, E_USER_WARNING);
+            throw new Exception('unabletocopy');
+        }
+
+        $ignoredFiles = $this->ignoredFilesProvider("{$source}/.h5pignore");
+
+        while (($file = readdir($dir)) !== false) {
+            if (($file != '.') && ($file != '..') && $file != '.git' && $file != '.gitignore' && !in_array($file, $ignoredFiles)) {
+                if (is_dir("{$source}/{$file}")) {
+                    $this->copyVendorFiles("{$source}/{$file}", "{$destination}/{$file}");
+                } else {
+                    $folder = Str::after($destination, env('AWS_URL', '/'));
+                    Storage::putFileAs($folder, new File("{$source}/{$file}"), $file);
+                }
+            }
+        }
+
+        closedir($dir);
+    }
+
     private function ignoredFilesProvider($file)
     {
         if (file_exists($file) === false) {
@@ -78,11 +108,10 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
     {
         if (!Storage::exists($path)) {
             $parent = preg_replace("/\/[^\/]+\/?$/", '', $path);
-            if ($parent !== '/' && $parent !== '' && !$this->isDirReady($parent)) {
+            if ($parent !== $path && $parent !== '/' && $parent !== '' && !$this->isDirReady($parent)) {
                 return false;
             }
 
-//            $path = config('filesystems.default') === 's3' ? Str::after($path, env('AWS_URL', '/')) : $path;
             $path = Str::after($path, Storage::path('/'));
             Storage::makeDirectory($path);
         }
