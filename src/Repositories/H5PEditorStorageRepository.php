@@ -9,6 +9,7 @@ use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
 use EscolaLms\HeadlessH5P\Models\H5PContent;
 use EscolaLms\HeadlessH5P\Models\H5PTempFile;
 use EscolaLms\HeadlessH5P\Helpers\Helpers;
+use Illuminate\Support\Facades\Storage;
 
 
 /**
@@ -188,11 +189,11 @@ class H5PEditorStorageRepository implements H5peditorStorage
      */
     public static function removeTemporarilySavedFiles($filePath)
     {
-        if (is_dir($filePath)) {
+        if (Storage::directoryExists($filePath)) {
             Helpers::deleteFileTree($filePath);
         }
         else {
-            unlink($filePath);
+            Storage::delete($filePath);
         }
     }
 }
