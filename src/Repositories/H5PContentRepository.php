@@ -175,7 +175,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
         $content = H5PContent::findOrFail($id);
         $content->delete();
 
-        $storage_path = storage_path(config('hh5p.h5p_content_storage_path') . $id);
+        $storage_path = config('hh5p.h5p_content_storage_path') . $id;
 
         Helpers::deleteFileTree($storage_path);
 

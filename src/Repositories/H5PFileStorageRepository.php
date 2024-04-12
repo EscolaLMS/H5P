@@ -47,7 +47,7 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
         $ignoredFiles = $this->ignoredFilesProvider("{$source}/.h5pignore");
 
         if (Storage::directoryExists($source)) {
-            foreach (Storage::allDirectories($source) as $directory) {
+            foreach (Storage::directories($source) as $directory) {
                 $dir = Str::afterLast($directory, '/');
                 $this->copyFiles("{$source}/{$dir}", "{$destination}/{$dir}");
             }
@@ -77,7 +77,13 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
     private function isDirReady($path): bool
     {
         if (!Storage::exists($path)) {
-            $path = config('filesystems.default') === 's3' ? Str::after($path, env('AWS_URL', '/')) : $path;
+            $parent = preg_replace("/\/[^\/]+\/?$/", '', $path);
+            if ($parent !== '/' && $parent !== '' && !$this->isDirReady($parent)) {
+                return false;
+            }
+
+//            $path = config('filesystems.default') === 's3' ? Str::after($path, env('AWS_URL', '/')) : $path;
+            $path = Str::after($path, Storage::path('/'));
             Storage::makeDirectory($path);
         }
 

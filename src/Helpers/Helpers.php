@@ -2,6 +2,9 @@
 
 namespace EscolaLms\HeadlessH5P\Helpers;
 
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+
 class Helpers
 {
     /**
@@ -45,26 +48,23 @@ class Helpers
      */
     public static function deleteFileTree($dir)
     {
-        if (!is_dir($dir)) {
+        if (!Storage::directoryExists($dir)) {
             return false;
         }
+        // TODO to remove ??
         if (is_link($dir)) {
             // Do not traverse and delete linked content, simply unlink.
             unlink($dir);
             return;
         }
-        $files = array_diff(scandir($dir), array('.','..'));
-        foreach ($files as $file) {
-            $filepath = "$dir/$file";
-            // Note that links may resolve as directories
-            if (!is_dir($filepath) || is_link($filepath)) {
-                // Unlink files and links
-                unlink($filepath);
-            } else {
-                // Traverse subdir and delete files
-                self::deleteFileTree($filepath);
-            }
+
+        foreach (Storage::directories($dir) as $directory) {
+            self::deleteFileTree($directory);
         }
-        return rmdir($dir);
+        foreach (Storage::files($dir) as $file) {
+            Storage::delete($file);
+        }
+
+        return Storage::deleteDirectory($dir);
     }
 }
