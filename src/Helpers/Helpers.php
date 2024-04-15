@@ -2,7 +2,6 @@
 
 namespace EscolaLms\HeadlessH5P\Helpers;
 
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class Helpers

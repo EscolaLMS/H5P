@@ -42,7 +42,7 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
     /**
      * @throws Exception
      */
-    public function copyFiles($source, $destination) {
+    private function copyFiles($source, $destination) {
         if (!$this->isDirReady($destination)) {
             throw new Exception('unabletocopy');
         }
