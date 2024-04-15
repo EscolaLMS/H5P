@@ -17,6 +17,7 @@ use H5PCore;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 
@@ -107,7 +108,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
 
     private function moveTmpFilesToContentFolders($nonce, $contentId): bool
     {
-        $storage_path = storage_path(config('hh5p.h5p_storage_path'));
+        $storage_path = Storage::path(config('hh5p.h5p_storage_path'));
 
         $files = H5PTempFile::where(['nonce' => $nonce])->get();
 
@@ -115,11 +116,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
             $old_path = $storage_path . $file->path;
             if (strpos($file->path, '/editor') !== false) {
                 $new_path = $storage_path . str_replace('/editor', '/content/' . $contentId, $file->path);
-                $dir_path = dirname($new_path);
-                if (!is_dir($dir_path)) {
-                    mkdir($dir_path, 0777, true);
-                }
-                rename($old_path, $new_path);
+                Storage::move($old_path, $new_path);
             }
 
             $file->delete();
@@ -178,7 +175,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
         $content = H5PContent::findOrFail($id);
         $content->delete();
 
-        $storage_path = storage_path(config('hh5p.h5p_content_storage_path') . $id);
+        $storage_path = config('hh5p.h5p_content_storage_path') . $id;
 
         Helpers::deleteFileTree($storage_path);
 
@@ -228,7 +225,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
 
         $filename = $this->hh5pService->getRepository()->getDownloadFile($id);
 
-        return storage_path('app/h5p/exports/' . $filename);
+        return 'h5p/exports/' . $filename;
     }
 
     public function getLibraryById(int $id): H5PLibrary

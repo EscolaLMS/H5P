@@ -15,7 +15,6 @@ use H5PEditorAjaxInterface;
 use H5peditorFile;
 use H5peditorStorage;
 use H5PFileStorage;
-use H5PMetadata;
 use H5PStorage;
 use H5PValidator;
 use H5PPermission;
@@ -23,6 +22,7 @@ use H5PHubEndpoints;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
 use JsonSerializable;
@@ -152,15 +152,15 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     {
         if (!isset($this->config)) {
             $config = (array)config('hh5p');
-            $config['url'] = asset($config['url']);
+            $config['url'] = Storage::url($config['url']);
             $config['ajaxPath'] = route($config['ajaxPath']) . '/';
-            $config['libraryUrl'] = url($config['libraryUrl']) . '/';
-            $config['get_laravelh5p_url'] = url($config['get_laravelh5p_url']);
-            $config['get_h5peditor_url'] = url($config['get_h5peditor_url']) . '/';
-            $config['get_h5pcore_url'] = url($config['get_h5pcore_url']);
+            $config['libraryUrl'] = Storage::url($config['libraryUrl']);
+            $config['get_laravelh5p_url'] = Storage::url($config['get_laravelh5p_url']);
+            $config['get_h5peditor_url'] = Storage::url($config['get_h5peditor_url']) . '/';
+            $config['get_h5pcore_url'] = Storage::url($config['get_h5pcore_url']);
             $config['getCopyrightSemantics'] = $this->getContentValidator()->getCopyrightSemantics();
             $config['getMetadataSemantics'] = $this->getContentValidator()->getMetadataSemantics();
-            $config['filesPath'] = url('h5p/editor'); // TODO: diffrernt name
+            $config['filesPath'] = Storage::url('h5p/editor'); // TODO: diffrernt name
             $this->config = $config;
         }
 
@@ -173,7 +173,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     public function getLibraries(string $machineName = null, string $major_version = null, string $minor_version = null)
     {
         $lang = config('hh5p.language');
-        $libraries_url = url(config('hh5p.h5p_library_url'));
+        $libraries_url = Storage::url(config('hh5p.h5p_library_url'));
 
         if ($machineName) {
             $defaultLang = $this->getEditor()->getLibraryLanguage($machineName, $major_version, $minor_version, $lang);
@@ -189,9 +189,9 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             $library
                 ->append('contentsCount')
                 ->append('requiredLibrariesCount');
-         }
+        }
 
-         return $libraries;
+        return $libraries;
     }
 
     private function addMoreHtmlTags($semantics) {
@@ -258,7 +258,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $settings['core']['scripts'][] = $config['get_h5peditor_url'] . '/language/'. $lang .'.js';
 
         $settings['editor'] = [
-            'filesPath' => isset($content) ? url("h5p/content/$content") : url('h5p/editor'),
+            'filesPath' => isset($content) ? Storage::url("h5p/content/$content") : Storage::url('h5p/editor'),
             'fileIcon' => [
                 'path' => $config['fileIcon'],
                 'width' => 50,
@@ -295,13 +295,13 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
         // add editor styles
         foreach (H5peditor::$styles as $style) {
-            $settings['editor']['assets']['css'][] = $config['get_h5peditor_url'] . ('/' . $style);
+            $settings['editor']['assets']['css'][] = $config['get_h5peditor_url'] . $style;
         }
         // Add editor JavaScript
         foreach (H5peditor::$scripts as $script) {
             // We do not want the creator of the iframe inside the iframe
             if ($script !== 'scripts/h5peditor-editor.js') {
-                $settings['editor']['assets']['js'][] = $config['get_h5peditor_url'] . ('/' . $script);
+                $settings['editor']['assets']['js'][] = $config['get_h5peditor_url'] . '/' . $script;
             }
         }
 
@@ -436,7 +436,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
         [$h5pEditorDir, $h5pCoreDir] = $this->getH5pEditorDir();
         $language_script = $this->getEditorLangScript($lang, $h5pEditorDir);
-        $settings['editor']['assets']['js'][] = $config['get_h5peditor_url'] . ($language_script);
+        $settings['editor']['assets']['js'][] = $config['get_h5peditor_url'] . trim($language_script, '/');
         $settings['core']['scripts'] = $this->margeFileList(
             $settings['core']['scripts'],
             'js',
@@ -832,10 +832,10 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     private function getH5pEditorDir(): array {
         $h5pEditorDir = file_exists(__DIR__ . '/../../vendor/h5p/h5p-editor')
             ? __DIR__ . '/../../vendor/h5p/h5p-editor'
-            : __DIR__ . '/../../../../../vendor/h5p/h5p-editor';
+            : __DIR__ . '/../../../../vendor/h5p/h5p-editor';
         $h5pCoreDir = file_exists(__DIR__ . '/../../vendor/h5p/h5p-core')
             ? __DIR__ . '/../../vendor/h5p/h5p-core'
-            : __DIR__ . '/../../../../../vendor/h5p/h5p-core';
+            : __DIR__ . '/../../../../vendor/h5p/h5p-core';
 
         return [$h5pEditorDir, $h5pCoreDir];
     }
