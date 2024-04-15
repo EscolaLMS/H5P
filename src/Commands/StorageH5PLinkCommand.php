@@ -39,7 +39,7 @@ class StorageH5PLinkCommand extends Command
                 continue;
             }
 
-            app(H5PFileStorageRepository::class, ['path' => env('AWS_URL')])->copyVendorFiles($target, config('hh5p-storage.storage_url') . $link);
+            app(H5PFileStorageRepository::class, ['path' => Storage::path('/') . '/h5p'])->copyVendorFiles($target, env('AWS_URL') . $link);
 
             $this->info("The [$link] link has been connected to [$target].");
         }
