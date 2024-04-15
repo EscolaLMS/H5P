@@ -51,7 +51,6 @@ class Helpers
         if (!Storage::directoryExists($dir)) {
             return false;
         }
-        // TODO to remove ??
         if (is_link($dir)) {
             // Do not traverse and delete linked content, simply unlink.
             unlink($dir);
@@ -66,5 +65,33 @@ class Helpers
         }
 
         return Storage::deleteDirectory($dir);
+    }
+
+    public static function deleteFileTreeLocal($dir)
+    {
+        if (!is_dir($dir)) {
+            return false;
+        }
+
+        if (is_link($dir)) {
+            // Do not traverse and delete linked content, simply unlink.
+            unlink($dir);
+            return;
+        }
+
+        $files = array_diff(scandir($dir), array('.', '..'));
+        foreach ($files as $file) {
+            $filepath = "$dir/$file";
+            // Note that links may resolve as directories
+            if (!is_dir($filepath) || is_link($filepath)) {
+                // Unlink files and links
+                unlink($filepath);
+            } else {
+                // Traverse subdir and delete files
+                self::deleteFileTreeLocal($filepath);
+            }
+        }
+
+        return rmdir($dir);
     }
 }

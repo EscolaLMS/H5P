@@ -81,7 +81,7 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
                 if (is_dir("{$source}/{$file}")) {
                     $this->copyVendorFiles("{$source}/{$file}", "{$destination}/{$file}");
                 } else {
-                    $folder = Str::after($destination, env('AWS_URL', '/'));
+                    $folder = Str::after($destination, env('AWS_URL', ''));
                     Storage::putFileAs($folder, new File("{$source}/{$file}"), $file);
                 }
             }

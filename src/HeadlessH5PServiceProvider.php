@@ -3,6 +3,7 @@
 namespace EscolaLms\HeadlessH5P;
 
 use EscolaLms\HeadlessH5P\Commands\H5PSeedCommand;
+use EscolaLms\HeadlessH5P\Commands\StorageH5PCopyStorageCommand;
 use EscolaLms\HeadlessH5P\Commands\StorageH5PLinkCommand;
 use EscolaLms\HeadlessH5P\Enums\ConfigEnum;
 use EscolaLms\HeadlessH5P\Providers\SettingsServiceProvider;
@@ -36,7 +37,7 @@ class HeadlessH5PServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-        $this->commands([H5PSeedCommand::class, StorageH5PLinkCommand::class]);
+        $this->commands([H5PSeedCommand::class, StorageH5PLinkCommand::class, StorageH5PCopyStorageCommand::class]);
         $this->bindH5P();
         $this->app->register(AuthServiceProvider::class);
         $this->app->register(SettingsServiceProvider::class);
