@@ -15,7 +15,8 @@
     "phpunit/phpunit": "^9.0",
     "orchestra/testbench": "^7.0",
     "laravel/legacy-factories": "^1.0.4",
-    "guzzlehttp/guzzle": "^7"
+    "guzzlehttp/guzzle": "^7",
+    "nunomaduro/larastan": "^2.0"
   },
   "autoload": {
     "psr-4": {

@@ -8,6 +8,7 @@ use EscolaLms\HeadlessH5P\Helpers\MargeFiles;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PFrameworkInterface;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
+use Exception;
 use H5PContentValidator;
 use H5PCore;
 use H5peditor;
@@ -38,6 +39,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     private H5PEditorAjaxInterface $editorAjaxRepository;
     private H5PContentValidator $contentValidator;
     private array $config;
+    private H5peditor $editor;
 
     public function __construct(
         H5PFrameworkInterface  $repository,
@@ -106,6 +108,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     public function validatePackage(UploadedFile $file, $skipContent = true, $h5p_upgrade_only = false): bool
     {
         rename($file->getPathName(), $this->getRepository()->getUploadedH5pPath());
+        $isValid = false;
         try {
             $isValid = $this->getValidator()->isValidPackage($skipContent, $h5p_upgrade_only);
         } catch (Exception $err) {
@@ -178,7 +181,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         if ($machineName) {
             $defaultLang = $this->getEditor()->getLibraryLanguage($machineName, $major_version, $minor_version, $lang);
             $data = $this->getEditor()->getLibraryData($machineName, $major_version, $minor_version, $lang, '', $libraries_url, $defaultLang);
-            $this->addMoreHtmlTags($data->semantics);
+            $this->addMoreHtmlTags(is_array($data) ? $data['semantics'] : $data->semantics);
 
             return $data;
         }
@@ -207,6 +210,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
             if ($field->type === 'text' && isset($field->widget) && $field->widget === 'html') {
                 if (!isset($field->tags)) {
+                    // @phpstan-ignore-next-line
                     $field->tags = [];
                 }
                 $field->tags = array_merge($field->tags, [
@@ -414,7 +418,9 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
         if ($user) {
             $settings['user'] = [
+                // @phpstan-ignore-next-line
                 "name" => $user->name,
+                // @phpstan-ignore-next-line
                 "mail" => $user->email,
             ];
         }
@@ -615,8 +621,6 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     /**
      * Gets content type cache for globally available libraries and the order
      * in which they have been used by the author
-     *
-     * @param bool $cacheOutdated The cache is outdated and not able to update
      */
     private function isContentTypeCacheUpdated()
     {
@@ -665,6 +669,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     public function getUpdatedContentHubMetadataCache()
     {
         $lang = config('hh5p.language');
+        // @phpstan-ignore-next-line
         return $this->getCore()->getUpdatedContentHubMetadataCache($lang);
     }
 
@@ -784,7 +789,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     /**
      * End-point for filter parameter values according to semantics.
      *
-     * @param {string} $libraryParameters
+     * @param $libraryParameters
      */
     public function filterLibraries($libraryParameters)
     {

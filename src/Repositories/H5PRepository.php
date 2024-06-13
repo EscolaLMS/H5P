@@ -20,6 +20,7 @@ use DateTime;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use JsonSerializable;
 
 
 class H5PRepository implements H5PFrameworkInterface
@@ -73,7 +74,7 @@ class H5PRepository implements H5PFrameworkInterface
      * @param array  $files    Files to send
      * @param string $method
      *
-     * @return string|array The content (response body), or an array with data. NULL if something went wrong
+     * @return string|array|null The content (response body), or an array with data. NULL if something went wrong
      */
     public function fetchExternalData($url, $data = null, $blocking = true, $stream = null, $fullData = false, $headers = [], $files = [], $method = 'POST')
     {
@@ -103,12 +104,12 @@ class H5PRepository implements H5PFrameworkInterface
                     return $fullData ? ['status' => $response->getStatusCode(), 'data' => json_decode($body)] : $body;
                 }
 
-                return true;
+                return ['status' => $response->getStatusCode()];
             } else {
-                return false;
+                return null;
             }
         } catch (RequestException $e) {
-            return false;
+            return null;
         }
     }
 
@@ -273,6 +274,7 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function getLibraryConfig($libraries = null)
     {
+        return [];
     }
 
     /**
@@ -315,6 +317,7 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function getAdminUrl()
     {
+        return '';
     }
 
     /**
@@ -471,7 +474,6 @@ class H5PRepository implements H5PFrameworkInterface
      *                            - languageCode: Translation in json format
      * @param bool   $new
      *
-     * @return
      */
     public function saveLibraryData(&$libraryData, $new = true)
     {
@@ -490,7 +492,7 @@ class H5PRepository implements H5PFrameworkInterface
             'semantics' => isset($libraryData['semantics']) ? $libraryData['semantics'] : '',
             'tutorial_url' => isset($libraryData['tutorial_url']) ?: '',
             'has_icon' => isset($libraryData['hasIcon']) ? 1 : 0,
-            'add_to' => isset($library['addTo']) ? json_encode($library['addTo']) : null
+            'add_to' => isset($libraryData['addTo']) ? json_encode($libraryData['addTo']) : null
         ];
 
         $libObj = H5PLibrary::firstOrCreate($library);
@@ -514,7 +516,7 @@ class H5PRepository implements H5PFrameworkInterface
     {
         $additionalLanguageCodes = ['pl'];
         foreach ($additionalLanguageCodes as $languageCode) {
-            if (isset($libraryLanguages) && !isset($libraryLanguages[$languageCode])) {
+            if (!isset($libraryLanguages[$languageCode])) {
                 $libraryLanguage = $this->h5PLibraryLanguageRepository->create($library, $languageCode);
 
                 if (isset($libraryLanguage)) {
@@ -592,9 +594,9 @@ class H5PRepository implements H5PFrameworkInterface
         // `params is array
         if (!isset($parameters) && is_array($content['params'])) {
             if (is_array($content['params']['params'])) {
-                $parameters = $parameters['params']['params'];
+                $parameters = $content['params']['params'];
             } else {
-                $parameters = $parameters['params'];
+                $parameters = $content['params'];
             }
         }
 
@@ -607,7 +609,7 @@ class H5PRepository implements H5PFrameworkInterface
         }
 
         $parameters = [
-            'params' => $parameters,
+            'params' => $parameters ?? [],
             'metadata' => $metadata,
         ];
 
@@ -864,7 +866,7 @@ class H5PRepository implements H5PFrameworkInterface
             ->first();
 
         if (is_null($library)) {
-            return;
+            return false;
         }
 
         $result = $library->toArray();
@@ -956,7 +958,7 @@ class H5PRepository implements H5PFrameworkInterface
     /**
      * Delete a library from database and file system.
      *
-     * @param stdClass $library
+     * @param $library
      *                          Library object with id, name, major version and minor version
      */
     public function deleteLibrary($library)
@@ -1069,7 +1071,7 @@ class H5PRepository implements H5PFrameworkInterface
      *
      * @param string $name
      *                        Identifier for the setting
-     * @param string $default
+     * @param string|bool $default
      *                        Optional default value if settings is not set
      *
      * @return mixed
@@ -1146,6 +1148,7 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function getNumNotFiltered()
     {
+        return 0;
     }
 
     /**
@@ -1158,6 +1161,7 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function getNumContent($libraryId, $skip = null)
     {
+        return 0;
     }
 
     /**
@@ -1255,10 +1259,8 @@ class H5PRepository implements H5PFrameworkInterface
     /**
      * Check if user has permissions to an action.
      *
-     * @method hasPermission
-     *
-     * @param [H5PPermission] $permission Permission type, ref H5PPermission
-     * @param [int]           $id         Id need by platform to determine permission
+     * @param H5PPermission $permission Permission type, ref H5PPermission
+     * @param int           $id         Id need by platform to determine permission
      *
      * @return bool
      */
@@ -1300,6 +1302,7 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function replaceContentTypeCache($contentTypeCache)
     {
+        $data = [];
         foreach ($contentTypeCache->contentTypes as $ct) {
            $data[] = [
                 'machine_name' => $ct->id,
@@ -1341,6 +1344,7 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function libraryHasUpgrade($library)
     {
+        return false;
     }
 
     /**
@@ -1360,7 +1364,6 @@ class H5PRepository implements H5PFrameworkInterface
      *
      * @param string $lang Language code in ISO 639-1
      *
-     * @return JsonSerializable Json string
      */
     public function getContentHubMetadataCache($lang = 'en')
     {
@@ -1375,6 +1378,7 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function getContentHubMetadataChecked($lang = 'en')
     {
+        return null;
     }
 
     /**
@@ -1387,6 +1391,7 @@ class H5PRepository implements H5PFrameworkInterface
      */
     public function setContentHubMetadataChecked($time, $lang = 'en')
     {
+        return false;
     }
 
     private function getSemanticsFromFile($machineName, $majorVersion, $minorVersion): ?string
