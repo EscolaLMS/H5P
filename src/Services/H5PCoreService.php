@@ -9,6 +9,7 @@ use H5PCore;
 class H5PCoreService extends H5PCore
 {
     protected bool $exportEnabled;
+    public bool $aggregateAssets;
 
     public function __construct(H5PFrameworkInterface $H5PFramework, $path, $url, $language = 'en', $export = FALSE)
     {
@@ -17,6 +18,10 @@ class H5PCoreService extends H5PCore
         $this->exportEnabled = $export;
     }
 
+    /**
+     * @param $content
+     * @return false|mixed|Object|string|null
+     */
     public function filterParameters(&$content)
     {
         if (!empty($content['filtered']) &&

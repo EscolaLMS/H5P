@@ -12,21 +12,21 @@ class ContentIndexResource extends JsonResource
 
     public function toArray($request): array
     {
-        $lib = H5PLibrary::find($this->library_id);
+        $lib = H5PLibrary::find($this->resource->library_id);
 
         $fields = [
-            'id' => $this->id,
-            'uuid' => $this->uuid,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'user_id' => $this->user_id,
-            'author' => $this->author,
-            'title' => $this->title,
-            'library_id' => $this->library_id,
+            'id' => $this->resource->id,
+            'uuid' => $this->resource->uuid,
+            'created_at' => $this->resource->created_at,
+            'updated_at' => $this->resource->updated_at,
+            'user_id' => $this->resource->user_id,
+            'author' => $this->resource->author,
+            'title' => $this->resource->title,
+            'library_id' => $this->resource->library_id,
             'library' => isset($lib) ? (new LibraryIndexResource($lib))->toArray() : null,
-            'slug' => $this->slug,
-            'filtered' => $this->filtered,
-            'disable' => $this->disable,
+            'slug' => $this->resource->slug,
+            'filtered' => $this->resource->filtered,
+            'disable' => $this->resource->disable,
         ];
 
         return self::apply($fields, $this);

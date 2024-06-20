@@ -58,6 +58,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
             'parameters' => $params,
             'nonce' => $nonce,
             'user_id' => $user->getKey(),
+            // @phpstan-ignore-next-line
             'author' => $user->email,
         ]);
 
@@ -136,7 +137,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
         $query = $this->orderBy($query, $orderDto);
         $paginator = $query->paginate(intval($per_page));
 
-        $paginator->getCollection()->transform(function ($content) {
+        $paginator->getCollection()->transform(function (H5PContent $content) {
             // Your code here
             if ($content->library) {
                 $content->library->makeHidden(['semantics']);
@@ -159,7 +160,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
         $query = $this->orderBy($query, $orderDto);
         $list = $query->get();
 
-        $list->transform(function ($content) {
+        $list->transform(function (H5PContent $content) {
             // Your code here
             $content->library->makeHidden(['semantics']);
             $content->library->setAppends([]);

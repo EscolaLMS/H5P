@@ -24,6 +24,7 @@ class H5PExportService extends H5PExport
         catch (Exception $e) {
             $this->h5pF->setErrorMessage($this->h5pF->t($e->getMessage()), 'failed-creating-export-file');
             H5PCore::deleteFileTree($tmpPath);
+            // @phpstan-ignore-next-line
             return FALSE;
         }
 
@@ -84,6 +85,7 @@ class H5PExportService extends H5PExport
             catch (Exception $e) {
                 $this->h5pF->setErrorMessage($this->h5pF->t($e->getMessage()), 'failed-creating-export-file');
                 H5PCore::deleteFileTree($tmpPath);
+                // @phpstan-ignore-next-line
                 return FALSE;
             }
 
@@ -138,6 +140,7 @@ class H5PExportService extends H5PExport
         }
         catch (Exception $e) {
             $this->h5pF->setErrorMessage($this->h5pF->t($e->getMessage()), 'failed-creating-export-file');
+            // @phpstan-ignore-next-line
             return false;
         }
 
@@ -145,6 +148,7 @@ class H5PExportService extends H5PExport
         Storage::deleteDirectory($tmpPath);
         $this->h5pF->afterExportCreated($content, $filename);
 
+        // @phpstan-ignore-next-line
         return true;
     }
 

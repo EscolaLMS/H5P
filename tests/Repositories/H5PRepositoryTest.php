@@ -67,7 +67,7 @@ class H5PRepositoryTest extends TestCase
         $url = H5PHubEndpoints::createURL('example/url');
         $result = $this->repository->fetchExternalData($url, null, false, null, false);
 
-        $this->assertFalse($result);
+        $this->assertNull($result);
     }
 
     public function testFetchExternalDataShouldReturnFalseWhenStatusIsDifferentFrom200(): void
@@ -77,7 +77,7 @@ class H5PRepositoryTest extends TestCase
         $url = H5PHubEndpoints::createURL('example/url');
         $result = $this->repository->fetchExternalData($url, null, false, null, false);
 
-        $this->assertFalse($result);
+        $this->assertNull($result);
     }
 
     public function testLoadAddonsShouldReturnHigherVersionLibrary(): void

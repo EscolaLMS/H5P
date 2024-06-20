@@ -45,7 +45,7 @@ class Helpers
      * @return boolean
      *  Indicates if the directory existed.
      */
-    public static function deleteFileTree($dir)
+    public static function deleteFileTree(string $dir): bool
     {
         if (!Storage::directoryExists($dir)) {
             return false;
@@ -53,7 +53,7 @@ class Helpers
         if (is_link($dir)) {
             // Do not traverse and delete linked content, simply unlink.
             unlink($dir);
-            return;
+            return true;
         }
 
         foreach (Storage::directories($dir) as $directory) {

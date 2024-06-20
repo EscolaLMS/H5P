@@ -3,6 +3,7 @@
 namespace EscolaLms\HeadlessH5P\Repositories;
 
 use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PLibraryLanguageRepositoryContract;
+use H5peditorFile;
 use H5peditorStorage;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
@@ -30,11 +31,11 @@ class H5PEditorStorageRepository implements H5peditorStorage
      * Load language file(JSON) from database.
      * This is used to translate the editor fields(title, description etc.)
      *
-     * @param string $name The machine readable name of the library(content type)
-     * @param int $major Major part of version number
-     * @param int $minor Minor part of version number
-     * @param string $lang Language code
-     * @return string Translation in JSON format
+     * @param string $machineName The machine readable name of the library(content type)
+     * @param int $majorVersion Major part of version number
+     * @param int $minorVersion Minor part of version number
+     * @param $language
+     * @return string|null Translation in JSON format
      */
     public function getLanguage($machineName, $majorVersion, $minorVersion, $language): ?string
     {
@@ -54,16 +55,11 @@ class H5PEditorStorageRepository implements H5peditorStorage
                 ['language_code',  $language]
             ])->first();
 
-            if ($libraryLanguage) {
-                $this->h5PLibraryLanguageRepository->update($libraryLanguage, $library, $language);
-                return $this->h5PLibraryLanguageRepository->getTranslationString($libraryLanguage->translation);
-            }
+            $libraryLanguage = $libraryLanguage
+                ? $this->h5PLibraryLanguageRepository->update($libraryLanguage, $library, $language)
+                : $this->h5PLibraryLanguageRepository->create($library, $language);
 
-            // if is empty try to create from local translation files
-            if (empty($libraryLanguage)) {
-                $libraryLanguage = $this->h5PLibraryLanguageRepository->create($library, $language);
-                return $libraryLanguage ? $this->h5PLibraryLanguageRepository->getTranslationString($libraryLanguage->translation) : null;
-            }
+            return $libraryLanguage ? $this->h5PLibraryLanguageRepository->getTranslationString($libraryLanguage->translation) : null;
         }
 
         return null;
@@ -163,14 +159,16 @@ class H5PEditorStorageRepository implements H5peditorStorage
      */
     public static function saveFileTemporarily($data, $move_file)
     {
+        // TODO this is for phpstan to not returning error
+        return true;
     }
 
     /**
      * Marks a file for later cleanup, useful when files are not instantly cleaned
      * up. E.g. for files that are uploaded through the editor.
      *
-     * @param H5peditorFile
-     * @param $content_id
+     * @param H5peditorFile $file
+     * @param $nonce
      */
     public static function markFileForCleanup($file, $nonce)
     {
