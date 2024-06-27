@@ -2,6 +2,7 @@
 
 namespace EscolaLms\HeadlessH5P\Http\Controllers;
 
+use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
 use EscolaLms\HeadlessH5P\Dtos\ContentFilterCriteriaDto;
 use EscolaLms\HeadlessH5P\Http\Controllers\Swagger\ContentApiSwagger;
@@ -18,7 +19,9 @@ use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ContentApiController extends EscolaLmsBaseController implements ContentApiSwagger
 {
@@ -34,6 +37,7 @@ class ContentApiController extends EscolaLmsBaseController implements ContentApi
     public function index(ContentListRequest $request): JsonResponse
     {
         $contentFilterDto = ContentFilterCriteriaDto::instantiateFromRequest($request);
+        $orderDto = OrderDto::instantiateFromRequest($request);
         $columns = [
             'hh5p_contents.id',
             'hh5p_contents.uuid',
@@ -43,8 +47,8 @@ class ContentApiController extends EscolaLmsBaseController implements ContentApi
             'hh5p_contents.parameters',
         ];
         $list = $request->get('per_page') !== null && $request->get('per_page') == 0 ?
-            $this->contentRepository->unpaginatedList($contentFilterDto, $columns) :
-            $this->contentRepository->list($contentFilterDto, $request->get('per_page'), $columns);
+            $this->contentRepository->unpaginatedList($contentFilterDto, $columns, $orderDto) :
+            $this->contentRepository->list($contentFilterDto, $request->get('per_page'), $columns, $orderDto);
 
         return $this->sendResponseForResource(ContentIndexResource::collection($list));
     }
@@ -123,15 +127,11 @@ class ContentApiController extends EscolaLmsBaseController implements ContentApi
         return $this->sendResponseForResource(ContentResource::make($content));
     }
 
-    public function download(AdminContentReadRequest $request, $id): BinaryFileResponse
+    public function download(AdminContentReadRequest $request, $id): StreamedResponse
     {
         $filepath = $this->contentRepository->download($id);
 
-        return response()
-            ->download($filepath, '', [
-                'Content-Type' => 'application/zip',
-                'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
-            ]);
+        return Storage::download($filepath);
     }
 
     public function deleteUnused(): JsonResponse

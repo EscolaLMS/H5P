@@ -246,10 +246,11 @@ class LibraryApiTest extends TestCase
 
         $h5pFile = $this->getH5PFile();
         $this->uploadH5PLibrary($h5pFile);
+        $library = H5PLibrary::latest()->first();
 
-        $library = H5PLibrary::first();
         $libraryDependencies = H5PLibraryDependency::where('library_id', $library->getKey());
         $libraryDependenciesCount = $libraryDependencies->count();
+
 
         $libraryDependencies->first()->delete();
 

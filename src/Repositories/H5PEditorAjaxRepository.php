@@ -8,6 +8,7 @@ use H5PEditorAjaxInterface;
 use EscolaLms\HeadlessH5P\Models\H5pLibrariesHubCache;
 use EscolaLms\HeadlessH5P\Helpers\Helpers;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Key;
@@ -48,7 +49,7 @@ class H5PEditorAjaxRepository implements H5PEditorAjaxInterface
                 ->last()
             );
 
-
+        // @phpstan-ignore-next-line
         return $unique->concat($result);
     }
 

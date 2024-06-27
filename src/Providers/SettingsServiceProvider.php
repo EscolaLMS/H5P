@@ -26,6 +26,7 @@ class SettingsServiceProvider extends ServiceProvider
             AdministrableConfig::registerConfig(ConfigEnum::CONFIG_KEY . '.h5p_ext_communication', ['boolean'], false);
             AdministrableConfig::registerConfig(ConfigEnum::CONFIG_KEY . '.h5p_save_content_state', ['boolean'], false);
             AdministrableConfig::registerConfig(ConfigEnum::CONFIG_KEY . '.h5p_save_content_frequency', ['numeric'], false);
+            AdministrableConfig::registerConfig(ConfigEnum::CONFIG_KEY . '.url', ['string'], false);
         }
     }
 }

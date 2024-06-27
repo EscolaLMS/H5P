@@ -1,0 +1,39 @@
+name: Tests PHPStan in environments
+
+on: [pull_request]
+
+jobs:
+  php82-laravel-latest-phpstan-postgres:
+    runs-on: ubuntu-latest
+    container:
+      image: escolalms/php:8.2
+
+    services:
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test
+          TZ: Europe/Warsaw
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Instantiate package
+        uses: actions/checkout@v2
+
+      - name: Update composer
+        run: COMPOSER_ROOT_VERSION=0.9.9 composer update
+
+      - name: Setup environment
+        run: cp env/postgres/* .
+
+      - name: Clear config
+        run: vendor/bin/testbench config:clear
+
+      - name: Publish things
+        run: vendor/bin/testbench migrate:fresh
+
+      - name: Run tests
+        run: vendor/bin/phpstan analyse

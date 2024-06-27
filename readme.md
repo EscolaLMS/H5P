@@ -1,4 +1,4 @@
-# Headless H5P Laravel API
+# Headless H5P Laravel API for Escola LMS ecosystem
 
 [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/H5P/)
 [![codecov](https://codecov.io/gh/EscolaLMS/H5P/branch/main/graph/badge.svg?token=ci4VPQbrOI)](https://codecov.io/gh/EscolaLMS/H5P)
@@ -7,6 +7,9 @@
 [![downloads](https://img.shields.io/packagist/v/escolalms/headless-h5p)](https://packagist.org/packages/escolalms/headless-h5p)
 [![downloads](https://img.shields.io/packagist/l/escolalms/headless-h5p)](https://packagist.org/packages/escolalms/headless-h5p)
 [![Maintainability](https://api.codeclimate.com/v1/badges/6316e8dc93a06d28c6a0/maintainability)](https://codeclimate.com/github/EscolaLMS/H5P/maintainability)
+
+## Before you begin
+This product is tightly coupled with the Escola LMS ecosystem and is not compatible with any other Laravel application.
 
 ## Working demo
 
@@ -43,7 +46,7 @@ Demo [React source files](https://github.com/EscolaLMS/h5p-laravel-demo/blob/mai
 1. `composer require escolalms/headless-h5p`
 2. `php artisan migrate`
 3. `php artisan h5p:storage-link` see below
-4. `php db:seed --class="EscolaLms\HeadlessH5P\Database\Seeders\PermissionTableSeeder" see below
+4. `php artisan db:seed --class="EscolaLms\HeadlessH5P\Database\Seeders\PermissionTableSeeder"` see below
 
 ### Storage links
 
@@ -93,3 +96,7 @@ You can seed library and content with build-in seeders as command that are acces
 ## Road map
 
 - rewrite h5p core in a way like [luminare in typescript](https://github.com/lumieducation/lumi)
+
+## Running test locally
+
+run `./test.sh`

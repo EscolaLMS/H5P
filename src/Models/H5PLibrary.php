@@ -2,6 +2,7 @@
 
 namespace EscolaLms\HeadlessH5P\Models;
 
+use EscolaLms\Core\Models\Traits\QueryCacheable;
 use EscolaLms\HeadlessH5P\Database\Factories\H5PLibraryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -113,11 +114,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *          type="integer",
  *      )
  * )
+ *
+ * @property string $name
+ * @property string $embedTypes
+ * @property int $count
  */
-
 class H5PLibrary extends Model
 {
-    use HasFactory;
+    use HasFactory, QueryCacheable;
 
     protected $table = 'hh5p_libraries';
 

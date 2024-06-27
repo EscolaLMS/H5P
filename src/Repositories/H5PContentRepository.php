@@ -2,6 +2,7 @@
 
 namespace EscolaLms\HeadlessH5P\Repositories;
 
+use EscolaLms\Core\Dtos\OrderDto;
 use EscolaLms\Core\Repositories\Criteria\Criterion;
 use EscolaLms\HeadlessH5P\Dtos\ContentFilterCriteriaDto;
 use EscolaLms\HeadlessH5P\Exceptions\H5PException;
@@ -16,6 +17,7 @@ use H5PCore;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 
@@ -56,6 +58,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
             'parameters' => $params,
             'nonce' => $nonce,
             'user_id' => $user->getKey(),
+            // @phpstan-ignore-next-line
             'author' => $user->email,
         ]);
 
@@ -106,7 +109,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
 
     private function moveTmpFilesToContentFolders($nonce, $contentId): bool
     {
-        $storage_path = storage_path(config('hh5p.h5p_storage_path'));
+        $storage_path = Storage::path(config('hh5p.h5p_storage_path'));
 
         $files = H5PTempFile::where(['nonce' => $nonce])->get();
 
@@ -114,11 +117,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
             $old_path = $storage_path . $file->path;
             if (strpos($file->path, '/editor') !== false) {
                 $new_path = $storage_path . str_replace('/editor', '/content/' . $contentId, $file->path);
-                $dir_path = dirname($new_path);
-                if (!is_dir($dir_path)) {
-                    mkdir($dir_path, 0777, true);
-                }
-                rename($old_path, $new_path);
+                Storage::move($old_path, $new_path);
             }
 
             $file->delete();
@@ -129,13 +128,16 @@ class H5PContentRepository implements H5PContentRepositoryContract
 
     public function list(
         ContentFilterCriteriaDto $contentFilterDto,
-        $per_page = 15,
-        array $columns = ['hh5p_contents.*']
-    ): LengthAwarePaginator {
+                                 $per_page = 15,
+        array                    $columns = ['hh5p_contents.*'],
+        ?OrderDto                $orderDto = null,
+    ): LengthAwarePaginator
+    {
         $query = $this->getQueryContent($contentFilterDto, $columns);
+        $query = $this->orderBy($query, $orderDto);
         $paginator = $query->paginate(intval($per_page));
 
-        $paginator->getCollection()->transform(function ($content) {
+        $paginator->getCollection()->transform(function (H5PContent $content) {
             // Your code here
             if ($content->library) {
                 $content->library->makeHidden(['semantics']);
@@ -150,12 +152,15 @@ class H5PContentRepository implements H5PContentRepositoryContract
 
     public function unpaginatedList(
         ContentFilterCriteriaDto $contentFilterDto,
-        array $columns = ['hh5p_contents.*']
-    ): Collection {
+        array                    $columns = ['hh5p_contents.*'],
+        ?OrderDto                $orderDto = null,
+    ): Collection
+    {
         $query = $this->getQueryContent($contentFilterDto, $columns);
+        $query = $this->orderBy($query, $orderDto);
         $list = $query->get();
 
-        $list->transform(function ($content) {
+        $list->transform(function (H5PContent $content) {
             // Your code here
             $content->library->makeHidden(['semantics']);
             $content->library->setAppends([]);
@@ -171,7 +176,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
         $content = H5PContent::findOrFail($id);
         $content->delete();
 
-        $storage_path = storage_path(config('hh5p.h5p_content_storage_path') . $id);
+        $storage_path = config('hh5p.h5p_content_storage_path') . $id;
 
         Helpers::deleteFileTree($storage_path);
 
@@ -221,7 +226,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
 
         $filename = $this->hh5pService->getRepository()->getDownloadFile($id);
 
-        return storage_path('app/h5p/exports/' . $filename);
+        return 'h5p/exports/' . $filename;
     }
 
     public function getLibraryById(int $id): H5PLibrary
@@ -254,8 +259,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
     private function getQueryContent(ContentFilterCriteriaDto $contentFilterDto, array $columns = ['*']): Builder
     {
         $query = H5PContent::with(['library'])
-            ->select($columns)
-            ->orderBy('id', 'desc');
+            ->select($columns);
 
         $query = self::applyQueryJoin($query);
         $query = self::applyQuerySelect($query);
@@ -281,5 +285,19 @@ class H5PContentRepository implements H5PContentRepositoryContract
         $content['embedType'] = H5PCore::determineEmbedType($h5pContent->embededType ?? 'div', $h5pLibrary->embedTypes);
 
         $this->hh5pService->getCore()->filterParameters($content);
+    }
+
+    private function orderBy(Builder $query, ?OrderDto $dto): Builder
+    {
+        if ($dto) {
+            match ($dto->getOrderBy()) {
+                'library_title' => $query
+                    ->withAggregate('library', 'title')
+                    ->orderBy('library_title', $dto->getOrder() ?? 'asc'),
+                'title' => $query->orderBy('parameters->metadata->title', $dto->getOrder() ?? 'asc'),
+                default => $query->orderBy($dto->getOrderBy() ?? 'id', $dto->getOrder() ?? 'desc'),
+            };
+        }
+        return $query;
     }
 }
