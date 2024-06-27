@@ -14,7 +14,7 @@ class JSONHelper
             $json = json_encode($json);
         }
 
-        $json = str_replace(['\n', '\t'], '', $json);
+        $json = str_replace(['\t'], '', $json);
         $json = str_replace(['\"', '&quot;'], '\'', $json);
         return str_replace(['\/'], '/', $json);
     }
