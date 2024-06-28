@@ -837,10 +837,10 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     private function getH5pEditorDir(): array {
         $h5pEditorDir = file_exists(__DIR__ . '/../../vendor/h5p/h5p-editor')
             ? __DIR__ . '/../../vendor/h5p/h5p-editor'
-            : __DIR__ . '/../../../../vendor/h5p/h5p-editor';
+            : __DIR__ . '/../../../../../vendor/h5p/h5p-editor';
         $h5pCoreDir = file_exists(__DIR__ . '/../../vendor/h5p/h5p-core')
             ? __DIR__ . '/../../vendor/h5p/h5p-core'
-            : __DIR__ . '/../../../../vendor/h5p/h5p-core';
+            : __DIR__ . '/../../../../../vendor/h5p/h5p-core';
 
         return [$h5pEditorDir, $h5pCoreDir];
     }
