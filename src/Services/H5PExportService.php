@@ -112,7 +112,7 @@ class H5PExportService extends H5PExport
 
         // Get path to temporary export target file
         $tmpFile = $this->h5pC->fs->getTmpPath();
-        $zipPath = storage_path('app' . $tmpFile);
+        $zipPath = $tmpFile;
 
         // Create new zip instance.
         $zip = new ZipArchive();
