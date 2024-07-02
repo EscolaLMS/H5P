@@ -130,7 +130,6 @@ class H5PExportService extends H5PExport
         // Close zip and remove tmp dir
         $zip->close();
         Storage::putFileAs('h5p/temp', new File($zipPath), Str::afterLast($tmpFile, '/'));
-        unlink($zipPath);
         H5PCore::deleteFileTree($tmpPath);
 
         $filename = $content['slug'] . '-' . $content['id'] . '.h5p';
