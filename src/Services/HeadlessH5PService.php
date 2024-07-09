@@ -182,7 +182,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
             $library = H5PLibrary::findOrFail($library_id);
 
             if (in_array($library->name, array('H5P.Questionnaire', 'H5P.FreeTextQuestion')) &&
-                !$this->h5p->h5pF->getOption('enable_lrs_content_types')) {
+                !$this->core->h5pF->getOption('enable_lrs_content_types')) {
                 $library->restricted = TRUE;
             }
             $this->addMoreHtmlTags($library->semantics);
