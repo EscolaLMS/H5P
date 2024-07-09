@@ -5,7 +5,6 @@ namespace EscolaLms\HeadlessH5P\Services;
 use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PFrameworkInterface;
 use H5PContentValidator;
 use H5PCore;
-use Illuminate\Support\Facades\Log;
 
 class H5PCoreService extends H5PCore
 {
