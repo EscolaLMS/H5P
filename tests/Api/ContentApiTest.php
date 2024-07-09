@@ -10,7 +10,7 @@ use EscolaLms\HeadlessH5P\Tests\Traits\H5PTestingTrait;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 
@@ -762,6 +762,9 @@ class ContentApiTest extends TestCase
             'value' => $h5pFirstId,
         ]);
 
+        $this->assertTrue(Storage::directoryExists('/h5p/content/' . $h5pFirstId));
+        $this->assertTrue(Storage::directoryExists('/h5p/content/' . $h5pSecondId));
+
         $response = $this->delete('/api/admin/hh5p/unused');
 
         $response->assertOk();
@@ -773,8 +776,8 @@ class ContentApiTest extends TestCase
             'id' => $h5pSecondId
         ]);
 
-        $this->assertTrue(File::exists(storage_path('app/h5p/content/' . $h5pFirstId)));
-        $this->assertFalse(File::exists(storage_path('app/h5p/content/' . $h5pSecondId)));
+        $this->assertTrue(Storage::directoryExists('/h5p/content/' . $h5pFirstId));
+        $this->assertFalse(Storage::directoryExists('/h5p/content/' . $h5pSecondId));
     }
 
     public function testShouldCreateUuidWhenIsEmptyAndWhenFetchContent(): void

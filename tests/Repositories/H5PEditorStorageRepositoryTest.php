@@ -177,7 +177,7 @@ class H5PEditorStorageRepositoryTest extends TestCase
 
         Storage::assertExists('/contents/123/audio.mp3');
 
-        $this->repository::removeTemporarilySavedFiles(Storage::path('contents/123/audio.mp3'));
+        $this->repository::removeTemporarilySavedFiles('contents/123/audio.mp3');
 
         Storage::assertMissing('/contents/123/audio.mp3');
     }
@@ -193,7 +193,7 @@ class H5PEditorStorageRepositoryTest extends TestCase
         Storage::assertExists('/contents/123/audio2.mp3');
         Storage::assertExists('/contents/123/audio3.mp3');
 
-        $this->repository::removeTemporarilySavedFiles(Storage::path('contents/123'));
+        $this->repository::removeTemporarilySavedFiles('contents/123');
 
         Storage::assertMissing('/contents/123/audio1.mp3');
         Storage::assertMissing('/contents/123/audio2.mp3');
@@ -211,7 +211,7 @@ class H5PEditorStorageRepositoryTest extends TestCase
         Storage::assertExists('/contents/123/video/mp4/video.mp4');
         Storage::assertExists('/contents/123/text.txt');
 
-        $this->repository::removeTemporarilySavedFiles(Storage::path('contents/123'));
+        $this->repository::removeTemporarilySavedFiles('contents/123');
 
         Storage::assertMissing('/contents/123/audio/audio.mp3');
         Storage::assertMissing('/contents/123/video/mp4/video.mp4');

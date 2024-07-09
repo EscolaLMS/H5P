@@ -15,14 +15,14 @@ class LibraryIndexResource extends JsonResource
     public function toArray($request = null): array
     {
         return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'title' => $this->title,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'machineName' => $this->machineName,
-            'uberName' => $this->uberName,
-            'libraryId' => $this->libraryId,
+            'id' => $this->resource->id,
+            'name' => $this->resource->name,
+            'title' => $this->resource->title,
+            'created_at' => $this->resource->created_at,
+            'updated_at' => $this->resource->updated_at,
+            'machineName' => $this->resource->machineName,
+            'uberName' => $this->resource->uberName,
+            'libraryId' => $this->resource->libraryId,
         ];
     }
 }
