@@ -225,7 +225,7 @@ class H5PFileStorageRepository extends H5PDefaultStorage implements H5PFileStora
 
     public function exportLibrary($library, $target, $developmentPath = NULL)
     {
-        $folder = \H5PCore::libraryToString($library, TRUE);
+        $folder = \H5PCore::libraryToString($library);
         $srcPath = ($developmentPath === NULL ? "/libraries/{$folder}" : $developmentPath);
         $this->copyFiles("{$this->path}{$srcPath}", "{$target}/{$folder}");
     }
