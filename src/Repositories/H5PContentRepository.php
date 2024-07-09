@@ -99,9 +99,11 @@ class H5PContentRepository implements H5PContentRepositoryContract
             'library_id' => $libDb->id,
             'library' => $library,
             'parameters' => $params,
-            'filtered' => isset($json->params) ? json_encode($json->params) : $content['filtered']
+            //'filtered' => isset($json->params) ? json_encode($json->params) : $content['filtered']
         ], $id);
 
+
+        $this->filterParameters($content, $libDb);
         $this->moveTmpFilesToContentFolders($nonce, $id);
 
         return $id;
