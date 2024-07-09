@@ -118,7 +118,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $name
  * @property string $embedTypes
  * @property int $count
- * @property int $restricted
+ * @property bool $restricted
  */
 class H5PLibrary extends Model
 {
