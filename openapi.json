@@ -647,30 +647,6 @@
                 ]
             }
         },
-        "/api/hh5p/libraries": {
-            "get": {
-                "tags": [
-                    "H5P"
-                ],
-                "summary": "H5P Editor Endpoint. Gets all h5p runnable libraries in the database. Called by  ",
-                "description": "Gets all h5p runnable libraries in the database. Called by H5P Editor",
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/H5PLibrary"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/api/hh5p/libraries?": {
             "get": {
                 "tags": [
@@ -1355,5 +1331,11 @@
                 "type": "object"
             }
         }
-    }
+    },
+    "tags": [
+        {
+            "name": "H5P",
+            "description": "H5P"
+        }
+    ]
 }
