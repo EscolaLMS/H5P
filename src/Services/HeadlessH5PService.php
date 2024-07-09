@@ -669,7 +669,6 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     public function getUpdatedContentHubMetadataCache()
     {
         $lang = config('hh5p.language');
-        // @phpstan-ignore-next-line
         return $this->getCore()->getUpdatedContentHubMetadataCache($lang);
     }
 
