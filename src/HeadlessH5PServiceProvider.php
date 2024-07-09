@@ -3,6 +3,7 @@
 namespace EscolaLms\HeadlessH5P;
 
 use EscolaLms\HeadlessH5P\Commands\H5PSeedCommand;
+use EscolaLms\HeadlessH5P\Commands\StorageH5PCopyStorageCommand;
 use EscolaLms\HeadlessH5P\Commands\StorageH5PLinkCommand;
 use EscolaLms\HeadlessH5P\Enums\ConfigEnum;
 use EscolaLms\HeadlessH5P\Providers\SettingsServiceProvider;
@@ -15,12 +16,13 @@ use EscolaLms\HeadlessH5P\Repositories\H5PFileStorageRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PLibraryLanguageRepository;
 use EscolaLms\HeadlessH5P\Repositories\H5PRepository;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
+use EscolaLms\HeadlessH5P\Services\H5PCoreService;
 use EscolaLms\HeadlessH5P\Services\HeadlessH5PService;
 use H5PContentValidator;
-use H5PCore;
 use H5peditor;
 use H5PStorage;
 use H5PValidator;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -35,7 +37,7 @@ class HeadlessH5PServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-        $this->commands([H5PSeedCommand::class, StorageH5PLinkCommand::class]);
+        $this->commands([H5PSeedCommand::class, StorageH5PLinkCommand::class, StorageH5PCopyStorageCommand::class]);
         $this->bindH5P();
         $this->app->register(AuthServiceProvider::class);
         $this->app->register(SettingsServiceProvider::class);
@@ -46,8 +48,8 @@ class HeadlessH5PServiceProvider extends ServiceProvider
         $this->app->singleton(HeadlessH5PServiceContract::class, function ($app) {
             $languageRepository = new H5PLibraryLanguageRepository();
             $repository = new H5PRepository($languageRepository);
-            $fileStorage = new H5PFileStorageRepository(storage_path('app/h5p'));
-            $core = new H5PCore($repository, $fileStorage, url('h5p'), config('hh5p.language'), config('hh5p.h5p_export'));
+            $fileStorage = new H5PFileStorageRepository(config('filesystems.default') === 's3' ? Storage::path('/') . '/h5p' : storage_path('app/h5p'));
+            $core = new H5PCoreService($repository, $fileStorage, Storage::url('h5p'), config('hh5p.language'), config('hh5p.h5p_export'));
             $core->aggregateAssets = true;
             $validator = new H5PValidator($repository, $core);
             $storage = new H5PStorage($repository, $core);

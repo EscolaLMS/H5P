@@ -31,9 +31,9 @@ interface HeadlessH5PServiceContract
 
     public function getContentValidator(): H5PContentValidator;
 
-    public function validatePackage(UploadedFile $file, bool $skipContent, bool $h5p_upgrade_only): bool;
+    public function validatePackage(UploadedFile $file, $skipContent = true, $h5p_upgrade_only = false): bool;
 
-    public function savePackage(object $content, int $contentMainId, bool $skipContent, array $options): bool;
+    public function savePackage(object $content = null, int $contentMainId = null, bool $skipContent = true, array $options = []): bool;
 
     public function getMessages(string $type);
 
@@ -62,4 +62,6 @@ interface HeadlessH5PServiceContract
     public function filterLibraries($libraryParameters);
 
     public function getTranslations(array $libraries, ?string $language = null): array;
+
+    public function uploadFile($contentId, $field, $token, $nonce = null);
 }

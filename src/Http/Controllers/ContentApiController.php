@@ -19,7 +19,9 @@ use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ContentApiController extends EscolaLmsBaseController implements ContentApiSwagger
 {
@@ -125,15 +127,11 @@ class ContentApiController extends EscolaLmsBaseController implements ContentApi
         return $this->sendResponseForResource(ContentResource::make($content));
     }
 
-    public function download(AdminContentReadRequest $request, $id): BinaryFileResponse
+    public function download(AdminContentReadRequest $request, $id): StreamedResponse
     {
         $filepath = $this->contentRepository->download($id);
 
-        return response()
-            ->download($filepath, '', [
-                'Content-Type' => 'application/zip',
-                'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
-            ]);
+        return Storage::download($filepath);
     }
 
     public function deleteUnused(): JsonResponse
