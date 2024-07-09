@@ -353,6 +353,11 @@ class H5PRepository implements H5PFrameworkInterface
         return $return === null ? false : $return->id;
     }
 
+    public function checkLibraryById(int $libraryId): H5PLibrary|null
+    {
+        return H5PLibrary::query()->where('id', $libraryId)->first();
+    }
+
     /**
      * Get file extension whitelist.
      *

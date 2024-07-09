@@ -5,10 +5,12 @@ namespace EscolaLms\HeadlessH5P\Services;
 use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PFrameworkInterface;
 use H5PContentValidator;
 use H5PCore;
+use Illuminate\Support\Facades\Log;
 
 class H5PCoreService extends H5PCore
 {
     protected bool $exportEnabled;
+
     public function __construct(H5PFrameworkInterface $H5PFramework, $path, $url, $language = 'en', $export = FALSE)
     {
         parent::__construct($H5PFramework, $path, $url, $language, $export);
@@ -133,5 +135,20 @@ class H5PCoreService extends H5PCore
         }
 
         return $slug;
+    }
+
+    public function getLibraryId($library, $libString = NULL)
+    {
+        static $libraryIdMap = [];
+
+        if (!$libString) {
+            $libString = self::libraryToString($library);
+        }
+
+        if (!isset($libraryIdMap[$libString]) || !$this->h5pF->checkLibraryById($libraryIdMap[$libString])) {
+            $libraryIdMap[$libString] = $this->h5pF->getLibraryId($library['machineName'], $library['majorVersion'], $library['minorVersion']);
+        }
+
+        return $libraryIdMap[$libString];
     }
 }
