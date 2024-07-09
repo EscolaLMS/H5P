@@ -1365,7 +1365,6 @@ class H5PRepository implements H5PFrameworkInterface
      * @param string $lang Language code in ISO 639-1
      *
      */
-    // @phpstan-ignore-next-line
     public function getContentHubMetadataCache($lang = 'en')
     {
     }
