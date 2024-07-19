@@ -683,7 +683,7 @@ class H5PRepository implements H5PFrameworkInterface
                 'name' => $dependency['machineName'],
                 'major_version' => $dependency['majorVersion'],
                 'minor_version' => $dependency['minorVersion'],
-            ])->firstOrFail();
+            ])->latest()->firstOrFail();
 
             H5PLibraryDependency::firstOrCreate([
                 'library_id' => $libraryId,
@@ -868,7 +868,7 @@ class H5PRepository implements H5PFrameworkInterface
             'minor_version' => $minorVersion,
         ])
             ->with('dependencies.requiredLibrary')
-            ->first();
+            ->latest()->first();
 
         if (is_null($library)) {
             return false;
@@ -907,6 +907,7 @@ class H5PRepository implements H5PFrameworkInterface
         $library = H5PLibrary::where('name', $machineName)
             ->where('major_version', $majorVersion)
             ->where('minor_version', $minorVersion)
+            ->latest()
             ->first();
 
         $semanticsFile = $this->getSemanticsFromFile($machineName, $majorVersion, $minorVersion);

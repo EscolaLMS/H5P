@@ -47,7 +47,7 @@ class H5PEditorStorageRepository implements H5peditorStorage
             ['major_version',  $majorVersion],
             ['minor_version', $minorVersion],
             ['name', $machineName],
-        ])->first();
+        ])->latest()->first();
 
         if ($library) {
             $libraryLanguage = H5PLibraryLanguage::where([
@@ -118,7 +118,7 @@ class H5PEditorStorageRepository implements H5peditorStorage
                     ['name', $library->name],
                     ['major_version', $library->majorVersion],
                     ['minor_version', $library->minorVersion]
-                ])->first())
+                ])->latest()->first())
                 ->reject(fn($library) => !$library)
                 ->values()
                 ->all();

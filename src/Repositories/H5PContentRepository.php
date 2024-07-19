@@ -40,7 +40,7 @@ class H5PContentRepository implements H5PContentRepositoryContract
             ['name', $libNames['machineName']],
             ['major_version', $libNames['majorVersion']],
             ['minor_version', $libNames['minorVersion']],
-        ])->first();
+        ])->latest()->first();
 
         if ($libDb === null) {
             throw new H5PException(H5PException::LIBRARY_NOT_FOUND);
@@ -70,16 +70,25 @@ class H5PContentRepository implements H5PContentRepositoryContract
 
     public function edit(int $id, string $library, string $params, string $nonce): int
     {
+        $content = H5PContent::where('id', $id)->first();
+        $previousLib = H5PLibrary::where('id', $content->library_id)->first();
+
         $libNames = $this->hh5pService->getCore()->libraryFromString($library);
 
         $libDb = H5PLibrary::where([
             ['name', $libNames['machineName']],
             ['major_version', $libNames['majorVersion']],
             ['minor_version', $libNames['minorVersion']],
-        ])->first();
+        ])->latest()->first();
 
         if ($libDb === null) {
             throw new H5PException(H5PException::LIBRARY_NOT_FOUND);
+        }
+
+        // don't update library version if there is new
+        if ($previousLib->name === $libDb->name) {
+            $libDb = $previousLib;
+            $library = $previousLib->uberName;
         }
 
         $json = json_decode($params);
@@ -87,8 +96,6 @@ class H5PContentRepository implements H5PContentRepositoryContract
         if ($json === null) {
             throw new H5PException(H5PException::INVALID_PARAMETERS_JSON);
         }
-
-        $content = H5PContent::where('id', $id)->first();
 
         if ($content === null) {
             throw new H5PException(H5PException::CONTENT_NOT_FOUND);
@@ -99,9 +106,11 @@ class H5PContentRepository implements H5PContentRepositoryContract
             'library_id' => $libDb->id,
             'library' => $library,
             'parameters' => $params,
-            'filtered' => isset($json->params) ? json_encode($json->params) : $content['filtered']
+            //'filtered' => isset($json->params) ? json_encode($json->params) : $content['filtered']
         ], $id);
 
+
+        $this->filterParameters($content, $libDb);
         $this->moveTmpFilesToContentFolders($nonce, $id);
 
         return $id;

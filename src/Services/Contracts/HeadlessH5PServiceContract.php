@@ -41,7 +41,7 @@ interface HeadlessH5PServiceContract
 
     public function getConfig(): array;
 
-    public function getLibraries(string $machineName = null, string $major_version = null, string $minor_version = null);
+    public function getLibraries(string $machineName = null, string $major_version = null, string $minor_version = null, int $library_id = null);
 
     public function getEditorSettings($content = null): array;
 

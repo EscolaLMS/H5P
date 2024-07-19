@@ -90,6 +90,7 @@ use Illuminate\Support\Str;
  * @property array $parameters
  * @property int $user_id
  * @property H5PLibrary $library
+ * @property int $library_id
  */
 class H5PContent extends Model
 {
