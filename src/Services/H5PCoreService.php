@@ -9,7 +9,6 @@ use H5PCore;
 class H5PCoreService extends H5PCore
 {
     protected bool $exportEnabled;
-    public $aggregateAssets;
 
     public function __construct(H5PFrameworkInterface $H5PFramework, $path, $url, $language = 'en', $export = FALSE)
     {
@@ -135,5 +134,20 @@ class H5PCoreService extends H5PCore
         }
 
         return $slug;
+    }
+
+    public function getLibraryId($library, $libString = NULL)
+    {
+        static $libraryIdMap = [];
+
+        if (!$libString) {
+            $libString = self::libraryToString($library);
+        }
+
+        if (!isset($libraryIdMap[$libString]) || !$this->h5pF->checkLibraryById($libraryIdMap[$libString])) {
+            $libraryIdMap[$libString] = $this->h5pF->getLibraryId($library['machineName'], $library['majorVersion'], $library['minorVersion']);
+        }
+
+        return $libraryIdMap[$libString];
     }
 }
