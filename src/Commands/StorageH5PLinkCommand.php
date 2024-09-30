@@ -5,6 +5,7 @@ namespace EscolaLms\HeadlessH5P\Commands;
 use EscolaLms\HeadlessH5P\Repositories\H5PFileStorageRepository;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\ExpectationFailedException;
 
 class StorageH5PLinkCommand extends Command
 {
@@ -34,9 +35,13 @@ class StorageH5PLinkCommand extends Command
         $links = $this->links();
 
         foreach ($links as $link => $target) {
-            if (Storage::fileExists($link)) {
-                $this->error("The [$link] link already exists.");
-                continue;
+            if (Storage::directoryExists($link)) {
+                try {
+                    Storage::assertDirectoryEmpty($link);
+                } catch (ExpectationFailedException $e) {
+                    $this->error("The [$link] link already exists.");
+                    continue;
+                }
             }
 
             app(H5PFileStorageRepository::class, ['path' => env('AWS_URL')])->copyVendorFiles($target, $link);
