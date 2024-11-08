@@ -314,8 +314,11 @@ class LibraryApiTest extends TestCase
         $libraryDependencies = H5PLibraryDependency::where('library_id', $library->getKey());
         $libraryDependenciesCount = $libraryDependencies->count();
 
+        if ($libraryDependencies->count() > 0) {
+            $libraryDependencies->first()->delete();
 
-        $libraryDependencies->first()->delete();
+            $this->assertNotEquals($libraryDependenciesCount, $libraryDependencies->count());
+        }
 
         $this->assertNotEquals($libraryDependenciesCount, $libraryDependencies->count());
 
