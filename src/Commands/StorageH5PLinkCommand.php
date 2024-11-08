@@ -14,7 +14,7 @@ class StorageH5PLinkCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'h5p:storage-link {--relative : Create the symbolic link using relative paths}';
+    protected $signature = 'h5p:storage-link {--relative : Create the symbolic link using relative paths} {--overwrite : Overwrite files if they existed before}';
 
     /**
      * The console command description.
@@ -31,16 +31,19 @@ class StorageH5PLinkCommand extends Command
     public function handle()
     {
         $relative = $this->option('relative');
+        $overwrite = $this->option('overwrite');
 
         $links = $this->links();
 
         foreach ($links as $link => $target) {
-            if (Storage::directoryExists($link)) {
-                try {
-                    Storage::assertDirectoryEmpty($link);
-                } catch (ExpectationFailedException $e) {
-                    $this->error("The [$link] link already exists.");
-                    continue;
+            if (!$overwrite) {
+                if (Storage::directoryExists($link)) {
+                    try {
+                        Storage::assertDirectoryEmpty($link);
+                    } catch (ExpectationFailedException $e) {
+                        $this->error("The [$link] link already exists.");
+                        continue;
+                    }
                 }
             }
 
