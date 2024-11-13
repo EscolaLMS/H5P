@@ -3,6 +3,9 @@
 namespace EscolaLms\HeadlessH5P\Helpers;
 
 use Exception;
+use Illuminate\Http\File;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class MargeFiles
 {
@@ -43,7 +46,7 @@ class MargeFiles
     {
         $hash = [];
         foreach ($this->arrayFiles as $file) {
-            $hash[] = hash_file('md5', $file);
+            $hash[] = hash('md5', Storage::get($this->getNameAfterPrefix($file)));
         }
 
         return md5(serialize($hash));
@@ -93,7 +96,11 @@ class MargeFiles
                 fwrite($stream, $contents . PHP_EOL);
             }
             rewind($stream);
-            file_put_contents($fileName, $stream);
+            if (config('filesystems.default') === 's3') {
+                Storage::put($this->getNameAfterPrefix($fileName), $stream);
+            } else {
+                file_put_contents($fileName, $stream);
+            }
             fclose($stream);
 
             return true;
@@ -107,10 +114,20 @@ class MargeFiles
      */
     private function getContent(string $path): string
     {
+        $folderPath = $this->getNameAfterPrefix($path);
+        if (Storage::exists($folderPath)) {
+            return Storage::get($folderPath);
+        }
+
         if (file_exists($path)) {
             return file_get_contents($path);
         }
 
         throw new Exception("File: '".$path."' do not exist");
+    }
+
+    private function getNameAfterPrefix(string $fileName): string
+    {
+        return env('AWS_URL', null) ? Str::after($fileName, env('AWS_URL')) : $fileName;
     }
 }
