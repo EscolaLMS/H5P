@@ -46,7 +46,8 @@ class MargeFiles
     {
         $hash = [];
         foreach ($this->arrayFiles as $file) {
-            $hash[] = hash('md5', Storage::get(Str::after($file, env('AWS_URL'))));
+            $name = env('AWS_URL', null) ? Str::after($file, env('AWS_URL')) : $file;
+            $hash[] = hash('md5', Storage::get($name));
         }
 
         return md5(serialize($hash));
