@@ -13,6 +13,7 @@ class MargeFiles
     private string $hash;
     private string $patch;
     private string $fileType;
+    private ?string $prefix;
 
     public function __construct(?array $filesArray = null, ?string $fileType = null, ?string $patch = null)
     {
@@ -20,6 +21,7 @@ class MargeFiles
         $this->fileType = $fileType ?? 'txt';
         $this->patch = $patch ?? storage_path();
         $this->hash = $this->getHash();
+        $this->prefix = env('AWS_URL', null);
     }
 
     public function setFileType(string $fileType): void
@@ -46,8 +48,7 @@ class MargeFiles
     {
         $hash = [];
         foreach ($this->arrayFiles as $file) {
-            $name = env('AWS_URL', null) ? Str::after($file, env('AWS_URL')) : $file;
-            $hash[] = hash('md5', Storage::get($name));
+            $hash[] = hash('md5', Storage::get($this->getNameAfterPrefix($file)));
         }
 
         return md5(serialize($hash));
@@ -97,7 +98,7 @@ class MargeFiles
                 fwrite($stream, $contents . PHP_EOL);
             }
             rewind($stream);
-            Storage::put(Str::after($fileName, env('AWS_URL')), $stream);
+            Storage::put($this->getNameAfterPrefix($fileName), $stream);
             fclose($stream);
 
             return true;
@@ -111,7 +112,7 @@ class MargeFiles
      */
     private function getContent(string $path): string
     {
-        $folderPath = Str::after($path, env('AWS_URL'));
+        $folderPath = $this->getNameAfterPrefix($path);
         if (Storage::exists($folderPath)) {
             return Storage::get($folderPath);
         }
@@ -121,5 +122,10 @@ class MargeFiles
         }
 
         throw new Exception("File: '".$path."' do not exist");
+    }
+
+    private function getNameAfterPrefix(string $fileName): string
+    {
+        return $this->prefix ? Str::after($fileName, $this->prefix) : $fileName;
     }
 }
