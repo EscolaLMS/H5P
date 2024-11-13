@@ -96,7 +96,11 @@ class MargeFiles
                 fwrite($stream, $contents . PHP_EOL);
             }
             rewind($stream);
-            Storage::put($this->getNameAfterPrefix($fileName), $stream);
+            if (config('filesystems.default') === 's3') {
+                Storage::put($this->getNameAfterPrefix($fileName), $stream);
+            } else {
+                file_put_contents($fileName, $stream);
+            }
             fclose($stream);
 
             return true;

@@ -117,6 +117,7 @@ class H5PExportService extends H5PExport
         // Create new zip instance.
         $zip = new ZipArchive();
         $zipName = Str::afterLast($zipPath, '/') . '.zip';
+        $zipName = storage_path('app/h5p/temp/' . $zipName);
         $zip->open($zipName, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
         // Add all the files from the tmp dir.
@@ -132,6 +133,7 @@ class H5PExportService extends H5PExport
         $zip->close();
         Storage::putFileAs('h5p/temp', new File($zipName), Str::afterLast($tmpFile, '/'));
         H5PCore::deleteFileTree($tmpPath);
+        \Illuminate\Support\Facades\File::delete($zipName);
 
         $filename = $content['slug'] . '-' . $content['id'] . '.h5p';
         try {
