@@ -13,7 +13,6 @@ class MargeFiles
     private string $hash;
     private string $patch;
     private string $fileType;
-    private ?string $prefix;
 
     public function __construct(?array $filesArray = null, ?string $fileType = null, ?string $patch = null)
     {
@@ -21,7 +20,6 @@ class MargeFiles
         $this->fileType = $fileType ?? 'txt';
         $this->patch = $patch ?? storage_path();
         $this->hash = $this->getHash();
-        $this->prefix = env('AWS_URL', null);
     }
 
     public function setFileType(string $fileType): void
@@ -126,6 +124,6 @@ class MargeFiles
 
     private function getNameAfterPrefix(string $fileName): string
     {
-        return $this->prefix ? Str::after($fileName, $this->prefix) : $fileName;
+        return env('AWS_URL', null) ? Str::after($fileName, env('AWS_URL')) : $fileName;
     }
 }
