@@ -116,7 +116,8 @@ class H5PExportService extends H5PExport
 
         // Create new zip instance.
         $zip = new ZipArchive();
-        $zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+        $zipName = Str::afterLast($zipPath, '/') . '.zip';
+        $zip->open($zipName, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
         // Add all the files from the tmp dir.
         foreach ($files as $file) {
@@ -129,7 +130,7 @@ class H5PExportService extends H5PExport
 
         // Close zip and remove tmp dir
         $zip->close();
-        Storage::putFileAs('h5p/temp', new File($zipPath), Str::afterLast($tmpFile, '/'));
+        Storage::putFileAs('h5p/temp', new File($zipName), Str::afterLast($tmpFile, '/'));
         H5PCore::deleteFileTree($tmpPath);
 
         $filename = $content['slug'] . '-' . $content['id'] . '.h5p';
