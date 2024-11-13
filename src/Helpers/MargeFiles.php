@@ -3,6 +3,9 @@
 namespace EscolaLms\HeadlessH5P\Helpers;
 
 use Exception;
+use Illuminate\Http\File;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class MargeFiles
 {
@@ -43,7 +46,7 @@ class MargeFiles
     {
         $hash = [];
         foreach ($this->arrayFiles as $file) {
-            $hash[] = hash_file('md5', $file);
+            $hash[] = hash('md5', Storage::get(Str::after($file, env('AWS_URL'))));
         }
 
         return md5(serialize($hash));
@@ -93,7 +96,7 @@ class MargeFiles
                 fwrite($stream, $contents . PHP_EOL);
             }
             rewind($stream);
-            file_put_contents($fileName, $stream);
+            Storage::put(Str::after($fileName, env('AWS_URL')), $stream);
             fclose($stream);
 
             return true;
@@ -107,6 +110,11 @@ class MargeFiles
      */
     private function getContent(string $path): string
     {
+        $folderPath = Str::after($path, env('AWS_URL'));
+        if (Storage::exists($folderPath)) {
+            return Storage::get($folderPath);
+        }
+
         if (file_exists($path)) {
             return file_get_contents($path);
         }

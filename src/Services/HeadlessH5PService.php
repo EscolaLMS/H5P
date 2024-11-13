@@ -850,6 +850,12 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
     }
 
     private function getH5pEditorDir(): array {
+        if (config('filesystems.default') === 's3') {
+            return [
+                env('AWS_URL') . '/h5p-editor',
+                env('AWS_URL') . '/h5p-core',
+            ];
+        }
         $h5pEditorDir = file_exists(__DIR__ . '/../../vendor/h5p/h5p-editor')
             ? __DIR__ . '/../../vendor/h5p/h5p-editor'
             : __DIR__ . '/../../../../../vendor/h5p/h5p-editor';
