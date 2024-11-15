@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use JsonSerializable;
 
 class HeadlessH5PService implements HeadlessH5PServiceContract
@@ -843,7 +844,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
 
         if ($lang === 'pl') {
             $resourceFile = __DIR__ . '/../../resources/lang/' . $lang . '/h5p.js';
-            !File::exists($resourceFile) ?: File::replace($h5pEditorDir . $language_script, File::get($resourceFile));
+            !File::exists($resourceFile) ?: Storage::put(Str::after($h5pEditorDir, env('AWS_URL')) . $language_script, File::get($resourceFile));
         }
 
         return $language_script;
