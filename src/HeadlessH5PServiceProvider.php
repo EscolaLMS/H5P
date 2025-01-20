@@ -50,7 +50,7 @@ class HeadlessH5PServiceProvider extends ServiceProvider
             $repository = new H5PRepository($languageRepository);
             $fileStorage = new H5PFileStorageRepository(config('filesystems.default') === 's3' ? Storage::path('/') . '/h5p' : storage_path('app/h5p'));
             $core = new H5PCoreService($repository, $fileStorage, Storage::url('h5p'), config('hh5p.language'), config('hh5p.h5p_export'));
-            $core->aggregateAssets = true;
+            $core->aggregateAssets = boolval(config('hh5p.aggregateAssets'));
             $validator = new H5PValidator($repository, $core);
             $storage = new H5PStorage($repository, $core);
             $editorStorage = new H5PEditorStorageRepository($languageRepository);
@@ -75,12 +75,12 @@ class HeadlessH5PServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->loadRoutesFrom(__DIR__.'/routes.php');
+        $this->loadRoutesFrom(__DIR__ . '/routes.php');
         //$this->loadFactoriesFrom(__DIR__ . '/../database/factories');
-        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'h5p');
-        $this->loadJsonTranslationsFrom(__DIR__.'/../resources/lang');
-        $this->mergeConfigFrom(__DIR__.'/../config/hh5p.php', 'hh5p');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'h5p');
+        $this->loadJsonTranslationsFrom(__DIR__ . '/../resources/lang');
+        $this->mergeConfigFrom(__DIR__ . '/../config/hh5p.php', 'hh5p');
         // Load configs
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();

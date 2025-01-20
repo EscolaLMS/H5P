@@ -7,7 +7,7 @@ use Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class MargeFiles
+class MergeFiles
 {
     private array $arrayFiles;
     private string $hash;
@@ -123,7 +123,7 @@ class MargeFiles
             return file_get_contents($path);
         }
 
-        throw new Exception("File: '".$path."' do not exist");
+        throw new Exception("File: '" . $path . "' do not exist");
     }
 
     private function getNameAfterPrefix(string $fileName): string

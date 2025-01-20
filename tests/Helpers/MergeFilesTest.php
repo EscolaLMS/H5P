@@ -2,29 +2,29 @@
 
 namespace EscolaLms\HeadlessH5P\Tests\Helpers;
 
-use EscolaLms\HeadlessH5P\Helpers\MargeFiles;
+use EscolaLms\HeadlessH5P\Helpers\MergeFiles;
 use EscolaLms\HeadlessH5P\Tests\TestCase;
 
-class MargeFilesTest extends TestCase
+class MergeFilesTest extends TestCase
 {
     protected function setUp(): void
     {
         parent::setUp();
     }
 
-    public function testMargeFiles()
+    public function testMergeFiles()
     {
-        $firstFileName = __DIR__.'/MargeFilesTest.php';
-        $secondFileName =  __DIR__.'/../TestCase.php';
+        $firstFileName = __DIR__ . '/MergeFilesTest.php';
+        $secondFileName =  __DIR__ . '/../TestCase.php';
         $arr = [
             $firstFileName,
         ];
-        $margeFiles = new MargeFiles();
-        $margeFiles->setFilesArray($arr);
-        $margeFiles->addFile($secondFileName);
-        $margeFiles->setFileType('css');
+        $mergeFiles = new MergeFiles();
+        $mergeFiles->setFilesArray($arr);
+        $mergeFiles->addFile($secondFileName);
+        $mergeFiles->setFileType('css');
 
-        $fileName = $margeFiles->getHashedFile();
+        $fileName = $mergeFiles->getHashedFile();
 
         $this->assertFileExists($fileName);
 

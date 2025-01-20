@@ -4,7 +4,7 @@ namespace EscolaLms\HeadlessH5P\Services;
 
 use EscolaLms\HeadlessH5P\Exceptions\H5PException;
 use EscolaLms\HeadlessH5P\Helpers\JSONHelper;
-use EscolaLms\HeadlessH5P\Helpers\MargeFiles;
+use EscolaLms\HeadlessH5P\Helpers\MergeFiles;
 use EscolaLms\HeadlessH5P\Models\H5PLibrary;
 use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PFrameworkInterface;
 use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
@@ -52,8 +52,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         H5PEditorAjaxInterface $editorAjaxRepository,
         H5peditor              $editor,
         H5PContentValidator    $contentValidator
-    )
-    {
+    ) {
         $this->repository = $repository;
         $this->fileStorage = $fileStorage;
         $this->core = $core;
@@ -182,8 +181,10 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         if ($library_id) {
             $library = H5PLibrary::findOrFail($library_id);
 
-            if (in_array($library->name, array('H5P.Questionnaire', 'H5P.FreeTextQuestion')) &&
-                !$this->core->h5pF->getOption('enable_lrs_content_types')) {
+            if (
+                in_array($library->name, array('H5P.Questionnaire', 'H5P.FreeTextQuestion')) &&
+                !$this->core->h5pF->getOption('enable_lrs_content_types')
+            ) {
                 $library->restricted = TRUE;
             }
             $this->addMoreHtmlTags($library->semantics);
@@ -213,7 +214,8 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         return $libraries;
     }
 
-    private function addMoreHtmlTags($semantics) {
+    private function addMoreHtmlTags($semantics)
+    {
         foreach ($semantics as $field) {
             while ($field->type === 'list') {
                 $field = $field->field;
@@ -275,7 +277,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         }
         $settings['core']['scripts'][] = $config['get_h5peditor_url'] . '/scripts/h5peditor-editor.js';
         $settings['core']['scripts'][] = $config['get_h5peditor_url'] . '/scripts/h5peditor-init.js';
-        $settings['core']['scripts'][] = $config['get_h5peditor_url'] . '/language/'. $lang .'.js';
+        $settings['core']['scripts'][] = $config['get_h5peditor_url'] . '/language/' . $lang . '.js';
 
         $settings['editor'] = [
             'filesPath' => isset($content) ? Storage::url("h5p/content/$content") : Storage::url('h5p/editor'),
@@ -329,7 +331,7 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $language_script = $this->getEditorLangScript($lang, $h5pEditorDir);
         $settings['editor']['assets']['js'][] = $config['get_h5peditor_url'] . ($language_script);
 
-        $settings['core']['scripts'] = $this->margeFileList(
+        $settings['core']['scripts'] = $this->mergeFileList(
             $settings['core']['scripts'],
             'js',
             [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
@@ -340,21 +342,21 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         // because there are @import url(...) in the css files that must be amended to the correct path
         // eg changing from relative to absolute path
 
-        /*$settings['core']['styles'] = $this->margeFileList(
+        /*$settings['core']['styles'] = $this->mergeFileList(
             $settings['core']['styles'],
             'css',
             [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
             [$h5pEditorDir, $h5pCoreDir]
         );*/
 
-        $settings['editor']['assets']['js'] = $this->margeFileList(
+        $settings['editor']['assets']['js'] = $this->mergeFileList(
             $settings['editor']['assets']['js'],
             'js',
             [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
             [$h5pEditorDir, $h5pCoreDir]
         );
 
-        /*$settings['editor']['assets']['css'] = $this->margeFileList(
+        /*$settings['editor']['assets']['css'] = $this->mergeFileList(
             $settings['editor']['assets']['css'],
             'css',
             [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
@@ -459,13 +461,13 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         [$h5pEditorDir, $h5pCoreDir] = $this->getH5pEditorDir();
         $language_script = $this->getEditorLangScript($lang, $h5pEditorDir);
         $settings['editor']['assets']['js'][] = $config['get_h5peditor_url'] . trim($language_script, '/');
-        $settings['core']['scripts'] = $this->margeFileList(
+        $settings['core']['scripts'] = $this->mergeFileList(
             $settings['core']['scripts'],
             'js',
             [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
             [$h5pEditorDir, $h5pCoreDir]
         );
-        /*$settings['core']['styles'] = $this->margeFileList(
+        /*$settings['core']['styles'] = $this->mergeFileList(
             $settings['core']['styles'],
             'css',
             [$config['get_h5peditor_url'], $config['get_h5pcore_url']],
@@ -513,12 +515,14 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         $preloaded_dependencies = $this->getCore()->loadContentDependencies($id, 'preloaded');
         $files = $this->getCore()->getDependenciesFiles($preloaded_dependencies);
 
+
         $cid = $settings['contents']["cid-$id"];
         $embed = H5PCore::determineEmbedType($cid['content']['embed_type'] ?? 'div', $cid['content']['library']['embedTypes']);
 
         $scripts = array_map(function ($value) use ($config) {
             return $config['url'] . ($value->path . $value->version);
         }, $files['scripts']);
+
 
         $styles = array_map(function ($value) use ($config) {
             return $config['url'] . ($value->path . $value->version);
@@ -623,15 +627,15 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         return $this->getEditor()->ajaxInterface->validateEditorToken($token);
     }
 
-    private function margeFileList(array $fileList, string $type, array $replaceFrom, array $replaceTo): array
+    private function mergeFileList(array $fileList, string $type, array $replaceFrom, array $replaceTo): array
     {
         $newFileList = [];
         foreach ($fileList as $file) {
             $newFileList[] = str_replace($replaceFrom, $replaceTo, $file);
         }
-        $margeFiles = new MargeFiles($newFileList, $type, $replaceTo[0]);
+        $mergeFiles = new MergeFiles($newFileList, $type, $replaceTo[0]);
 
-        return [$replaceFrom[0] . ($type . '/' . basename($margeFiles->getHashedFile()))];
+        return [$replaceFrom[0] . ($type . '/' . basename($mergeFiles->getHashedFile()))];
     }
 
     /**
@@ -779,7 +783,8 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
      */
     public function reinstallLibraryDependencies(string $machineName): void
     {
-        if (!$this->editor->ajaxInterface->getContentTypeCache($machineName) ||
+        if (
+            !$this->editor->ajaxInterface->getContentTypeCache($machineName) ||
             !$this->callHubEndpoint(H5PHubEndpoints::CONTENT_TYPES . $machineName) ||
             !$this->core->librariesJsonData
         ) {
@@ -839,7 +844,8 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         return $this->editorAjaxRepository->getTranslations($libs, $language);
     }
 
-    private function getEditorLangScript(string $lang, string $h5pEditorDir): string {
+    private function getEditorLangScript(string $lang, string $h5pEditorDir): string
+    {
         $language_script = '/language/' . $lang . '.js';
 
         if ($lang === 'pl') {
@@ -850,7 +856,8 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
         return $language_script;
     }
 
-    private function getH5pEditorDir(): array {
+    private function getH5pEditorDir(): array
+    {
         if (config('filesystems.default') === 's3') {
             return [
                 env('AWS_URL') . '/h5p-editor',

@@ -1,5 +1,6 @@
 <?php
 return [
+    'aggregateAssets' => true,
     'domain' => 'domain',
     'url' => 'h5p',
     'ajaxSetFinished' => 'ajaxSetFinished',
