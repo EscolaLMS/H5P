@@ -107,6 +107,10 @@ class H5PContentRepository implements H5PContentRepositoryContract
             'filtered' => isset($json->params) ? json_encode($json->params) : $content['filtered']
         ], $id);
 
+        $content = $this->hh5pService->getCore()->loadContent($id);
+        $content['filtered'] = '';
+        $this->hh5pService->getCore()->filterParameters($content);
+
         $this->moveTmpFilesToContentFolders($nonce, $id);
 
         return $id;
